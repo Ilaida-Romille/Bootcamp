@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub - Organizers</title>
+    <meta name="description" content="Plan, register, and connect your corporate events with EventHub. The all-in-one event management platform for enterprise organizations, organizers, and attendees.">
+    
+    <!-- Bootstrap 5.3.8 CSS CDN -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    
+    <!-- External Shared Styles -->
+    <link rel="stylesheet" href="../css/global.css">
+    <!-- Migrated Separate Stylesheet Component -->
+    <link rel="stylesheet" href="../css/platform/organizers.css">
+</head>
+<body>
+
+    <!-- Nav Bar Section (Uses your global background setup) -->
+    <header class="navbar navbar-expand-md glass-nav navbar-dark sticky-top">
+        <div class="container-fluid px-4">
+            <a href="#" class="navbar-brand fw-bold text-white fs-5 m-0">EventHub</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardNavbar" aria-controls="dashboardNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="dashboardNavbar">
+                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 gap-md-3 mt-3 mt-md-0 text-secondary" style="font-size: 0.85rem;">
+                    <span class="text-white-50">Platform Owner</span>
+                    <span class="d-none d-md-inline text-muted">|</span>
+                    <span class="fw-semibold text-white" style="cursor: pointer;">Admin <small class="text-white-50 ms-1">▼</small></span>
+                    <a href="../index.html" class="link-secondary text-decoration-none ms-0 ms-md-4">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Master Layout Wrapper -->
+    <div class="container-fluid p-0 d-flex flex-column flex-md-row align-items-stretch">
+        
+        <!-- Side Bar Navigation -->
+        <aside class="sidebar p-3 p-md-4 flex-shrink-0">
+            <nav class="nav flex-column gap-2">
+                <a href="dashboard.html" class="nav-item rounded">Dashboard</a>
+                <a href="#" class="nav-item rounded active">Organizers</a>
+                <a href="billing.html" class="nav-item rounded">Billing & Invoices</a>
+                <a href="tickets.html" class="nav-item rounded">Tickets & Requests</a>
+            </nav>
+        </aside>
+
+        <!-- Main Dashboard Workspace -->
+        <main class="flex-grow-1 p-4 p-lg-5" style="max-width: 1400px; margin: 0 auto; width: 100%;">
+            <h1 class="h2 fw-bold text-white mb-4">Organizers</h1>
+
+            <!-- Filters Layer using Bootstrap Grid Row configurations -->
+            <form class="row g-3 align-items-end mb-4" onsubmit="event.preventDefault();">
+                <div class="col-md-7 col-lg-8">
+                    <label for="searchCompany" class="form-label small text-secondary">Search by company name</label>
+                    <input type="text" id="searchCompany" class="form-control glass-form-input">
+                </div>
+                <div class="col-md-3 col-lg-2">
+                    <label for="statusFilter" class="form-label small text-secondary">Status</label>
+                    <input type="text" id="statusFilter" class="form-control glass-form-input">
+                </div>
+                <div class="col-md-2">
+                    <!-- Global custom dark theme button referenced inside global components -->
+                    <button type="submit" class="btn btn-dark w-100 fw-semibold tracking-wide" style="height: 42px;">Search</button>
+                </div>
+            </form>
+
+            <!-- Table Contents with Responsive Wrapped Container Layer -->
+            <div class="glass-table-responsive rounded-3">
+                <table class="table glass-data-table mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Company Name</th>
+                            <th scope="col"># Events</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-medium text-white">Acme Events Co.</td>
+                            <td>24</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Active</span></td>
+                            <td class="actions-cell">
+                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-medium text-white">Northwind Corp.</td>
+                            <td>9</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Active</span></td>
+                            <td class="actions-cell">
+                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-medium text-white">Globex Holdings</td>
+                            <td>3</td>
+                            <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Suspended</span></td>
+                            <td class="actions-cell">
+                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-medium text-white">Initech PH</td>
+                            <td>17</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Active</span></td>
+                            <td class="actions-cell">
+                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-medium text-white">Umbrella Group</td>
+                            <td>1</td>
+                            <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">Pending</span></td>
+                            <td class="actions-cell">
+                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap 5.3.8 JS Bundle CDN -->
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

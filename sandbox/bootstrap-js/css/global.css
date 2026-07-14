@@ -1,0 +1,89 @@
+:root {
+    --bg-main: #050811;
+    --accent-blue: #64b5f6;
+    --accent-blue-muted: #26476b;
+    --text-main: #f0f4f8;
+    --text-muted: #8a9cb2;
+    --modal-top-glow: rgba(100, 181, 246, 0.55);
+    --error-color: #ef5350;
+    --error-border: rgba(239, 83, 80, 0.65);
+    --error-glow: rgba(239, 83, 80, 0.16);
+}
+
+body {
+    background: 
+        radial-gradient(circle at 15% 15%, #1a2f4c 0%, rgba(10, 15, 26, 0.8) 40%, transparent 70%),
+        radial-gradient(circle at 90% 85%, #163a54 0%, rgba(8, 12, 21, 0.9) 25%, transparent 50%),
+        var(--bg-main);
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+}
+
+/* Nav Bar Integration */
+.glass-nav {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar Styling Fixes to Adapt with Bootstrap 5 Layouts */
+.sidebar {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.00) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        width: 240px;
+        min-height: calc(100vh - 71px);
+        border-bottom: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+}
+
+.sidebar .nav-item {
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+.sidebar .nav-item:hover {
+    color: var(--text-main);
+    text-shadow: 0 0 8px rgba(100, 181, 246, 0.3);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.sidebar .nav-item.active {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Glass Outline Action Buttons */
+.btn-glass-outline {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-main);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-glass-outline:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-blue);
+    color: var(--text-main);
+    text-shadow: 0 0 8px rgba(100, 181, 246, 0.4);
+    box-shadow: 0 0 15px rgba(100, 181, 246, 0.1);
+}

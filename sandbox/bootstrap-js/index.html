@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub | Enterprise & Corporate Event Management Platform</title>
+    <meta name="description" content="Plan, register, and connect your corporate events with EventHub. The all-in-one event management platform for enterprise organizations, organizers, and attendees.">
+    <!-- Bootstrap 5 CSS CDN -->
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/log_in_form.css">
+</head>
+<body>
+
+    <!-- Navbar Section -->
+    <header class="navbar navbar-expand-md glass-nav navbar-dark sticky-top">
+        <div class="container-xl">
+            <a href="#" class="navbar-brand fw-bold text-white fs-4" style="transition: color 0.3s ease;">EventHub</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+                <nav class="navbar-nav gap-2 mt-3 mt-md-0">
+                    <a href="#" class="nav-link text-secondary" style="font-size: 0.9rem;">About</a>
+                    <a href="#" class="nav-link text-secondary" style="font-size: 0.9rem;">How It Works</a>
+                    <a href="#" class="nav-link text-secondary" style="font-size: 0.9rem;">Contact</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container of the Page -->
+    <main class="container-xl d-flex flex-column justify-content-center align-items-center" style="min-height: calc(100vh - 75px);">
+        <div class="row w-100 gy-5 align-items-center justify-content-between py-5">
+            
+            <!-- Left Column: Hero Section -->
+            <section class="col-lg-5 text-center text-lg-start">
+                <h1 class="display-3 fw-bold lh-sm mb-4 glow-title">Plan.<br>Register.<br>Connect.</h1>
+                <p class="fs-5 text-secondary fst-italic">One platform for corporate events — sign in to access your space.</p>
+            </section>
+
+            <!-- Right Column: Login Card Section -->
+            <section class="col-lg-6 col-xl-5 d-flex justify-content-center justify-content-lg-end">
+                <div class="glass-card card p-4 p-sm-5 rounded-4 w-100" style="max-width: 440px;">
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <span class="text-uppercase fw-bold text-info tracking-widest fs-6" style="letter-spacing: 0.14em; opacity: 0.8;">EventHub</span>
+                        <h2 class="h3 fw-bold text-white mt-2 mb-1">Welcome back</h2>
+                        <p class="text-secondary small">Sign in to continue to your platform</p>
+                    </div>
+
+                    <!-- Form with dynamic redirection -->
+                    <form id="dynamic-login-form" novalidate>
+
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            <label class="form-label text-uppercase text-secondary fw-semibold small" style="letter-spacing: 0.05em;" for="login-email">Email address</label>
+                            <div class="input-wrapper">
+                                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg"
+                                     width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                <input
+                                    class="form-control glass-input"
+                                    type="email"
+                                    id="login-email"
+                                    name="email"
+                                    placeholder="you@company.com"
+                                    required
+                                    minlength="15"
+                                    maxlength="100"
+                                    autocomplete="email"
+                                    spellcheck="false"
+                                >
+                            </div>
+                            <span class="field-error mt-1" id="email-error" role="alert">Please enter a valid email address (15-100 characters).</span>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label text-uppercase text-secondary fw-semibold small m-0" style="letter-spacing: 0.05em;" for="login-password">Password</label>
+                                <a href="#" class="small text-decoration-none text-info" style="font-size: 0.77rem; opacity: 0.8;">Forgot password?</a>
+                            </div>
+                            <div class="input-wrapper">
+                                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg"
+                                     width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <input
+                                    class="form-control glass-input"
+                                    type="password"
+                                    id="login-password"
+                                    name="password"
+                                    placeholder="••••••••"
+                                    required
+                                    minlength="8"
+                                    autocomplete="current-password"
+                                >
+                            </div>
+                            <span class="field-error mt-1" id="password-error" role="alert">Password must be at least 8 characters.</span>
+                        </div>
+
+                        <button class="btn btn-info w-100 py-2.5 fw-bold text-dark mb-3" type="submit" style="transition: transform 0.1s ease, background 0.2s ease;">Sign In</button>
+
+                    </form>
+
+                    <!-- Footer -->
+                    <p class="text-center text-secondary small mb-0 mt-2">
+                        Don't have an account? <a href="#" class="text-info fw-semibold text-decoration-none">Sign up</a>
+                    </p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 Bundle JS CDN -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!-- Validation & Routing Controller Script -->
+    <script>
+        document.getElementById('dynamic-login-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            
+            const email = emailInput.value.trim().toLowerCase(); 
+            const password = passwordInput.value;
+
+            let isValid = true;
+
+            // 1. Core Structural Email Constraints
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+            if (!emailRegex.test(email) || email.length < 5 || email.length > 100) { 
+                emailInput.classList.add('user-invalid');
+                document.getElementById('email-error').style.maxHeight = "2.5rem";
+                document.getElementById('email-error').style.opacity = "1";
+                isValid = false;
+            } else {
+                emailInput.classList.remove('user-invalid');
+                document.getElementById('email-error').style.maxHeight = "0";
+                document.getElementById('email-error').style.opacity = "0";
+            }
+
+            // 2. Standard Passwords Boundary Restrictions
+            if (password.length < 8) {
+                passwordInput.classList.add('user-invalid');
+                document.getElementById('password-error').style.maxHeight = "2.5rem";
+                document.getElementById('password-error').style.opacity = "1";
+                isValid = false;
+            } else {
+                passwordInput.classList.remove('user-invalid');
+                document.getElementById('password-error').style.maxHeight = "0";
+                document.getElementById('password-error').style.opacity = "0";
+            }
+
+            if (!isValid) return;
+
+            // 3. Conditional Domain Routing Engine
+            if (email.includes('@eventhub.com')) {
+                window.location.href = 'platform/dashboard.html';
+            } else if (
+                email === 'admin@company.com' || 
+                (email.startsWith('admin') && (email.includes('@foundation.') || email.includes('@school.')))
+            ) {
+                window.location.href = 'organizer/dashboard.html';
+            } else if (
+                email.includes('@company.com') || 
+                email.includes('@school.') || 
+                email.includes('@foundation.')
+            ) {
+                window.location.href = 'users/upcoming_events.html';
+            } else {
+                alert('Access Denied: This corporate domain or email configuration is unregistered.');
+            }
+        });
+
+        // Clear warning visuals immediately on typing
+        document.querySelectorAll('.glass-input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('user-invalid');
+                const errorSpan = this.closest('.mb-3, .mb-4').querySelector('.field-error');
+                if (errorSpan) {
+                    errorSpan.style.maxHeight = "0";
+                    errorSpan.style.opacity = "0";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

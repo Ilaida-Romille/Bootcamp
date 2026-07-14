@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub - Tech Summit 2026</title>
+    <meta name="description" content="Plan, register, and connect your corporate events with EventHub. The all-in-one event management platform for enterprise organizations, organizers, and attendees.">
+    
+    <!-- Bootstrap 5.3.8 CSS CDN -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    
+    <!-- External Shared Styles -->
+    <link rel="stylesheet" href="../css/global.css">
+    <!-- Migrated Separate Stylesheet Component -->
+    <link rel="stylesheet" href="../css/users/agenda.css">
+</head>
+<body>
+
+    <!-- Nav Bar Section -->
+    <header class="navbar navbar-expand-md glass-nav navbar-dark sticky-top">
+        <div class="container-fluid px-4">
+            <a href="#" class="navbar-brand fw-bold text-white fs-5 m-0">EventHub</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardNavbar" aria-controls="dashboardNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="dashboardNavbar">
+                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 gap-md-3 mt-3 mt-md-0 text-white" style="font-size: 0.85rem;">
+                    <span class="text-white-50">Tech Summit 2026</span>
+                    <span class="d-none d-md-inline text-muted">|</span>
+                    <span class="fw-medium custom-profile-dropdown" style="cursor: pointer;">Juan Dela Cruz <small class="profile-caret">▼</small></span>
+                    <a href="../index.html" class="link-secondary text-decoration-none ms-0 ms-md-4 logout-link">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Workspace Wrapper Container -->
+    <main class="custom-workspace-container">
+        <div class="row g-4 align-items-start matches-workspace-grid">
+            
+            <!-- Vertical Agenda Stack Layout Panel -->
+            <section class="col-grow-panel">
+                <h1 class="custom-section-title">Agenda</h1>
+                <div class="d-flex flex-column gap-2 custom-agenda-timeline">
+                    
+                    <div class="glass-agenda-card rounded-1 overflow-hidden">
+                        <div class="agenda-time">9:00 AM</div>
+                        <div class="agenda-details text-white">Registration & Welcome Coffee</div>
+                    </div>
+
+                    <div class="glass-agenda-card rounded-1 overflow-hidden">
+                        <div class="agenda-time">9:30 AM</div>
+                        <div class="agenda-details text-white">Opening Keynote — Main Hall</div>
+                    </div>
+
+                    <div class="glass-agenda-card rounded-1 overflow-hidden">
+                        <div class="agenda-time">10:45 AM</div>
+                        <div class="agenda-details text-white">Breakout: Cloud Architecture</div>
+                    </div>
+
+                    <div class="glass-agenda-card rounded-1 overflow-hidden">
+                        <div class="agenda-time">1:00 PM</div>
+                        <div class="agenda-details text-white">Lunch & Networking</div>
+                    </div>
+
+                    <div class="glass-agenda-card rounded-1 overflow-hidden">
+                        <div class="agenda-time">2:00 PM</div>
+                        <div class="agenda-details text-white">Panel: The Future of AI</div>
+                    </div>
+
+                    <div class="glass-agenda-card rounded-1 overflow-hidden">
+                        <div class="agenda-time">4:00 PM</div>
+                        <div class="agenda-details text-white">Closing Remarks</div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Sidebar Widgets Track Layout Panel -->
+            <section class="col-100-lg-380 col-100-md-100 sidebar-widgets-panel">
+                
+                <!-- Attendees Control Module Container Card -->
+                <div class="custom-widget-card mb-4">
+                    <h2 class="custom-section-title widget-title fs-6">Attendees</h2>
+                    <div class="glass-attendees-box rounded-3 overflow-hidden">
+                        <ul class="list-unstyled d-flex flex-column gap-3 mb-4 custom-attendee-list">
+                            <li class="d-flex align-items-center gap-3 custom-attendee-item">
+                                <div class="avatar-placeholder"><img src="../img/attendee/attendee_50x50.png" alt="Attendee Icon" class="attendee-avatar-img"></div>
+                                <span class="small text-white attendee-info">Maria Santos — <span class="text-secondary">Acme Events Co.</span></span>
+                            </li>
+                            <li class="d-flex align-items-center gap-3 custom-attendee-item">
+                                <div class="avatar-placeholder"><img src="../img/attendee/attendee_50x50.png" alt="Attendee Icon" class="attendee-avatar-img"></div>
+                                <span class="small text-white attendee-info">Liam Cruz — <span class="text-secondary">Northwind Corp.</span></span>
+                            </li>
+                            <li class="d-flex align-items-center gap-3 custom-attendee-item">
+                                <div class="avatar-placeholder"><img src="../img/attendee/attendee_50x50.png" alt="Attendee Icon" class="attendee-avatar-img"></div>
+                                <span class="small text-white attendee-info">Ana Reyes — <span class="text-secondary">Initech PH</span></span>
+                            </li>
+                            <li class="d-flex align-items-center gap-3 custom-attendee-item meta-item">
+                                <div class="avatar-placeholder"><img src="../img/attendee/attendee_50x50.png" alt="Attendee Icon" class="attendee-avatar-img"></div>
+                                <span class="small text-secondary attendee-info fst-italic">+ 118 more attendees</span>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-dark fw-semibold custom-widget-btn d-flex justify-content-center align-items-center">View All & Connect</a>
+                    </div>
+                </div>
+
+                <!-- Interactive Map Operations Layer Module Card -->
+                <div class="custom-widget-card mb-4">
+                    <h2 class="custom-section-title widget-title fs-6">Venue</h2>
+                    <div class="glass-map-box rounded-3 overflow-hidden">
+
+                        <div class="map-container">
+                            <!-- Pure CSS Interactive Checkbox Toggles -->
+                            <input type="checkbox" id="map-activate" class="map-toggle">
+
+                            <!-- Click Guard Activation Screen -->
+                            <label for="map-activate" class="map-overlay" aria-label="Click to interact with map">
+                                <svg class="map-overlay-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"></path>
+                                    <circle cx="12" cy="9" r="2.5"></circle>
+                                </svg>
+                                <span class="map-overlay-text text-white">Click to Interact</span>
+                            </label>
+
+                            <!-- Map Pins Graphic Node System Overlays -->
+                            <div class="map-pin-wrapper">
+                                <input type="checkbox" id="pin-main-hall" class="pin-toggle">
+                                <label for="pin-main-hall" class="map-pin" aria-label="View Main Hall details">
+                                    <span class="pin-pulse"></span>
+                                </label>
+                                <!-- Interactive Sibling Tooltip Node -->
+                                <div class="popup-card rounded-1">
+                                    <label for="pin-main-hall" class="popup-close" aria-label="Close venue info">&#x2715;</label>
+                                    <p class="popup-title">Main Hall</p>
+                                    <p class="popup-detail">Building A &mdash; Tech Zone</p>
+                                    <p class="popup-detail">Makati Convention Center</p>
+                                </div>
+                            </div>
+
+                            <!-- Vector Dark Filter Mapping Frame Canvas -->
+                            <iframe class="map-iframe" src="https://maps.google.com/maps?q=Makati+Convention+Center,+Makati+City,+Philippines&hl=en&z=15&output=embed" title="Tech Summit 2026 Venue — Makati Convention Center" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                        </div>
+
+                        <!-- Footer Descriptor Text Bar -->
+                        <div class="map-footer text-start">
+                            <span class="map-venue-name text-white small">Makati Convention Center</span>
+                            <span class="map-venue-address text-secondary extra-small-text">Makati City, Metro Manila, Philippines</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Organizer Messaging Dispatch Trigger Card -->
+                <div class="custom-widget-card glass-contact-card p-4 rounded-3 text-start">
+                    <p class="small text-secondary mb-4">Have a question for the organizer?</p>
+                    <a href="#" class="btn btn-glass-outline w-100 fw-semibold custom-widget-btn rounded-2">Message the Organizer</a>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Bootstrap 5.3.8 JS Bundle CDN -->
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

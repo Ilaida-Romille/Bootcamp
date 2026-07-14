@@ -1,0 +1,115 @@
+/* Glassmorphic Input Parameters */
+.glass-form-input {
+    height: 42px;
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: var(--text-main) !important;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-form-input:focus {
+    border-color: var(--accent-blue) !important;
+    box-shadow: 0 0 10px rgba(100, 181, 246, 0.15) !important;
+    outline: none;
+    position: relative;
+    z-index: 2;
+}
+
+/* Unified Date Field Boundaries Layout Overrides */
+@media (min-width: 768px) {
+    .date-range-start {
+        border-top-right-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+        border-right: none !important;
+    }
+    .date-range-end {
+        border-top-left-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
+    }
+}
+
+/* Glassmorphic Table Implementations */
+.glass-table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-data-table {
+    width: 100%;
+    min-width: 750px;
+    background: transparent !important;
+    border-collapse: collapse;
+}
+
+.glass-data-table th,
+.glass-data-table td {
+    padding: 0.9rem 1rem !important;
+    color: var(--text-muted) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.04) !important;
+    background: transparent !important;
+}
+
+.glass-data-table th {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    color: var(--text-main) !important;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.glass-data-table th:last-child,
+.glass-data-table td:last-child {
+    border-right: none !important;
+}
+
+.glass-data-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.glass-data-table tbody tr:hover td {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Generation Configuration Display Cards */
+.glass-generation-card {
+    min-height: 180px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.custom-action-btn {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Specific Section Form Input Alignment System Overrides */
+@media (min-width: 576px) {
+    .specific-input-left {
+        border-top-right-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+        border-right: none !important;
+    }
+    .specific-input-mid {
+        border-radius: 0px !important;
+        border-right: none !important;
+    }
+    .specific-btn-right {
+        border-top-left-radius: 0px !important;
+        border-bottom-left-radius: 0px !important;
+    }
+}

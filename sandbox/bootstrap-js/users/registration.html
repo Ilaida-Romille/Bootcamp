@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub - Event Registration</title>
+    <meta name="description" content="Plan, register, and connect your corporate events with EventHub. The all-in-one event management platform for enterprise organizations, organizers, and attendees.">
+    
+    <!-- Bootstrap 5.3.8 CSS CDN -->
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+          
+    <link rel="stylesheet" href="../css/global.css">
+    <!-- Migrated Separate Stylesheet Component -->
+    <link rel="stylesheet" href="../css/users/registration.css">
+</head>
+<body>
+
+    <!-- Nav Bar Section -->
+    <header class="navbar navbar-expand-md glass-nav navbar-dark sticky-top">
+        <div class="container-fluid px-4">
+            <a href="#" class="navbar-brand fw-bold text-white fs-5 m-0">EventHub</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#registrationNavbar" aria-controls="registrationNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="registrationNavbar">
+                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 gap-md-3 mt-3 mt-md-0 text-white" style="font-size: 0.85rem;">
+                    <div class="fw-medium custom-profile-dropdown" style="cursor: pointer;">
+                        Juan Dela Cruz <small class="profile-caret">▼</small>
+                    </div>
+                    <span class="d-none d-md-inline text-muted">|</span>
+                    <a href="../index.html" class="link-secondary text-decoration-none logout-link">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Registration Section -->
+    <main class="custom-registration-container">
+        
+        <!-- Summary Up Top -->
+        <div class="event-summary-card rounded-1">
+            <h1 id="eventTitle" class="event-display-title">Loading Event...</h1>
+            <div class="event-display-meta">
+                <span id="eventDate">---</span> 
+                <span class="meta-divider">•</span> 
+                <span>9:00 AM — 5:00 PM</span> 
+                <span class="meta-divider">•</span> 
+                <span id="eventLocation">---</span>
+            </div>
+        </div>
+
+        <!-- Forms Below -->
+        <section class="registration-form-section">
+            <h2 class="form-section-title">Registration Details</h2>
+            
+            <form class="registration-form" novalidate>
+                <!-- Row 1: Name and Email -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-md-6 form-group">
+                        <label for="fullName" class="form-label mb-1">Full Name *</label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            class="form-input rounded-1" 
+                            required
+                        >
+                        <span class="field-error">This field is required.</span>
+                    </div>
+                    <div class="col-12 col-md-6 form-group">
+                        <label for="emailAddress" class="form-label mb-1">Email Address *</label>
+                        <input 
+                            type="email" 
+                            id="emailAddress" 
+                            class="form-input rounded-1" 
+                            required
+                            minlength="15"
+                            maxlength="100"
+                            pattern="^[a-zA-Z0-9._%+-]+@(?!gmail\.com|yahoo\.com|hotmail\.com|outlook\.com|aol\.com|icloud\.com|protonmail\.com|mail\.com)([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$"
+                            placeholder="you@company.com"
+                        >
+                        <span class="field-error">Email must be 15-100 characters and use a valid corporate domain.</span>
+                    </div>
+                </div>
+
+                <!-- Row 2: Company and Dietary -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-md-6 form-group">
+                        <label for="companyDept" class="form-label mb-1">Company / Department *</label>
+                        <input 
+                            type="text" 
+                            id="companyDept" 
+                            class="form-input rounded-1"
+                            required
+                        >
+                        <span class="field-error">This field is required.</span>
+                    </div>
+                    <div class="col-12 col-md-6 form-group">
+                        <label for="dietary" class="form-label mb-1">Dietary Restrictions *</label>
+                        <input 
+                            type="text" 
+                            id="dietary" 
+                            class="form-input rounded-1"
+                            required
+                        >
+                        <span class="field-error">This field is required.</span>
+                    </div>
+                </div>
+
+                <!-- Row 3: Notes -->
+                <div class="form-group mb-4">
+                    <label for="additionalNotes" class="form-label mb-1">Additional Notes (optional)</label>
+                    <input type="text" id="additionalNotes" class="form-input rounded-1">
+                </div>
+
+                <!-- Form Action Buttons Block -->
+                <div class="custom-form-actions">
+                    <a href="upcoming_events.html" class="btn btn-outline-light action-btn rounded-1">Cancel</a>
+                    <button type="submit" class="btn btn-dark action-btn rounded-1" formaction="agenda.html">Register</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <!-- Getting query parameters -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('title')) {
+            document.getElementById('eventTitle').innerText = urlParams.get('title');
+            document.getElementById('eventDate').innerText = urlParams.get('date');
+            document.getElementById('eventLocation').innerText = urlParams.get('location');
+        }
+    </script>
+
+    <!-- Bootstrap 5.3.8 JS Bundle CDN -->
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
