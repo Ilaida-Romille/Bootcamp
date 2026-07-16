@@ -14,20 +14,40 @@
 </head>
 <body>
 
-    <!-- Nav Bar Section -->
-    <header class="navbar navbar-expand-md glass-nav navbar-dark sticky-top">
-        <div class="container-fluid px-4">
+    <!-- Nav Bar Section (Always expanded, no hamburger) -->
+    <header class="navbar glass-nav navbar-dark sticky-top">
+        <div class="container-fluid px-4 d-flex align-items-center justify-content-between">
+            
+            <!-- Logo -->
             <a href="#" class="navbar-brand fw-bold text-white fs-5 m-0" style="transition: color 0.3s ease;">EventHub</a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardNavbar" aria-controls="dashboardNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="dashboardNavbar">
-                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 gap-md-3 mt-3 mt-md-0 text-secondary" style="font-size: 0.85rem;">
-                    <span class="text-white-50">Platform Owner</span>
-                    <span class="d-none d-md-inline text-muted">|</span>
-                    <span class="fw-semibold text-white" style="cursor: pointer;">Admin <small class="text-white-50 ms-1">▼</small></span>
-                    <a href="../index.html" class="link-secondary text-decoration-none ms-0 ms-md-4" style="transition: color 0.2s ease;">Log Out</a>
+            
+            <!-- Navigation Items (Always inline on all screens) -->
+            <div class="d-flex align-items-center gap-2 gap-sm-3 text-secondary" style="font-size: 0.85rem;">
+                
+                <!-- Role Badge -->
+                <span class="text-white-50 text-nowrap">Platform Owner</span>
+                <span class="text-muted">|</span>
+                
+                <!-- Interactive Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-link dropdown-toggle fw-semibold text-white p-0 border-0 text-decoration-none" 
+                            type="button" 
+                            id="adminDropdown" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false" 
+                            style="font-size: 0.85rem; box-shadow: none;">
+                        Jane Dela Cruz
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark bg-dark border-secondary mt-2" aria-labelledby="adminDropdown">
+                        <li><a class="dropdown-item py-2" href="#" style="font-size: 0.85rem;">System Config</a></li>
+                        <li><a class="dropdown-item py-2" href="#" style="font-size: 0.85rem;">Activity Logs</a></li>
+                        <li><hr class="dropdown-divider border-secondary"></li>
+                        <li>
+                            <a class="dropdown-item py-2 text-danger" href="../index.html" style="font-size: 0.85rem;">Log Out</a>
+                        </li>
+                    </ul>
                 </div>
+                
             </div>
         </div>
     </header>
@@ -149,6 +169,6 @@
     </div>
 
     <!-- Bootstrap 5.3.8 JS Bundle CDN -->
-    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

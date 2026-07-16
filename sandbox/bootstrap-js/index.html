@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EventHub | Enterprise & Corporate Event Management Platform</title>
-    <meta name="description" content="Plan, register, and connect your corporate events with EventHub. The all-in-one event management platform for enterprise organizations, organizers, and attendees.">
+    <meta name="description" content="Plan, register, and connect your corporate events with EventHub. All-in-one event management platform for enterprise organizations, organizers, and attendees.">
     <!-- Bootstrap 5 CSS CDN -->
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/log_in_form.css">
+    
 </head>
 <body>
 
@@ -31,16 +32,21 @@
 
     <!-- Main Container of the Page -->
     <main class="container-xl d-flex flex-column justify-content-center align-items-center" style="min-height: calc(100vh - 75px);">
-        <div class="row w-100 gy-5 align-items-center justify-content-between py-5">
+        <!-- Added "split-transition-container" and started as centered -->
+        <div id="content-row" class="row w-100 gy-5 align-items-center justify-content-center py-5 split-transition-container">
             
             <!-- Left Column: Hero Section -->
-            <section class="col-lg-5 text-center text-lg-start">
+            <section class="col-lg-5 hero-col" id="hero-section">
                 <h1 class="display-3 fw-bold lh-sm mb-4 glow-title">Plan.<br>Register.<br>Connect.</h1>
                 <p class="fs-5 text-secondary fst-italic">One platform for corporate events — sign in to access your space.</p>
+                <!-- Added Get Started Trigger Button -->
+                <button id="get-started-btn" class="btn btn-info btn-lg mt-3 px-5 py-2.5 fw-bold text-dark" style="transition: transform 0.2s ease, background 0.2s ease; border-radius: 50px;">
+                    Get Started
+                </button>
             </section>
 
             <!-- Right Column: Login Card Section -->
-            <section class="col-lg-6 col-xl-5 d-flex justify-content-center justify-content-lg-end">
+            <section class="col-lg-6 col-xl-5 d-flex justify-content-center justify-content-lg-end login-col">
                 <div class="glass-card card p-4 p-sm-5 rounded-4 w-100" style="max-width: 440px;">
                     <!-- Header -->
                     <div class="text-center mb-4">
@@ -126,8 +132,28 @@
     <!-- Bootstrap 5 Bundle JS CDN -->
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
-    <!-- Validation & Routing Controller Script -->
+    <!-- Validation, Routing, and Transition Animations -->
     <script>
+        // --- Trigger Transition Animation on Get Started Button click ---
+        const getStartedBtn = document.getElementById('get-started-btn');
+        const contentRow = document.getElementById('content-row');
+        const heroSection = document.getElementById('hero-section');
+
+        getStartedBtn.addEventListener('click', function() {
+            // Apply class to activate the layout slide transition
+            contentRow.classList.add('split-active');
+            
+            // On desktop screens, align the hero text left dynamically with the animation
+            if (window.innerWidth >= 992) {
+                heroSection.style.setProperty('text-align', 'left', 'important');
+            }
+
+            // Hide the Get Started button gracefully once the split state has finished moving
+            getStartedBtn.style.opacity = '0';
+            getStartedBtn.style.pointerEvents = 'none';
+        });
+
+        // --- Original Login Validation ---
         document.getElementById('dynamic-login-form').addEventListener('submit', function(event) {
             event.preventDefault(); 
 
