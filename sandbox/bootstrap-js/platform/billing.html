@@ -16,7 +16,7 @@
 </head>
 <body>
 
-    <!-- Nav Bar Section (Always expanded, no hamburger) -->
+    <!-- Nav Bar Section -->
     <header class="navbar glass-nav navbar-dark sticky-top">
         <div class="container-fluid px-4 d-flex align-items-center justify-content-between">
             
@@ -145,7 +145,7 @@
                             <h3 class="h6 fw-bold text-white mb-2">All Organizers — This Month</h3>
                             <p class="small text-secondary mb-4">Runs monthly billing for every active organizer at once.</p>
                         </div>
-                        <button type="button" class="btn btn-dark w-100 fw-semibold custom-action-btn mt-auto">Generate Monthly Invoices (Batch)</button>
+                        <button type="button" id="btnGenerateBatch" class="btn btn-dark w-100 fw-semibold custom-action-btn mt-auto">Generate Monthly Invoices (Batch)</button>
                     </div>
                 </div>
 
@@ -162,10 +162,24 @@
                             </div>
                             <div class="col-sm-4 mb-3 mb-sm-0">
                                 <label for="genMonth" class="form-label small text-secondary">Month</label>
-                                <input type="text" id="genMonth" class="form-control glass-form-input specific-input-mid">
+                                <select id="genMonth" class="form-select glass-form-input specific-input-mid">
+                                    <option value="" selected disabled>Select month...</option>
+                                    <option value="January 2026">January 2026</option>
+                                    <option value="February 2026">February 2026</option>
+                                    <option value="March 2026">March 2026</option>
+                                    <option value="April 2026">April 2026</option>
+                                    <option value="May 2026">May 2026</option>
+                                    <option value="June 2026">June 2026</option>
+                                    <option value="July 2026">July 2026</option>
+                                    <option value="August 2026">August 2026</option>
+                                    <option value="September 2026">September 2026</option>
+                                    <option value="October 2026">October 2026</option>
+                                    <option value="November 2026">November 2026</option>
+                                    <option value="December 2026">December 2026</option>
+                                </select>
                             </div>
                             <div class="col-sm-3">
-                                <button type="submit" class="btn btn-dark w-100 fw-semibold custom-action-btn specific-btn-right">Generate</button>
+                                <button type="submit" class="btn btn-dark w-100 fw-semibold custom-action-btn specific-btn-right ms-1">Generate</button>
                             </div>
                         </form>
                     </div>
@@ -175,7 +189,182 @@
         </main>
     </div>
 
+    <!-- Invoice Modal -->
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark text-light border-secondary">
+                
+                <!-- Modal Header -->
+                <div class="modal-header border-secondary px-4 py-3">
+                    <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2" id="invoiceModalLabel">
+                        <span>Invoice Preview</span>
+                        <span id="modalStatusBadge" class="badge bg-success-subtle text-success border border-success-subtle fs-6 ms-2">Paid</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Printable Invoice Body -->
+                <div class="modal-body p-4" id="printableInvoice">
+                    
+                    <!-- Invoice Header Details -->
+                    <div class="row mb-4 pb-3 border-bottom border-secondary">
+                        <div class="col-sm-6">
+                            <h3 class="fw-bold text-white mb-1">EventHub Inc.</h3>
+                            <p class="small text-secondary mb-0">Cloud Events Management Platform</p>
+                            <p class="small text-secondary">billing@eventhub.com</p>
+                        </div>
+                        <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                            <h4 class="fw-bold text-white mb-1" id="modalInvoiceNum">INV-2026-XXXX</h4>
+                            <p class="small text-secondary mb-0">Billing Period: <strong class="text-white" id="modalBillingPeriod">--</strong></p>
+                            <p class="small text-secondary">Issue Date: <span class="text-white" id="modalIssueDate">2026-05-31</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Billed To Section -->
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <span class="text-uppercase text-secondary fs-7 fw-semibold tracking-wider">Billed To</span>
+                            <h5 class="fw-bold text-white mt-1 mb-1" id="modalOrganizerName">Organizer Name</h5>
+                            <p class="small text-secondary mb-0" id="modalOrganizerEmail">organizer@company.com</p>
+                        </div>
+                        <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                            <span class="text-uppercase text-secondary fs-7 fw-semibold tracking-wider">Payment Status</span>
+                            <p class="small text-secondary mb-0">Payment Method: <strong class="text-white">Offline Bank Transfer / PO</strong></p>
+                            <p class="small text-secondary">Due Date: <strong class="text-white" id="modalDueDate">2026-06-30</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- Line Items Table -->
+                    <div class="table-responsive mb-4">
+                        <table class="table table-dark table-striped align-middle border-secondary mb-0">
+                            <thead class="table-secondary text-uppercase small">
+                                <tr>
+                                    <th scope="col" class="py-2">Description</th>
+                                    <th scope="col" class="text-center py-2">Attendees</th>
+                                    <th scope="col" class="text-end py-2">Rate / Attendee</th>
+                                    <th scope="col" class="text-end py-2">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold text-white">Event Registration & Usage Platform Fee</div>
+                                        <div class="small text-secondary">Per-attendee usage for corporate events hosted</div>
+                                    </td>
+                                    <td class="text-center fw-semibold" id="modalAttendeeCount">0</td>
+                                    <td class="text-end" id="modalRatePerAttendee">₱ 0.00</td>
+                                    <td class="text-end fw-bold text-white" id="modalLineTotal">₱ 0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Summary & Total Math -->
+                    <div class="row justify-content-end">
+                        <div class="col-sm-6 col-md-5">
+                            <div class="d-flex justify-content-between py-1 border-bottom border-secondary">
+                                <span class="text-secondary small">Subtotal</span>
+                                <span class="fw-semibold text-white" id="modalSubtotal">₱ 0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1 border-bottom border-secondary">
+                                <span class="text-secondary small">Tax / VAT (0%)</span>
+                                <span class="text-secondary small">Included</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-2 mt-1 fs-5">
+                                <span class="fw-bold text-white">Total Amount</span>
+                                <span class="fw-bold text-success" id="modalTotalAmount">₱ 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Remittance Footnote -->
+                    <div class="mt-4 pt-3 border-top border-secondary text-secondary small">
+                        <p class="mb-0"><strong>Note:</strong> Invoices are generated automatically based on registered attendee usage. Payments must be settled via corporate wire transfer within 30 days of issuance.</p>
+                    </div>
+
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success fw-semibold" onclick="window.print()">Print / Export PDF</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch Monthly Generation Results Modal -->
+    <div class="modal fade" id="batchSummaryModal" tabindex="-1" aria-labelledby="batchSummaryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark text-light border-secondary">
+                
+                <!-- Header -->
+                <div class="modal-header border-secondary px-4 py-3">
+                    <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2" id="batchSummaryModalLabel">
+                        <span>Monthly Batch Invoices</span>
+                        <span id="batchPeriodBadge" class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 ms-2">June 2026</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Body Table -->
+                <div class="modal-body p-4">
+                    
+                    <!-- Batch Summary Stats Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-4">
+                            <div class="bg-secondary bg-opacity-10 border border-secondary p-3 rounded">
+                                <span class="text-secondary small d-block">Organizers Processed</span>
+                                <span class="fw-bold text-white fs-5" id="batchTotalCount">0</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="bg-secondary bg-opacity-10 border border-secondary p-3 rounded">
+                                <span class="text-secondary small d-block">Total Attendees Billed</span>
+                                <span class="fw-bold text-white fs-5" id="batchTotalAttendees">0</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="bg-secondary bg-opacity-10 border border-secondary p-3 rounded">
+                                <span class="text-secondary small d-block">Total Period Billed</span>
+                                <span class="fw-bold text-success fs-5" id="batchTotalAmount">₱ 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generated Invoices Table -->
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped align-middle border-secondary mb-0">
+                            <thead class="table-secondary text-uppercase small">
+                                <tr>
+                                    <th scope="col" class="py-2">Invoice #</th>
+                                    <th scope="col" class="py-2">Organizer</th>
+                                    <th scope="col" class="text-center py-2">Attendees</th>
+                                    <th scope="col" class="text-end py-2">Amount</th>
+                                    <th scope="col" class="text-center py-2">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="batchInvoicesTableBody">
+                                <!-- Invoices dynamically injected via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5.3.8 JS Bundle CDN -->
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../js/billing/billing.js"></script>
 </body>
 </html>

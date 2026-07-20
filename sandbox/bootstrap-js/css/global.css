@@ -44,6 +44,10 @@ body {
         min-height: calc(100vh - 71px);
         border-bottom: none;
         border-right: 1px solid rgba(255, 255, 255, 0.06);
+
+        position: sticky;
+        top: 57px; /* Positions it perfectly right under your sticky navbar */
+        height: calc(100vh - 57px);
     }
 }
 

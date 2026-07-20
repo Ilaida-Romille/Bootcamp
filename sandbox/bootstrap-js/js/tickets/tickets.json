@@ -1,0 +1,198 @@
+[
+  {
+    "ticketId": "TCK-1042",
+    "subject": "Can't edit event capacity",
+    "organizer": {
+      "id": "ORG-801",
+      "name": "Acme Events Co.",
+      "contactEmail": "admin@acmeevents.com"
+    },
+    "eventId": "EVT-2026-001",
+    "status": "Open",
+    "priority": "High",
+    "processArea": "5.2 Event Setup & Configuration",
+    "openedAt": "2026-07-17T09:30:00Z",
+    "message": "We're trying to raise our event capacity from 200 to 350 but the field won't save. Can someone check?",
+    "responses": []
+  },
+  {
+    "ticketId": "TCK-1039",
+    "subject": "Request: add 3 more admins",
+    "organizer": {
+      "id": "ORG-402",
+      "name": "Initech PH",
+      "contactEmail": "hr@initech.ph"
+    },
+    "eventId": null,
+    "status": "Open",
+    "priority": "Medium",
+    "processArea": "5.1 Organizer Onboarding & Account Management",
+    "openedAt": "2026-07-18T14:15:00Z",
+    "message": "We need to invite 3 additional Organizer Team Members to manage our upcoming mid-year town hall. Could you increase our seat limit or resend the invitation links?",
+    "responses": []
+  },
+  {
+    "ticketId": "TCK-1031",
+    "subject": "Invoice discrepancy",
+    "organizer": {
+      "id": "ORG-109",
+      "name": "Northwind Corp.",
+      "contactEmail": "finance@northwind.com"
+    },
+    "eventId": "EVT-2026-088",
+    "status": "In Progress",
+    "priority": "High",
+    "processArea": "5.10 Billing & Invoicing",
+    "openedAt": "2026-07-15T11:00:00Z",
+    "message": "Our June monthly invoice includes charges for 450 attendees, but our check-in list shows only 380 attended. Please clarify how attendee fees were calculated for EVT-2026-088.",
+    "responses": [
+      {
+        "responder": "Platform Support Staff",
+        "timestamp": "2026-07-16T08:45:00Z",
+        "text": "Hello Northwind team, as per the BRD, billing is based on total registered attendees rather than physical check-ins. We are reviewing your registration logs now."
+      }
+    ]
+  },
+  {
+    "ticketId": "TCK-1020",
+    "subject": "Reactivate account",
+    "organizer": {
+      "id": "ORG-305",
+      "name": "Globex Holdings",
+      "contactEmail": "ops@globex.com"
+    },
+    "eventId": null,
+    "status": "Resolved",
+    "priority": "Low",
+    "processArea": "5.9 Platform Administration",
+    "openedAt": "2026-07-10T16:20:00Z",
+    "message": "Our account was temporarily suspended due to an overdue offline invoice payment. The bank transfer has been completed on our end. Please reactivate our account.",
+    "responses": [
+      {
+        "responder": "Platform Owner",
+        "timestamp": "2026-07-11T10:00:00Z",
+        "text": "Payment verified via bank transfer receipt. Your account status has been restored to Active."
+      }
+    ]
+  },
+  {
+    "ticketId": "TCK-1045",
+    "subject": "Dietary requirements export failing",
+    "organizer": {
+      "id": "ORG-801",
+      "name": "Acme Events Co.",
+      "contactEmail": "events@acmeevents.com"
+    },
+    "eventId": "EVT-2026-001",
+    "status": "Open",
+    "priority": "High",
+    "processArea": "5.3 Attendee Registration",
+    "openedAt": "2026-07-20T08:00:00Z",
+    "message": "We need to send the catering list to our vendor today, but exporting attendee dietary restrictions to CSV yields a blank file.",
+    "responses": []
+  },
+  {
+    "ticketId": "TCK-1044",
+    "subject": "Digital business cards not syncing",
+    "organizer": {
+      "id": "ORG-512",
+      "name": "Stark Industries",
+      "contactEmail": "tech-support@stark.com"
+    },
+    "eventId": "EVT-2026-042",
+    "status": "In Progress",
+    "priority": "Medium",
+    "processArea": "5.4 Networking & Engagement",
+    "openedAt": "2026-07-19T13:10:00Z",
+    "message": "Attendees at Session B reported that exchanging digital business cards via mobile web browsers is timing out.",
+    "responses": [
+      {
+        "responder": "Platform Support Staff",
+        "timestamp": "2026-07-19T14:00:00Z",
+        "text": "We are investigating potential websocket congestion during peak conference hours."
+      }
+    ]
+  },
+  {
+    "ticketId": "TCK-1043",
+    "subject": "Onboarding review pending",
+    "organizer": {
+      "id": "ORG-990",
+      "name": "Soylent Corp",
+      "contactEmail": "contact@soylent.com"
+    },
+    "eventId": null,
+    "status": "Open",
+    "priority": "Low",
+    "processArea": "5.9 Platform Administration",
+    "openedAt": "2026-07-19T10:00:00Z",
+    "message": "We completed our company sign-up 48 hours ago. Could someone review and approve our Organizer account so we can publish our event page?",
+    "responses": []
+  },
+  {
+    "ticketId": "TCK-1035",
+    "subject": "Live poll results not updating",
+    "organizer": {
+      "id": "ORG-220",
+      "name": "Umbrella Corp",
+      "contactEmail": "admin@umbrella.io"
+    },
+    "eventId": "EVT-2026-015",
+    "status": "Resolved",
+    "priority": "Medium",
+    "processArea": "5.7 Surveys & Polls",
+    "openedAt": "2026-07-14T09:00:00Z",
+    "message": "During the Keynote session, the live poll screen stayed at 0 votes even though attendees submitted responses.",
+    "responses": [
+      {
+        "responder": "Platform Support Staff",
+        "timestamp": "2026-07-14T11:30:00Z",
+        "text": "Resolved. Cached session tokens were preventing auto-refresh on the presenter dashboard."
+      }
+    ]
+  },
+  {
+    "ticketId": "TCK-1028",
+    "subject": "Check-in QR code scanning issue",
+    "organizer": {
+      "id": "ORG-109",
+      "name": "Northwind Corp.",
+      "contactEmail": "onsite@northwind.com"
+    },
+    "eventId": "EVT-2026-088",
+    "status": "Resolved",
+    "priority": "High",
+    "processArea": "5.8 Event Check-In",
+    "openedAt": "2026-07-12T07:45:00Z",
+    "message": "Check-in staff devices were unable to scan attendee confirmation emails under low lighting conditions.",
+    "responses": [
+      {
+        "responder": "Platform Support Staff",
+        "timestamp": "2026-07-12T08:15:00Z",
+        "text": "Advised staff to utilize manual search by attendee name or email as fallback."
+      }
+    ]
+  },
+  {
+    "ticketId": "TCK-1015",
+    "subject": "Request event duplication feature assistance",
+    "organizer": {
+      "id": "ORG-402",
+      "name": "Initech PH",
+      "contactEmail": "hr@initech.ph"
+    },
+    "eventId": "EVT-2025-010",
+    "status": "Resolved",
+    "priority": "Low",
+    "processArea": "5.2 Event Setup & Configuration",
+    "openedAt": "2026-07-05T15:00:00Z",
+    "message": "We want to clone last year's annual conference setup including tracks and session speakers for our 2026 conference.",
+    "responses": [
+      {
+        "responder": "Platform Support Staff",
+        "timestamp": "2026-07-05T16:00:00Z",
+        "text": "Guided the user through the 'Duplicate Event' feature under Event Settings."
+      }
+    ]
+  }
+]
