@@ -72,14 +72,32 @@
             <h1 class="h2 fw-bold text-white mb-4">Organizers</h1>
 
             <!-- Filters Layer using Bootstrap Grid Row configurations -->
-            <form class="row g-3 align-items-end mb-4" onsubmit="event.preventDefault();">
+            <form class="row g-3 align-items-end mb-4" id="companyFilterForm" onsubmit="event.preventDefault();">
                 <div class="col-md-7 col-lg-8">
                     <label for="searchCompany" class="form-label small text-secondary">Search by company name</label>
                     <input type="text" id="searchCompany" class="form-control glass-form-input">
                 </div>
                 <div class="col-md-3 col-lg-2">
-                    <label for="statusFilter" class="form-label small text-secondary">Status</label>
-                    <input type="text" id="statusFilter" class="form-control glass-form-input">
+                    <div class="dropdown" id="statusFilterDropdown">
+                        <!-- Dropdown Toggle Button -->
+                        <button 
+                            class="btn glass-form-input dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" 
+                            type="button" 
+                            id="statusFilterBtn" 
+                            data-bs-toggle="dropdown" 
+                            data-value="All" 
+                            aria-expanded="false">
+                            <span>All</span>
+                        </button>
+
+                        <!-- Dropdown Items Menu -->
+                        <ul class="dropdown-menu dropdown-menu-dark w-100 shadow" aria-labelledby="statusFilterBtn">
+                            <li><a class="dropdown-item active" href="#" data-value="All">All</a></li>
+                            <li><a class="dropdown-item" href="#" data-value="Active">Active</a></li>
+                            <li><a class="dropdown-item" href="#" data-value="Suspended">Suspended</a></li>
+                            <li><a class="dropdown-item" href="#" data-value="Pending">Pending</a></li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="col-md-2">
                     <!-- Global custom dark theme button referenced inside global components -->
@@ -89,7 +107,7 @@
 
             <!-- Table Contents with Responsive Wrapped Container Layer -->
             <div class="glass-table-responsive rounded-3">
-                <table class="table glass-data-table mb-0 align-middle">
+                <table class="table glass-data-table mb-0 align-middle" id="companiesTable">
                     <thead>
                         <tr>
                             <th scope="col">Company Name</th>
@@ -98,54 +116,48 @@
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td class="fw-medium text-white">Acme Events Co.</td>
-                            <td>24</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Active</span></td>
-                            <td class="actions-cell">
-                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="fw-medium text-white">Northwind Corp.</td>
-                            <td>9</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Active</span></td>
-                            <td class="actions-cell">
-                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="fw-medium text-white">Globex Holdings</td>
-                            <td>3</td>
-                            <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Suspended</span></td>
-                            <td class="actions-cell">
-                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="fw-medium text-white">Initech PH</td>
-                            <td>17</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Active</span></td>
-                            <td class="actions-cell">
-                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="fw-medium text-white">Umbrella Group</td>
-                            <td>1</td>
-                            <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">Pending</span></td>
-                            <td class="actions-cell">
-                                <a href="#">View</a><span class="action-divider">|</span><a href="#">Change Status</a>
-                            </td>
-                        </tr>
+                    <tbody id="companyTableBody">
+                        
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Custom Glassmorphic Pagination System
+            <div class="d-flex flex-column align-items-center mt-2 mb-3">
+                <div class="d-flex justify-content-center w-100">
+                    <nav class="custom-pagination-container justify-content-center align-items-center" id="pagination-controls" aria-label="Page Navigation">
+                        <ul class="pagination mb-0" id="pagination-list"></ul>
+                    </nav>
+                </div>
+                <small id="pagination-info" class="text-white-50 text-center mt-2">
+                    Showing 0 to 0 of 0 entries
+                </small>
+            </div> -->
+
+            <!-- Pagination Section -->
+            <div class="d-flex flex-column align-items-center mt-2 mb-3">
+                <div class="d-flex justify-content-center w-100">
+                    <nav class="custom-pagination-container" aria-label="Page Navigation">
+                        <!-- Previous Button -->
+                        <a href="#" class="custom-page-link page-control" id="prevPageBtn" tabindex="-1" aria-disabled="true">« Prev</a>
+                        
+                        <!-- Dynamic Page Numbers -->
+                        <div class="custom-page-numbers-wrapper" id="pageNumbersContainer"></div>
+                        
+                        <!-- Next Button -->
+                        <a href="#" class="custom-page-link page-control" id="nextPageBtn">Next »</a>
+                    </nav>
+                </div>
+                <small id="pagination-info" class="text-white-50 text-center mt-2">
+                    Showing 0 to 0 of 0 entries
+                </small>
             </div>
         </main>
     </div>
 
     <!-- Bootstrap 5.3.8 JS Bundle CDN -->
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../js/organizer/organizer_table.js"></script>
 </body>
 </html>

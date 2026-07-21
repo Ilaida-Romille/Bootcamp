@@ -1,0 +1,1382 @@
+[
+  {
+    "id": "ATT-001",
+    "name": "Sarah Connor",
+    "email": "sarah.connor@company.com",
+    "phone": "+639170001122",
+    "organizerId": "ORG-801",
+    "digitalBusinessCard": {
+      "jobTitle": "Lead Systems Engineer",
+      "company": "Acme Events Co.",
+      "linkedin": "https://linkedin.com/in/sarahconnor",
+      "bio": "Building resilient cloud architectures."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-001",
+        "registeredAt": "2026-07-01T10:15:00Z",
+        "checkInStatus": { "isCheckedIn": true, "checkInTime": "2026-08-14T08:45:00Z", "checkInCode": "CHK-EVT001-001" },
+        "dietaryRestrictions": "Gluten-Free",
+        "selectedSessionIds": ["SES-01", "SES-02"]
+      },
+      {
+        "eventId": "EVT-021",
+        "registeredAt": "2026-07-05T14:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT021-001" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-002",
+    "name": "Alex Chen",
+    "email": "alex.chen@school.edu.ph",
+    "phone": "+639185554321",
+    "organizerId": "ORG-801",
+    "digitalBusinessCard": {
+      "jobTitle": "Senior Software Developer",
+      "company": "Acme Events Co.",
+      "linkedin": "https://linkedin.com/in/alexchen",
+      "bio": "Full-stack developer and API enthusiast."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-001",
+        "registeredAt": "2026-07-02T11:00:00Z",
+        "checkInStatus": { "isCheckedIn": true, "checkInTime": "2026-08-14T09:00:00Z", "checkInCode": "CHK-EVT001-002" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": ["SES-01"]
+      },
+      {
+        "eventId": "EVT-022",
+        "registeredAt": "2026-07-10T09:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT022-002" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-003",
+    "name": "Maria Santos",
+    "email": "maria.santos@foundation.org",
+    "phone": "+639201112233",
+    "organizerId": "ORG-109",
+    "digitalBusinessCard": {
+      "jobTitle": "HR Manager",
+      "company": "Northwind Corp.",
+      "linkedin": "https://linkedin.com/in/mariasantos",
+      "bio": "People operations and talent acquisition."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-001",
+        "registeredAt": "2026-07-03T09:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT001-003" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-023",
+        "registeredAt": "2026-07-12T10:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT023-003" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-004",
+    "name": "Juan Dela Cruz",
+    "email": "juan.delacruz@company.com",
+    "phone": "+639171234567",
+    "organizerId": "ORG-109",
+    "digitalBusinessCard": {
+      "jobTitle": "Financial Analyst",
+      "company": "Northwind Corp.",
+      "linkedin": null,
+      "bio": "Corporate finance and budgeting."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-001",
+        "registeredAt": "2026-07-04T08:15:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT001-004" },
+        "dietaryRestrictions": "Halal",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-024",
+        "registeredAt": "2026-07-11T16:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT024-004" },
+        "dietaryRestrictions": "Halal",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-005",
+    "name": "Michael Scott",
+    "email": "mscott@school.edu.ph",
+    "phone": "+639198887766",
+    "organizerId": "ORG-402",
+    "digitalBusinessCard": {
+      "jobTitle": "Regional Manager",
+      "company": "Initech PH",
+      "linkedin": "https://linkedin.com/in/michaellscott",
+      "bio": "World's best boss."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-001",
+        "registeredAt": "2026-07-05T13:45:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT001-005" },
+        "dietaryRestrictions": "Nut Allergy",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-021",
+        "registeredAt": "2026-07-15T11:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT021-005" },
+        "dietaryRestrictions": "Nut Allergy",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-006",
+    "name": "Pam Beesly",
+    "email": "pam.b@foundation.org",
+    "phone": "+639173332211",
+    "organizerId": "ORG-402",
+    "digitalBusinessCard": {
+      "jobTitle": "Office Administrator",
+      "company": "Initech PH",
+      "linkedin": null,
+      "bio": "Graphic designer and event coordinator."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-002",
+        "registeredAt": "2026-07-01T09:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT002-006" },
+        "dietaryRestrictions": "Vegan",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-025",
+        "registeredAt": "2026-07-14T15:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT025-006" },
+        "dietaryRestrictions": "Vegan",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-007",
+    "name": "Jim Halpert",
+    "email": "jhalpert@company.com",
+    "phone": "+639182223344",
+    "organizerId": "ORG-305",
+    "digitalBusinessCard": {
+      "jobTitle": "Sales Director",
+      "company": "Globex Holdings",
+      "linkedin": "https://linkedin.com/in/jimhalpert",
+      "bio": "Key account manager and sports enthusiast."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-002",
+        "registeredAt": "2026-07-02T10:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT002-007" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-026",
+        "registeredAt": "2026-07-16T12:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT026-007" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-008",
+    "name": "Dwight Schrute",
+    "email": "dschrute@school.edu.ph",
+    "phone": "+639204445566",
+    "organizerId": "ORG-305",
+    "digitalBusinessCard": {
+      "jobTitle": "Assistant to the Regional Manager",
+      "company": "Globex Holdings",
+      "linkedin": null,
+      "bio": "Beet farmer and safety officer."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-002",
+        "registeredAt": "2026-07-03T11:45:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT002-008" },
+        "dietaryRestrictions": "Kosher",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-022",
+        "registeredAt": "2026-07-13T09:15:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT022-008" },
+        "dietaryRestrictions": "Kosher",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-009",
+    "name": "Tony Stark",
+    "email": "tony.stark@company.com",
+    "phone": "+639179990000",
+    "organizerId": "ORG-512",
+    "digitalBusinessCard": {
+      "jobTitle": "Chief Technology Officer",
+      "company": "Stark Logistics Asia",
+      "linkedin": "https://linkedin.com/in/tonystark",
+      "bio": "Genius, billionaire, philanthropist."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-002",
+        "registeredAt": "2026-07-04T14:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT002-009" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-027",
+        "registeredAt": "2026-07-17T11:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT027-009" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-010",
+    "name": "Bruce Wayne",
+    "email": "bwayne@foundation.org",
+    "phone": "+639180001111",
+    "organizerId": "ORG-933",
+    "digitalBusinessCard": {
+      "jobTitle": "Managing Director",
+      "company": "Wayne Enterprises",
+      "linkedin": null,
+      "bio": "Corporate governance and urban development."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-003",
+        "registeredAt": "2026-07-01T08:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT003-010" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-028",
+        "registeredAt": "2026-07-18T10:45:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT028-010" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-011",
+    "name": "Diana Prince",
+    "email": "diana.prince@school.edu.ph",
+    "phone": "+639207778899",
+    "organizerId": "ORG-933",
+    "digitalBusinessCard": {
+      "jobTitle": "Head of Museum Curations",
+      "company": "Wayne Enterprises",
+      "linkedin": "https://linkedin.com/in/dianaprince",
+      "bio": "History, antiquities, and global logistics."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-003",
+        "registeredAt": "2026-07-02T16:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT003-011" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-029",
+        "registeredAt": "2026-07-19T09:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT029-011" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-012",
+    "name": "Clark Kent",
+    "email": "ckent@company.com",
+    "phone": "+639175556677",
+    "organizerId": "ORG-601",
+    "digitalBusinessCard": {
+      "jobTitle": "Senior Communications Specialist",
+      "company": "Umbrella Group",
+      "linkedin": null,
+      "bio": "Investigative reporting and media relations."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-003",
+        "registeredAt": "2026-07-03T12:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT003-012" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-023",
+        "registeredAt": "2026-07-15T14:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT023-012" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-013",
+    "name": "Peter Parker",
+    "email": "pparker@school.edu.ph",
+    "phone": "+639181112233",
+    "organizerId": "ORG-601",
+    "digitalBusinessCard": {
+      "jobTitle": "Lab Research Assistant",
+      "company": "Umbrella Group",
+      "linkedin": "https://linkedin.com/in/peterparker",
+      "bio": "Biotech enthusiast and freelance photographer."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-004",
+        "registeredAt": "2026-07-01T15:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT004-013" },
+        "dietaryRestrictions": "Dairy-Free",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-030",
+        "registeredAt": "2026-07-11T13:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT030-013" },
+        "dietaryRestrictions": "Dairy-Free",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-014",
+    "name": "Bruce Banner",
+    "email": "bbanner@foundation.org",
+    "phone": "+639203334455",
+    "organizerId": "ORG-714",
+    "digitalBusinessCard": {
+      "jobTitle": "Principal Research Scientist",
+      "company": "Cyberdyne Systems",
+      "linkedin": null,
+      "bio": "Gamma radiation and advanced physics."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-004",
+        "registeredAt": "2026-07-02T13:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT004-014" },
+        "dietaryRestrictions": "Gluten-Free",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-031",
+        "registeredAt": "2026-07-12T11:45:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT031-014" },
+        "dietaryRestrictions": "Gluten-Free",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-015",
+    "name": "Natasha Romanoff",
+    "email": "natasha.r@company.com",
+    "phone": "+639174445566",
+    "organizerId": "ORG-714",
+    "digitalBusinessCard": {
+      "jobTitle": "Security Operations Lead",
+      "company": "Cyberdyne Systems",
+      "linkedin": "https://linkedin.com/in/natasharomanoff",
+      "bio": "Risk management and physical security."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-004",
+        "registeredAt": "2026-07-03T10:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT004-015" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-024",
+        "registeredAt": "2026-07-14T08:50:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT024-015" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-016",
+    "name": "Steve Rogers",
+    "email": "srogers@school.edu.ph",
+    "phone": "+639186667788",
+    "organizerId": "ORG-220",
+    "digitalBusinessCard": {
+      "jobTitle": "Corporate Strategy Consultant",
+      "company": "Aperture Labs PH",
+      "linkedin": null,
+      "bio": "Leadership and organizational culture."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-004",
+        "registeredAt": "2026-07-04T17:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT004-016" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-032",
+        "registeredAt": "2026-07-16T15:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT032-016" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-017",
+    "name": "Wanda Maximoff",
+    "email": "wanda.m@foundation.org",
+    "phone": "+639208889900",
+    "organizerId": "ORG-220",
+    "digitalBusinessCard": {
+      "jobTitle": "UX Researcher",
+      "company": "Aperture Labs PH",
+      "linkedin": "https://linkedin.com/in/wandamaximoff",
+      "bio": "Behavioral psychology and interface design."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-005",
+        "registeredAt": "2026-07-01T11:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT005-017" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-040",
+        "registeredAt": "2026-07-18T13:40:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT040-017" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-018",
+    "name": "Stephen Strange",
+    "email": "sstrange@company.com",
+    "phone": "+639171110000",
+    "organizerId": "ORG-145",
+    "digitalBusinessCard": {
+      "jobTitle": "Chief Medical Consultant",
+      "company": "Soylent Corp Asia",
+      "linkedin": null,
+      "bio": "Neuroscience and healthcare tech."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-005",
+        "registeredAt": "2026-07-02T14:40:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT005-018" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-033",
+        "registeredAt": "2026-07-19T10:15:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT033-018" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-019",
+    "name": "Arthur Dent",
+    "email": "adent@school.edu.ph",
+    "phone": "+639183334455",
+    "organizerId": "ORG-145",
+    "digitalBusinessCard": {
+      "jobTitle": "Logistics Coordinator",
+      "company": "Soylent Corp Asia",
+      "linkedin": null,
+      "bio": "Supply chain route optimization."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-006",
+        "registeredAt": "2026-07-01T09:50:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT006-019" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-034",
+        "registeredAt": "2026-07-10T11:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT034-019" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-020",
+    "name": "Ford Prefect",
+    "email": "fprefect@foundation.org",
+    "phone": "+639205556677",
+    "organizerId": "ORG-388",
+    "digitalBusinessCard": {
+      "jobTitle": "Field Researcher",
+      "company": "Tyrell Dynamics",
+      "linkedin": "https://linkedin.com/in/fordprefect",
+      "bio": "Travel and field studies specialist."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-006",
+        "registeredAt": "2026-07-02T12:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT006-020" },
+        "dietaryRestrictions": "Vegan",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-025",
+        "registeredAt": "2026-07-13T14:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT025-020" },
+        "dietaryRestrictions": "Vegan",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-021",
+    "name": "Tricia McMillan",
+    "email": "tmcmillan@company.com",
+    "phone": "+639177778899",
+    "organizerId": "ORG-388",
+    "digitalBusinessCard": {
+      "jobTitle": "Astrophysicist & Data Lead",
+      "company": "Tyrell Dynamics",
+      "linkedin": "https://linkedin.com/in/triciamcmillan",
+      "bio": "Data analytics and mathematical modeling."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-006",
+        "registeredAt": "2026-07-03T15:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT006-021" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-035",
+        "registeredAt": "2026-07-14T09:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT035-021" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-022",
+    "name": "Elliot Alderson",
+    "email": "ealderson@school.edu.ph",
+    "phone": "+639189990011",
+    "organizerId": "ORG-492",
+    "digitalBusinessCard": {
+      "jobTitle": "Cybersecurity Engineer",
+      "company": "Massive Dynamic",
+      "linkedin": null,
+      "bio": "Penetration testing and network architecture."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-007",
+        "registeredAt": "2026-07-01T08:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT007-022" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-036",
+        "registeredAt": "2026-07-12T16:40:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT036-022" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-023",
+    "name": "Angela Moss",
+    "email": "amoss@foundation.org",
+    "phone": "+639201110022",
+    "organizerId": "ORG-492",
+    "digitalBusinessCard": {
+      "jobTitle": "Risk & Compliance Lead",
+      "company": "Massive Dynamic",
+      "linkedin": "https://linkedin.com/in/angelamoss",
+      "bio": "Corporate security and compliance officer."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-007",
+        "registeredAt": "2026-07-02T10:45:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT007-023" },
+        "dietaryRestrictions": "Gluten-Free",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-037",
+        "registeredAt": "2026-07-15T10:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT037-023" },
+        "dietaryRestrictions": "Gluten-Free",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-024",
+    "name": "Roy Trenneman",
+    "email": "roy.trenneman@company.com",
+    "phone": "+639172221100",
+    "organizerId": "ORG-801",
+    "digitalBusinessCard": {
+      "jobTitle": "IT Support Manager",
+      "company": "Acme Events Co.",
+      "linkedin": null,
+      "bio": "Have you tried turning it off and on again?"
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-008",
+        "registeredAt": "2026-07-01T14:15:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT008-024" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-038",
+        "registeredAt": "2026-07-11T09:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT038-024" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-025",
+    "name": "Maurice Moss",
+    "email": "moss@school.edu.ph",
+    "phone": "+639184443322",
+    "organizerId": "ORG-801",
+    "digitalBusinessCard": {
+      "jobTitle": "Senior Systems Architect",
+      "company": "Acme Events Co.",
+      "linkedin": "https://linkedin.com/in/mauricemoss",
+      "bio": "0118 999 881 999 119 725 3"
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-008",
+        "registeredAt": "2026-07-02T16:50:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT008-025" },
+        "dietaryRestrictions": "Nut Allergy",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-026",
+        "registeredAt": "2026-07-16T13:40:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT026-025" },
+        "dietaryRestrictions": "Nut Allergy",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-026",
+    "name": "Jen Barber",
+    "email": "jbarber@foundation.org",
+    "phone": "+639206665544",
+    "organizerId": "ORG-109",
+    "digitalBusinessCard": {
+      "jobTitle": "Relationship Manager",
+      "company": "Northwind Corp.",
+      "linkedin": "https://linkedin.com/in/jenbarber",
+      "bio": "Managing tech teams and operational workflows."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-008",
+        "registeredAt": "2026-07-03T09:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT008-026" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-039",
+        "registeredAt": "2026-07-17T15:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT039-026" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-027",
+    "name": "Leslie Knope",
+    "email": "lknope@company.com",
+    "phone": "+639178887700",
+    "organizerId": "ORG-109",
+    "digitalBusinessCard": {
+      "jobTitle": "Deputy Director of Operations",
+      "company": "Northwind Corp.",
+      "linkedin": "https://linkedin.com/in/leslieknope",
+      "bio": "Community building and public policy."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-009",
+        "registeredAt": "2026-07-01T13:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT009-027" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-040",
+        "registeredAt": "2026-07-18T11:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT040-027" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-028",
+    "name": "Ron Swanson",
+    "email": "rswanson@school.edu.ph",
+    "phone": "+639180009988",
+    "organizerId": "ORG-402",
+    "digitalBusinessCard": {
+      "jobTitle": "Director of Facilities",
+      "company": "Initech PH",
+      "linkedin": null,
+      "bio": "I like meat and solitude."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-009",
+        "registeredAt": "2026-07-02T15:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT009-028" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-041",
+        "registeredAt": "2026-07-19T08:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT041-028" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-029",
+    "name": "April Ludgate",
+    "email": "aludgate@foundation.org",
+    "phone": "+639202221133",
+    "organizerId": "ORG-402",
+    "digitalBusinessCard": {
+      "jobTitle": "Executive Assistant",
+      "company": "Initech PH",
+      "linkedin": null,
+      "bio": "I hate everything."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-010",
+        "registeredAt": "2026-07-01T10:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT010-029" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-042",
+        "registeredAt": "2026-07-10T14:15:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT042-029" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-030",
+    "name": "Andy Dwyer",
+    "email": "adwyer@company.com",
+    "phone": "+639173334422",
+    "organizerId": "ORG-305",
+    "digitalBusinessCard": {
+      "jobTitle": "Head of Campus Security",
+      "company": "Globex Holdings",
+      "linkedin": "https://linkedin.com/in/andydwyer",
+      "bio": "Burt Macklin, FBI."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-010",
+        "registeredAt": "2026-07-02T12:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT010-030" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-027",
+        "registeredAt": "2026-07-11T16:50:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT027-030" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-031",
+    "name": "Ben Wyatt",
+    "email": "bwyatt@school.edu.ph",
+    "phone": "+639185556644",
+    "organizerId": "ORG-305",
+    "digitalBusinessCard": {
+      "jobTitle": "Senior Auditor",
+      "company": "Globex Holdings",
+      "linkedin": "https://linkedin.com/in/benwyatt",
+      "bio": "Budgeting, board games, and calzones."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-011",
+        "registeredAt": "2026-07-01T08:50:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT011-031" },
+        "dietaryRestrictions": "Dairy-Free",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-043",
+        "registeredAt": "2026-07-12T10:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT043-031" },
+        "dietaryRestrictions": "Dairy-Free",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-032",
+    "name": "Chris Traeger",
+    "email": "ctraeger@foundation.org",
+    "phone": "+639207776655",
+    "organizerId": "ORG-512",
+    "digitalBusinessCard": {
+      "jobTitle": "Chief Wellness Officer",
+      "company": "Stark Logistics Asia",
+      "linkedin": "https://linkedin.com/in/christraeger",
+      "bio": "LITERALLY the healthiest man alive."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-011",
+        "registeredAt": "2026-07-02T11:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT011-032" },
+        "dietaryRestrictions": "Vegan",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-028",
+        "registeredAt": "2026-07-13T12:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT028-032" },
+        "dietaryRestrictions": "Vegan",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-033",
+    "name": "Donna Meagle",
+    "email": "dmeagle@company.com",
+    "phone": "+639179998877",
+    "organizerId": "ORG-512",
+    "digitalBusinessCard": {
+      "jobTitle": "Fleet & Purchasing Manager",
+      "company": "Stark Logistics Asia",
+      "linkedin": "https://linkedin.com/in/donnameagle",
+      "bio": "Treat yo self."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-012",
+        "registeredAt": "2026-07-01T16:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT012-033" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-044",
+        "registeredAt": "2026-07-14T11:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT044-033" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-034",
+    "name": "Tom Haverford",
+    "email": "thaverford@school.edu.ph",
+    "phone": "+639181110099",
+    "organizerId": "ORG-601",
+    "digitalBusinessCard": {
+      "jobTitle": "Brand & Marketing Specialist",
+      "company": "Umbrella Group",
+      "linkedin": "https://linkedin.com/in/tomhaverford",
+      "bio": "Entrepreneur and innovator."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-012",
+        "registeredAt": "2026-07-02T09:40:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT012-034" },
+        "dietaryRestrictions": "Halal",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-045",
+        "registeredAt": "2026-07-15T13:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT045-034" },
+        "dietaryRestrictions": "Halal",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-035",
+    "name": "Ted Lasso",
+    "email": "tlasso@foundation.org",
+    "phone": "+639203332211",
+    "organizerId": "ORG-601",
+    "digitalBusinessCard": {
+      "jobTitle": "Culture & Leadership Coach",
+      "company": "Umbrella Group",
+      "linkedin": "https://linkedin.com/in/tedlasso",
+      "bio": "I believe in belief."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-013",
+        "registeredAt": "2026-07-01T10:15:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT013-035" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-029",
+        "registeredAt": "2026-07-16T10:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT029-035" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-036",
+    "name": "Roy Kent",
+    "email": "rkent@company.com",
+    "phone": "+639175554433",
+    "organizerId": "ORG-714",
+    "digitalBusinessCard": {
+      "jobTitle": "Operations Supervisor",
+      "company": "Cyberdyne Systems",
+      "linkedin": null,
+      "bio": "He's here, he's there, he's everywhere."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-013",
+        "registeredAt": "2026-07-02T13:50:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT013-036" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-046",
+        "registeredAt": "2026-07-17T09:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT046-036" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-037",
+    "name": "Keeley Jones",
+    "email": "kjones@school.edu.ph",
+    "phone": "+639187776655",
+    "organizerId": "ORG-714",
+    "digitalBusinessCard": {
+      "jobTitle": "PR & Brand Consultant",
+      "company": "Cyberdyne Systems",
+      "linkedin": "https://linkedin.com/in/keeleyjones",
+      "bio": "Public relations and corporate branding."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-014",
+        "registeredAt": "2026-07-01T11:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT014-037" },
+        "dietaryRestrictions": "Gluten-Free",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-047",
+        "registeredAt": "2026-07-18T14:40:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT047-037" },
+        "dietaryRestrictions": "Gluten-Free",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-038",
+    "name": "Higgins Leslie",
+    "email": "higgins@foundation.org",
+    "phone": "+639209998877",
+    "organizerId": "ORG-220",
+    "digitalBusinessCard": {
+      "jobTitle": "Director of Communications",
+      "company": "Aperture Labs PH",
+      "linkedin": null,
+      "bio": "Internal comms and executive coordination."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-014",
+        "registeredAt": "2026-07-02T14:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT014-038" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-048",
+        "registeredAt": "2026-07-19T11:50:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT048-038" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-039",
+    "name": "Damon Salvatore",
+    "email": "dsalvatore@company.com",
+    "phone": "+639170002233",
+    "organizerId": "ORG-220",
+    "digitalBusinessCard": {
+      "jobTitle": "Security Consultant",
+      "company": "Aperture Labs PH",
+      "linkedin": null,
+      "bio": "Risk management and threat assessment."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-015",
+        "registeredAt": "2026-07-01T15:45:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT015-039" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-049",
+        "registeredAt": "2026-07-10T08:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT049-039" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-040",
+    "name": "Stefan Salvatore",
+    "email": "ssalvatore@school.edu.ph",
+    "phone": "+639182221144",
+    "organizerId": "ORG-933",
+    "digitalBusinessCard": {
+      "jobTitle": "Archivist & Researcher",
+      "company": "Wayne Enterprises",
+      "linkedin": "https://linkedin.com/in/stefansalvatore",
+      "bio": "Records management and historical research."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-015",
+        "registeredAt": "2026-07-02T16:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT015-040" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": []
+      },
+      {
+        "eventId": "EVT-050",
+        "registeredAt": "2026-07-11T12:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT050-040" },
+        "dietaryRestrictions": "Vegetarian",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-041",
+    "name": "Elena Gilbert",
+    "email": "egilbert@foundation.org",
+    "phone": "+639204443355",
+    "organizerId": "ORG-933",
+    "digitalBusinessCard": {
+      "jobTitle": "Clinical Research Coordinator",
+      "company": "Wayne Enterprises",
+      "linkedin": "https://linkedin.com/in/elenagilbert",
+      "bio": "Healthcare operations and trial management."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-016",
+        "registeredAt": "2026-07-01T09:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT016-041" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-042",
+    "name": "Caroline Forbes",
+    "email": "cforbes@company.com",
+    "phone": "+639176665544",
+    "organizerId": "ORG-145",
+    "digitalBusinessCard": {
+      "jobTitle": "Event Director",
+      "company": "Soylent Corp Asia",
+      "linkedin": "https://linkedin.com/in/carolineforbes",
+      "bio": "Event logistics and corporate hospitality."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-016",
+        "registeredAt": "2026-07-02T10:15:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT016-042" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-043",
+    "name": "Bonnie Bennett",
+    "email": "bbennett@school.edu.ph",
+    "phone": "+639188887766",
+    "organizerId": "ORG-145",
+    "digitalBusinessCard": {
+      "jobTitle": "Data Analyst",
+      "company": "Soylent Corp Asia",
+      "linkedin": null,
+      "bio": "Statistical modeling and predictive data."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-017",
+        "registeredAt": "2026-07-01T14:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT017-043" },
+        "dietaryRestrictions": "Vegan",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-044",
+    "name": "Matt Donovan",
+    "email": "mdonovan@foundation.org",
+    "phone": "+639200001122",
+    "organizerId": "ORG-388",
+    "digitalBusinessCard": {
+      "jobTitle": "Facility Manager",
+      "company": "Tyrell Dynamics",
+      "linkedin": null,
+      "bio": "Building operations and safety enforcement."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-017",
+        "registeredAt": "2026-07-02T11:45:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT017-044" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-045",
+    "name": "Tyler Lockwood",
+    "email": "tlockwood@company.com",
+    "phone": "+639172223344",
+    "organizerId": "ORG-388",
+    "digitalBusinessCard": {
+      "jobTitle": "Business Development Lead",
+      "company": "Tyrell Dynamics",
+      "linkedin": "https://linkedin.com/in/tylerlockwood",
+      "bio": "Strategic partnerships and growth."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-018",
+        "registeredAt": "2026-07-01T13:20:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT018-045" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-046",
+    "name": "Alaric Saltzman",
+    "email": "asaltzman@school.edu.ph",
+    "phone": "+639184445566",
+    "organizerId": "ORG-492",
+    "digitalBusinessCard": {
+      "jobTitle": "Head of Research & Development",
+      "company": "Massive Dynamic",
+      "linkedin": null,
+      "bio": "Academic research and technical writing."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-018",
+        "registeredAt": "2026-07-02T15:10:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT018-046" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-047",
+    "name": "Klaus Mikaelson",
+    "email": "kmikaelson@foundation.org",
+    "phone": "+639206667788",
+    "organizerId": "ORG-492",
+    "digitalBusinessCard": {
+      "jobTitle": "Executive Director",
+      "company": "Massive Dynamic",
+      "linkedin": "https://linkedin.com/in/klausmikaelson",
+      "bio": "Global investments and art acquisition."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-019",
+        "registeredAt": "2026-07-01T08:40:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT019-047" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-048",
+    "name": "Elijah Mikaelson",
+    "email": "emikaelson@company.com",
+    "phone": "+639178889911",
+    "organizerId": "ORG-801",
+    "digitalBusinessCard": {
+      "jobTitle": "Chief Legal Counsel",
+      "company": "Acme Events Co.",
+      "linkedin": "https://linkedin.com/in/elijahmikaelson",
+      "bio": "Corporate law and negotiation."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-019",
+        "registeredAt": "2026-07-02T12:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT019-048" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-049",
+    "name": "Rebekah Mikaelson",
+    "email": "rmikaelson@school.edu.ph",
+    "phone": "+639180001122",
+    "organizerId": "ORG-801",
+    "digitalBusinessCard": {
+      "jobTitle": "VP of Corporate Communications",
+      "company": "Acme Events Co.",
+      "linkedin": null,
+      "bio": "Brand reputation and public affairs."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-020",
+        "registeredAt": "2026-07-01T16:00:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT020-049" },
+        "dietaryRestrictions": "Gluten-Free",
+        "selectedSessionIds": []
+      }
+    ]
+  },
+  {
+    "id": "ATT-050",
+    "name": "Kol Mikaelson",
+    "email": "kol.m@foundation.org",
+    "phone": "+639202223344",
+    "organizerId": "ORG-109",
+    "digitalBusinessCard": {
+      "jobTitle": "Systems Administrator",
+      "company": "Northwind Corp.",
+      "linkedin": "https://linkedin.com/in/kolmikaelson",
+      "bio": "Network security and infrastructure management."
+    },
+    "registrations": [
+      {
+        "eventId": "EVT-020",
+        "registeredAt": "2026-07-02T10:30:00Z",
+        "checkInStatus": { "isCheckedIn": false, "checkInTime": null, "checkInCode": "CHK-EVT020-050" },
+        "dietaryRestrictions": "None",
+        "selectedSessionIds": []
+      }
+    ]
+  }
+]

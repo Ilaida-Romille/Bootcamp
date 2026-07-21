@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function processAndShowInvoice(organizerQuery, monthQuery) {
     try {
         // Fetch JSON located in the same folder
-        const response = await fetch('../js/billing/invoices.json');
+        const response = await fetch('../data/platform/invoices.json');
         if (!response.ok) throw new Error('Failed to load JSON data');
         
         const data = await response.json();
@@ -106,7 +106,7 @@ async function processAndShowInvoice(organizerQuery, monthQuery) {
  */
 async function processBatchInvoices(targetMonth) {
     try {
-        const response = await fetch('../js/billing/invoices.json');
+        const response = await fetch('../data/platform/invoices.json');
         if (!response.ok) throw new Error('Failed to load JSON data');
 
         const data = await response.json();

@@ -103,7 +103,7 @@ function renderTicketDetail(ticket) {
  * Fetch JSON file asynchronously on load
  */
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("../js/tickets/tickets.json")
+    fetch("../data/platform/tickets.json")
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

@@ -97,7 +97,7 @@
             </form>
 
             <!-- Table Contents Component Container -->
-            <div class="glass-table-responsive rounded-3 mb-5">
+            <div class="glass-table-responsive rounded-3">
                 <table class="table glass-data-table mb-0 align-middle">
                     <thead>
                         <tr>
@@ -108,30 +108,31 @@
                             <th scope="col">Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td class="fw-medium text-white">INV-2026-0512</td>
-                            <td>Acme Events Co.</td>
-                            <td>May 2026</td>
-                            <td>₱ 84,200</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Paid</span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-medium text-white">INV-2026-0498</td>
-                            <td>Northwind Corp.</td>
-                            <td>May 2026</td>
-                            <td>₱ 22,750</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Paid</span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-medium text-white">INV-2026-0501</td>
-                            <td>Initech PH</td>
-                            <td>May 2026</td>
-                            <td>₱ 51,300</td>
-                            <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Overdue</span></td>
-                        </tr>
+                    <tbody id="invoice-table-body">
                     </tbody>
-                </table>
+                </table>  
+            </div>
+
+            <!-- Custom Glassmorphic Pagination System -->
+            <div class="d-flex flex-column align-items-center mt-2 mb-3">
+                <!-- Controls Container -->
+                <div class="d-flex justify-content-center w-100">
+                    <nav class="custom-pagination-container" aria-label="Page Navigation">
+                        <!-- Prev Button -->
+                        <a href="#" class="custom-page-link page-control" id="prevPageBtn" tabindex="-1" aria-disabled="true">« Prev</a>
+                        
+                        <!-- Page Numbers Container -->
+                        <div class="custom-page-numbers-wrapper" id="pageNumbersContainer"></div>
+                        
+                        <!-- Next Button -->
+                        <a href="#" class="custom-page-link page-control" id="nextPageBtn">Next »</a>
+                    </nav>
+                </div>
+                
+                <!-- Info Text Below -->
+                <small id="pagination-info" class="text-white-50 text-center mt-2">
+                    Showing 0 to 0 of 0 entries
+                </small>
             </div>
 
             <!-- Bottom Invoice Operations Layout Grid -->
@@ -366,5 +367,7 @@
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="../js/billing/billing.js"></script>
+    <script src="../js/billing/invoices-table.js"></script>
+
 </body>
 </html>
