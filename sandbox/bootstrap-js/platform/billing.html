@@ -72,29 +72,31 @@
             <h1 class="h2 fw-bold text-white mb-4">Search Invoices (Historical)</h1>
 
             <!-- Filters Layer using Bootstrap Grid Layout -->
-            <form class="row g-3 align-items-end mb-4" onsubmit="event.preventDefault();">
-                <div class="col-md-5 col-lg-5">
-                    <label for="filterOrganizer" class="form-label small text-secondary">Organizer</label>
-                    <input type="text" id="filterOrganizer" class="form-control glass-form-input">
-                </div>
-                
-                <div class="col-md-5 col-lg-5">
-                    <div class="row g-0">
-                        <div class="col-6">
-                            <label for="filterFrom" class="form-label small text-secondary">From</label>
-                            <input type="text" id="filterFrom" class="form-control glass-form-input date-range-start">
-                        </div>
-                        <div class="col-6">
-                            <label for="filterTo" class="form-label small text-secondary">To</label>
-                            <input type="text" id="filterTo" class="form-control glass-form-input date-range-end">
+            <form id="billingFilterForm" class="row g-3 align-items-end mb-4">
+                    <div class="col-md-5 col-lg-5">
+                        <label for="filterOrganizer" class="form-label small text-secondary">Organizer / Invoice #</label>
+                        <input type="text" id="filterOrganizer" class="form-control glass-form-input" placeholder="Search organizer or INV-...">
+                    </div>
+                    
+                    <div class="col-md-5 col-lg-5">
+                        <div class="row g-0">
+                            <!-- From Date Field -->
+                            <div class="col-6 position-relative">
+                                <label for="filterFrom" class="form-label small text-secondary">From</label>
+                                <input type="month" id="filterFrom" class="form-control glass-form-input date-range-start custom-date-input">
+                            </div>
+                            <!-- To Date Field -->
+                            <div class="col-6 position-relative">
+                                <label for="filterTo" class="form-label small text-secondary">To</label>
+                                <input type="month" id="filterTo" class="form-control glass-form-input date-range-end custom-date-input">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-md-2 col-lg-2">
-                    <button type="submit" class="btn btn-dark w-100 fw-semibold tracking-wide" style="height: 42px;">Go</button>
-                </div>
-            </form>
+                    <div class="col-md-2 col-lg-2">
+                        <button type="submit" id="billingGoBtn" class="btn btn-dark w-100 fw-semibold tracking-wide" style="height: 42px;">Go</button>
+                    </div>
+                </form>
 
             <!-- Table Contents Component Container -->
             <div class="glass-table-responsive rounded-3">
@@ -157,28 +159,61 @@
                             <h3 class="h6 fw-bold text-white mb-2">Specific Organizer</h3>
                         </div>
                         <form class="row g-0 align-items-end mt-2" onsubmit="event.preventDefault();">
+                            <!-- Single Specific Organizer Invoice Generation Panel -->
                             <div class="col-sm-5 mb-3 mb-sm-0">
-                                <label for="genOrganizer" class="form-label small text-secondary">Organizer</label>
-                                <input type="text" id="genOrganizer" class="form-control glass-form-input specific-input-left">
+                                <label for="genOrgBtn" class="form-label small text-secondary">Organizer</label>
+                                <div class="dropup position-relative" id="genOrgDropdown">
+                                    <button 
+                                        class="btn glass-form-input specific-input-left dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" 
+                                        type="button" 
+                                        id="genOrgBtn" 
+                                        data-bs-toggle="dropdown" 
+                                        data-bs-auto-close="true"
+                                        data-value="" 
+                                        aria-expanded="false">
+                                        <span class="text-truncate me-2">Select organizer...</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-dark w-100 shadow" 
+                                        aria-labelledby="genOrgBtn" 
+                                        id="genOrgMenuList" 
+                                        style="max-height: 250px; overflow-y: auto; overflow-x: hidden;">
+                                        <!-- Dynamically populated via billing.js from invoices.json -->
+                                    </ul>
+                                </div>
                             </div>
+                            
+                            <!-- Custom Bootstrap Dropdown -->
                             <div class="col-sm-4 mb-3 mb-sm-0">
-                                <label for="genMonth" class="form-label small text-secondary">Month</label>
-                                <select id="genMonth" class="form-select glass-form-input specific-input-mid">
-                                    <option value="" selected disabled>Select month...</option>
-                                    <option value="January 2026">January 2026</option>
-                                    <option value="February 2026">February 2026</option>
-                                    <option value="March 2026">March 2026</option>
-                                    <option value="April 2026">April 2026</option>
-                                    <option value="May 2026">May 2026</option>
-                                    <option value="June 2026">June 2026</option>
-                                    <option value="July 2026">July 2026</option>
-                                    <option value="August 2026">August 2026</option>
-                                    <option value="September 2026">September 2026</option>
-                                    <option value="October 2026">October 2026</option>
-                                    <option value="November 2026">November 2026</option>
-                                    <option value="December 2026">December 2026</option>
-                                </select>
+                                <label for="genMonthBtn" class="form-label small text-secondary">Month</label>
+                                <div class="dropdown" id="genMonthDropdown">
+                                    <button 
+                                        class="btn glass-form-input specific-input-mid dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" 
+                                        type="button" 
+                                        id="genMonthBtn" 
+                                        data-bs-toggle="dropdown" 
+                                        data-value="" 
+                                        aria-expanded="false">
+                                        <span>Select month...</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-dark w-100 shadow" aria-labelledby="genMonthBtn">
+                                        <li><a class="dropdown-item" href="#" data-value="January 2026">January 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="February 2026">February 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="March 2026">March 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="April 2026">April 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="May 2026">May 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="June 2026">June 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="July 2026">July 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="August 2026">August 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="September 2026">September 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="October 2026">October 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="November 2026">November 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="December 2026">December 2026</a></li>
+                                    </ul>
+                                </div>
                             </div>
+
                             <div class="col-sm-3">
                                 <button type="submit" class="btn btn-dark w-100 fw-semibold custom-action-btn specific-btn-right ms-1">Generate</button>
                             </div>
@@ -359,6 +394,18 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="errorToastBody">
+                    No record found.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>

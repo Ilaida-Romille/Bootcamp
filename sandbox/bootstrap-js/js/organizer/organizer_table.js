@@ -40,8 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statusDropdownItems.forEach(el => el.classList.remove('active'));
             item.classList.add('active');
 
-            // 4. Trigger filter update
-            applyFilters();
+            // NOTE: Auto-filter removed. Requires Search button click to execute filter.
         });
     });
 
@@ -55,22 +54,27 @@ document.addEventListener('DOMContentLoaded', () => {
             
             rawData = await response.json();
             
-            // Once data is loaded, apply initial filters and render
+            // Once data is loaded, display initial empty state
             applyFilters();
         } catch (error) {
             console.error('Error loading company JSON data:', error);
             if (tableBody) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger py-4">Failed to load data.</td></tr>`;
+                renderTableMessage('Failed to load data.', 'text-danger');
             }
         }
     }
 
     // -------------------------------------------------------------
-    // 2. Filter Logic (Search & Dropdown)
+    // 2. Filter Logic (Triggered ONLY via Search Button Click)
     // -------------------------------------------------------------
     function applyFilters() {
         const searchTerm = (searchInput ? searchInput.value : '').trim().toLowerCase();
         const selectedStatus = selectedStatusValue.toLowerCase();
+
+        // If search term is 1 or 2 chars, exit immediately and DO NOT modify data or UI
+        if (searchTerm.length > 0 && searchTerm.length < 3) {
+            return;
+        }
 
         filteredData = rawData.filter(item => {
             const matchesName = (item.name || '').toLowerCase().includes(searchTerm);
@@ -117,31 +121,95 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -------------------------------------------------------------
+    // Helper: Render Single Message Row safely
+    // -------------------------------------------------------------
+    function renderTableMessage(messageText, textClass = 'text-white-50') {
+        tableBody.replaceChildren(); // Safely clears existing table rows
+        
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        
+        td.colSpan = 4;
+        td.className = `text-center ${textClass} py-4`;
+        td.textContent = messageText;
+        
+        tr.appendChild(td);
+        tableBody.appendChild(tr);
+    }
+
+    // -------------------------------------------------------------
     // Helper: Dynamic Table Row Generator
     // -------------------------------------------------------------
     function renderTableRows(items) {
         if (!tableBody) return;
 
-        if (items.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-white-50 py-4">No companies found matching your query.</td></tr>`;
+        const searchTerm = (searchInput ? searchInput.value : '').trim();
+
+        if (searchTerm.length > 0 && searchTerm.length < 3) {
+            renderTableMessage('Please enter at least 3 characters to search.');
             return;
         }
 
-        tableBody.innerHTML = items.map(item => {
+        if (items.length === 0) {
+            renderTableMessage('No company record/s found.');
+            return;
+        }
+
+        // Clear existing table contents safely
+        tableBody.replaceChildren();
+
+        const fragment = document.createDocumentFragment();
+
+        items.forEach(item => {
             const eventCount = item.eventIds ? item.eventIds.length : 0;
             const badgeClass = getBadgeClass(item.status);
 
-            return `
-                <tr>
-                    <td class="fw-medium text-white">${escapeHtml(item.name)}</td>
-                    <td>${eventCount}</td>
-                    <td><span class="badge ${badgeClass} border px-2 py-1">${escapeHtml(item.status)}</span></td>
-                    <td class="actions-cell">
-                        <a href="#" data-id="${item.id}">View</a><span class="action-divider">|</span><a href="#" data-id="${item.id}">Change Status</a>
-                    </td>
-                </tr>
-            `;
-        }).join('');
+            const tr = document.createElement('tr');
+
+            // 1. Name Cell
+            const tdName = document.createElement('td');
+            tdName.className = 'fw-medium text-white';
+            tdName.textContent = item.name || '';
+
+            // 2. Events Count Cell
+            const tdEvents = document.createElement('td');
+            tdEvents.textContent = eventCount;
+
+            // 3. Status Badge Cell
+            const tdStatus = document.createElement('td');
+            const spanBadge = document.createElement('span');
+            spanBadge.className = `badge ${badgeClass} border px-2 py-1`;
+            spanBadge.textContent = item.status || '';
+            tdStatus.appendChild(spanBadge);
+
+            // 4. Actions Cell
+            const tdActions = document.createElement('td');
+            tdActions.className = 'actions-cell';
+
+            const viewLink = document.createElement('a');
+            viewLink.href = '#';
+            viewLink.dataset.id = item.id;
+            viewLink.textContent = 'View';
+
+            const divider = document.createElement('span');
+            divider.className = 'action-divider';
+            divider.textContent = '|';
+
+            const statusLink = document.createElement('a');
+            statusLink.href = '#';
+            statusLink.dataset.id = item.id;
+            statusLink.textContent = 'Change Status';
+
+            tdActions.append(viewLink, divider, statusLink);
+
+            // Append all cells to table row
+            tr.append(tdName, tdEvents, tdStatus, tdActions);
+            
+            // Append row to fragment
+            fragment.appendChild(tr);
+        });
+
+        tableBody.appendChild(fragment);
     }
 
     // Helper for Status Badge styling
@@ -158,19 +226,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Helper to prevent HTML injection XSS
-    function escapeHtml(str) {
-        return (str || '').replace(/[&<>"']/g, match => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-        }[match]));
-    }
-
     // -------------------------------------------------------------
-    // Helper: Dynamic Pagination Controls (Copied Design)
+    // Helper: Dynamic Pagination Controls
     // -------------------------------------------------------------
     function renderPagination(totalPages) {
         if (!pageNumbersContainer) return;
-        pageNumbersContainer.innerHTML = '';
+        pageNumbersContainer.replaceChildren(); // Safe clear
 
         if (filteredData.length === 0) {
             if (prevPageBtn) prevPageBtn.classList.add('page-disabled');
@@ -201,6 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Generate number buttons using .custom-page-link and .page-active
+        const fragment = document.createDocumentFragment();
+
         for (let i = 1; i <= totalPages; i++) {
             const a = document.createElement('a');
             a.href = '#';
@@ -216,14 +279,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            pageNumbersContainer.appendChild(a);
+            fragment.appendChild(a);
         }
+
+        pageNumbersContainer.appendChild(fragment);
     }
 
     // -------------------------------------------------------------
-    // Event Listeners
+    // Event Listeners (Triggers ONLY when Form/Search button is clicked)
     // -------------------------------------------------------------
-    if (searchInput) searchInput.addEventListener('input', applyFilters);
     if (filterForm) {
         filterForm.addEventListener('submit', (e) => {
             e.preventDefault();

@@ -1,12 +1,34 @@
+// Helper: Converts billing period strings like "May 2026" or "5/2026" to "2026-05"
+function parsePeriodToYearMonth(periodStr) {
+    if (!periodStr) return '';
+    
+    // Parse "Month Year" format (e.g. "May 2026")
+    const parts = periodStr.trim().split(' ');
+    if (parts.length >= 2) {
+        const date = new Date(`${parts[0]} 1, ${parts[1]}`);
+        if (!isNaN(date.getTime())) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            return `${year}-${month}`;
+        }
+    }
+    return '';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const ITEMS_PER_PAGE = 5;
     let currentPage = 1;
-    let invoicesData = [];
+    let rawInvoicesData = [];     // Master JSON data
+    let filteredInvoicesData = []; // Filtered data after clicking 'Go'
 
-    // Replace with the path to your JSON file or API endpoint
     const JSON_URL = '../data/platform/invoices.json';
 
     // DOM Elements
+    const billingFilterForm = document.getElementById('billingFilterForm');
+    const filterOrganizerInput = document.getElementById('filterOrganizer');
+    const filterFromInput = document.getElementById('filterFrom');
+    const filterToInput = document.getElementById('filterTo');
+
     const pageNumbersContainer = document.getElementById('pageNumbersContainer');
     const prevPageBtn = document.getElementById('prevPageBtn');
     const nextPageBtn = document.getElementById('nextPageBtn');
@@ -23,26 +45,68 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const data = await response.json();
             
-            // Assign invoices from JSON source
-            invoicesData = data.invoices || [];
+            // Store master invoice list
+            rawInvoicesData = data.invoices || [];
             
-            updateView();
+            // Initial render
+            applyFilters();
         } catch (error) {
             console.error('Error fetching invoice data:', error);
             const tableBody = document.getElementById('invoice-table-body');
             if (tableBody) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center text-danger py-4">
-                            Failed to load invoice records.
-                        </td>
-                    </tr>`;
+                renderTableMessage(tableBody, 'Failed to load invoice records.', 'text-danger');
             }
         }
     }
 
-    // Helper: Formats status string to appropriate Bootstrap badge classes
-    function getStatusBadge(status) {
+    // -------------------------------------------------------------
+    // Filtering Logic (Runs ONLY on 'Go' form submission)
+    // -------------------------------------------------------------
+    function applyFilters() {
+        const query = (filterOrganizerInput ? filterOrganizerInput.value : '').trim().toLowerCase();
+
+        // If the query is between 1 and 2 characters, exit and DO NOT touch the table
+        if (query.length > 0 && query.length < 3) {
+            return;
+        }
+
+        // Month input values return "YYYY-MM" (e.g., "2026-05")
+        const fromMonthVal = filterFromInput ? filterFromInput.value : '';
+        const toMonthVal = filterToInput ? filterToInput.value : '';
+
+        filteredInvoicesData = rawInvoicesData.filter(item => {
+            // 1. Search Query Match (Organizer Name OR Invoice #)
+            const matchesOrg = (item.organizerName || '').toLowerCase().includes(query);
+            const matchesInvNum = (item.invoiceNumber || '').toLowerCase().includes(query);
+            const matchesSearch = query === '' || matchesOrg || matchesInvNum;
+
+            // 2. Month-Year Range Match
+            let matchesDate = true;
+            
+            // Extract "YYYY-MM" from item.billingPeriod (or fallback to item.issueDate)
+            const itemYearMonth = parsePeriodToYearMonth(item.billingPeriod || item.issueDate);
+
+            if (itemYearMonth) {
+                // Lexicographical string comparison works directly for "YYYY-MM"
+                if (fromMonthVal && itemYearMonth < fromMonthVal) {
+                    matchesDate = false;
+                }
+                if (toMonthVal && itemYearMonth > toMonthVal) {
+                    matchesDate = false;
+                }
+            }
+
+            return matchesSearch && matchesDate;
+        });
+
+        currentPage = 1; // Reset to page 1 on successful filter execution
+        updateView();
+    }
+
+    // -------------------------------------------------------------
+    // Helper Functions
+    // -------------------------------------------------------------
+    function renderStatusBadge(status) {
         let badgeClass = 'bg-secondary-subtle text-secondary border-secondary-subtle';
         
         switch (status?.toLowerCase()) {
@@ -57,10 +121,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
 
-        return `<span class="badge ${badgeClass} border px-2 py-1">${status}</span>`;
+        const span = document.createElement('span');
+        span.className = `badge ${badgeClass} border px-2 py-1`;
+        span.textContent = status || '';
+        return span;
     }
 
-    // Helper: Formats numbers into currency format (PHP)
     function formatCurrency(amount) {
         return new Intl.NumberFormat('en-PH', {
             style: 'currency',
@@ -70,20 +136,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }).format(amount).replace('PHP', '₱');
     }
 
-    // Render items for current active page
+    function renderTableMessage(tableBody, messageText, textClass = 'text-white-50') {
+        tableBody.replaceChildren(); // Safe clear
+
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+
+        td.colSpan = 5;
+        td.className = `text-center ${textClass} py-4`;
+        td.textContent = messageText;
+
+        tr.appendChild(td);
+        tableBody.appendChild(tr);
+    }
+
+    // -------------------------------------------------------------
+    // Render Functions
+    // -------------------------------------------------------------
     function renderTable() {
         const tableBody = document.getElementById('invoice-table-body');
         if (!tableBody) return;
 
-        tableBody.innerHTML = '';
-
-        if (invoicesData.length === 0) {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="text-center text-white-50 py-4">
-                        No invoice records found.
-                    </td>
-                </tr>`;
+        if (filteredInvoicesData.length === 0) {
+            renderTableMessage(tableBody, 'No invoice record/s found.');
             
             if (paginationInfo) {
                 paginationInfo.textContent = 'Showing 0 to 0 of 0 entries';
@@ -91,45 +166,63 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        tableBody.replaceChildren(); // Safely clear old rows
+
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, invoicesData.length);
-        const currentItems = invoicesData.slice(startIndex, endIndex);
+        const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, filteredInvoicesData.length);
+        const currentItems = filteredInvoicesData.slice(startIndex, endIndex);
+
+        const fragment = document.createDocumentFragment();
 
         currentItems.forEach(item => {
-            // Calculate Amount dynamically: attendeeCount * ratePerAttendee
             const calculatedAmount = (item.attendeeCount || 0) * (item.ratePerAttendee || 0);
 
             const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="fw-medium text-white">${item.invoiceNumber || 'N/A'}</td>
-                <td>${item.organizerName || 'N/A'}</td>
-                <td>${item.billingPeriod || 'N/A'}</td>
-                <td>${formatCurrency(calculatedAmount)}</td>
-                <td>${getStatusBadge(item.status)}</td>
-            `;
-            tableBody.appendChild(row);
+
+            // 1. Invoice Number
+            const tdInvoice = document.createElement('td');
+            tdInvoice.className = 'fw-medium text-white';
+            tdInvoice.textContent = item.invoiceNumber || 'N/A';
+
+            // 2. Organizer Name
+            const tdOrganizer = document.createElement('td');
+            tdOrganizer.textContent = item.organizerName || 'N/A';
+
+            // 3. Billing Period
+            const tdPeriod = document.createElement('td');
+            tdPeriod.textContent = item.billingPeriod || 'N/A';
+
+            // 4. Amount
+            const tdAmount = document.createElement('td');
+            tdAmount.textContent = formatCurrency(calculatedAmount);
+
+            // 5. Status Badge
+            const tdStatus = document.createElement('td');
+            tdStatus.appendChild(renderStatusBadge(item.status));
+
+            row.append(tdInvoice, tdOrganizer, tdPeriod, tdAmount, tdStatus);
+            fragment.appendChild(row);
         });
 
-        // Update footer info (e.g., "Showing 1 to 5 of 22 entries")
+        tableBody.appendChild(fragment);
+
         if (paginationInfo) {
-            paginationInfo.textContent = `Showing ${startIndex + 1} to ${endIndex} of ${invoicesData.length} entries`;
+            paginationInfo.textContent = `Showing ${startIndex + 1} to ${endIndex} of ${filteredInvoicesData.length} entries`;
         }
     }
 
-    // Render pagination buttons dynamically matching custom design
     function renderPagination() {
         if (!pageNumbersContainer) return;
 
-        pageNumbersContainer.innerHTML = '';
-        const totalPages = Math.ceil(invoicesData.length / ITEMS_PER_PAGE) || 1;
+        pageNumbersContainer.replaceChildren(); // Safely clear existing buttons
+        
+        const totalPages = Math.ceil(filteredInvoicesData.length / ITEMS_PER_PAGE) || 1;
 
-        // Ensure currentPage stays within valid boundaries
         if (currentPage > totalPages) currentPage = totalPages;
         if (currentPage < 1) currentPage = 1;
 
-        // Update Prev button status
         if (prevPageBtn) {
-            if (currentPage <= 1 || invoicesData.length === 0) {
+            if (currentPage <= 1 || filteredInvoicesData.length === 0) {
                 prevPageBtn.classList.add('page-disabled');
                 prevPageBtn.setAttribute('tabindex', '-1');
                 prevPageBtn.setAttribute('aria-disabled', 'true');
@@ -140,9 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Update Next button status
         if (nextPageBtn) {
-            if (currentPage >= totalPages || invoicesData.length === 0) {
+            if (currentPage >= totalPages || filteredInvoicesData.length === 0) {
                 nextPageBtn.classList.add('page-disabled');
                 nextPageBtn.setAttribute('tabindex', '-1');
                 nextPageBtn.setAttribute('aria-disabled', 'true');
@@ -153,9 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (invoicesData.length === 0) return;
+        if (filteredInvoicesData.length === 0) return;
 
-        // Generate number buttons using .custom-page-link and .page-active
+        const fragment = document.createDocumentFragment();
+
         for (let i = 1; i <= totalPages; i++) {
             const a = document.createElement('a');
             a.href = '#';
@@ -171,11 +264,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            pageNumbersContainer.appendChild(a);
+            fragment.appendChild(a);
         }
+
+        pageNumbersContainer.appendChild(fragment);
     }
 
-    // Prev / Next button listeners
+    // -------------------------------------------------------------
+    // Event Listeners
+    // -------------------------------------------------------------
+    if (billingFilterForm) {
+        billingFilterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            applyFilters();
+        });
+    }
+
     if (prevPageBtn) {
         prevPageBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -189,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextPageBtn) {
         nextPageBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const totalPages = Math.ceil(invoicesData.length / ITEMS_PER_PAGE);
+            const totalPages = Math.ceil(filteredInvoicesData.length / ITEMS_PER_PAGE);
             if (currentPage < totalPages) {
                 currentPage++;
                 updateView();
