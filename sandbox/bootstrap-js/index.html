@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EventHub | Enterprise & Corporate Event Management Platform</title>
     <meta name="description" content="Plan, register, and connect your corporate events with EventHub. All-in-one event management platform for enterprise organizations, organizers, and attendees.">
-    <!-- Bootstrap 5 CSS CDN -->
+    <!-- Bootstrap 5 CSS -->
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/log_in_form.css">
@@ -129,99 +129,14 @@
         </div>
     </main>
 
-    <!-- Bootstrap 5 Bundle JS CDN -->
+    <!-- Bootstrap 5 Bundle -->
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <!-- Validation, Routing, and Transition Animations -->
-    <script>
-        // --- Trigger Transition Animation on Get Started Button click ---
-        const getStartedBtn = document.getElementById('get-started-btn');
-        const contentRow = document.getElementById('content-row');
-        const heroSection = document.getElementById('hero-section');
-
-        getStartedBtn.addEventListener('click', function() {
-            // Apply class to activate the layout slide transition
-            contentRow.classList.add('split-active');
-            
-            // On desktop screens, align the hero text left dynamically with the animation
-            if (window.innerWidth >= 992) {
-                heroSection.style.setProperty('text-align', 'left', 'important');
-            }
-
-            // Hide the Get Started button gracefully once the split state has finished moving
-            getStartedBtn.style.opacity = '0';
-            getStartedBtn.style.pointerEvents = 'none';
-        });
-
-        // --- Original Login Validation ---
-        document.getElementById('dynamic-login-form').addEventListener('submit', function(event) {
-            event.preventDefault(); 
-
-            const emailInput = document.getElementById('login-email');
-            const passwordInput = document.getElementById('login-password');
-            
-            const email = emailInput.value.trim().toLowerCase(); 
-            const password = passwordInput.value;
-
-            let isValid = true;
-
-            // 1. Core Structural Email Constraints
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
-            if (!emailRegex.test(email) || email.length < 5 || email.length > 100) { 
-                emailInput.classList.add('user-invalid');
-                document.getElementById('email-error').style.maxHeight = "2.5rem";
-                document.getElementById('email-error').style.opacity = "1";
-                isValid = false;
-            } else {
-                emailInput.classList.remove('user-invalid');
-                document.getElementById('email-error').style.maxHeight = "0";
-                document.getElementById('email-error').style.opacity = "0";
-            }
-
-            // 2. Standard Passwords Boundary Restrictions
-            if (password.length < 8) {
-                passwordInput.classList.add('user-invalid');
-                document.getElementById('password-error').style.maxHeight = "2.5rem";
-                document.getElementById('password-error').style.opacity = "1";
-                isValid = false;
-            } else {
-                passwordInput.classList.remove('user-invalid');
-                document.getElementById('password-error').style.maxHeight = "0";
-                document.getElementById('password-error').style.opacity = "0";
-            }
-
-            if (!isValid) return;
-
-            // 3. Conditional Domain Routing Engine
-            if (email.includes('@eventhub.com')) {
-                window.location.href = 'platform/dashboard.html';
-            } else if (
-                email === 'admin@company.com' || 
-                (email.startsWith('admin') && (email.includes('@foundation.') || email.includes('@school.')))
-            ) {
-                window.location.href = 'organizer/dashboard.html';
-            } else if (
-                email.includes('@company.com') || 
-                email.includes('@school.') || 
-                email.includes('@foundation.')
-            ) {
-                window.location.href = 'users/upcoming_events.html';
-            } else {
-                alert('Access Denied: This corporate domain or email configuration is unregistered.');
-            }
-        });
-
-        // Clear warning visuals immediately on typing
-        document.querySelectorAll('.glass-input').forEach(input => {
-            input.addEventListener('input', function() {
-                this.classList.remove('user-invalid');
-                const errorSpan = this.closest('.mb-3, .mb-4').querySelector('.field-error');
-                if (errorSpan) {
-                    errorSpan.style.maxHeight = "0";
-                    errorSpan.style.opacity = "0";
-                }
-            });
-        });
-    </script>
+    <!-- Email Validator Module -->
+    <script src="js/login/emailValidator.js"></script>
+    
+    <!-- Main UI & Routing Handler -->
+    <script src="js/login/login.js"></script>
 </body>
 </html>

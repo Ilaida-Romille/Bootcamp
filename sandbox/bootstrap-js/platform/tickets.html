@@ -76,36 +76,14 @@
                 
                 <!-- Ticket List Queue Column -->
                 <div class="col-100-lg-350 col-100-md-100">
-                    <div class="glass-tickets-list rounded-3 overflow-hidden">
-                        <div class="ticket-item active">
-                            <div class="ticket-meta"><strong>#TCK-1042</strong> — Open</div>
-                            <div class="ticket-company">Acme Events Co.</div>
-                            <div class="ticket-subject">Can't edit event capacity</div>
-                        </div>
+                    <div id="ticketsListContainer" class="glass-tickets-list rounded-3">
                         
-                        <div class="ticket-item">
-                            <div class="ticket-meta"><strong>#TCK-1039</strong> — Open</div>
-                            <div class="ticket-company">Initech PH</div>
-                            <div class="ticket-subject">Request: add 3 more admins</div>
-                        </div>
-                        
-                        <div class="ticket-item">
-                            <div class="ticket-meta"><strong>#TCK-1031</strong> — In Progress</div>
-                            <div class="ticket-company">Northwind Corp.</div>
-                            <div class="ticket-subject">Invoice discrepancy</div>
-                        </div>
-                        
-                        <div class="ticket-item">
-                            <div class="ticket-meta"><strong>#TCK-1020</strong> — Resolved</div>
-                            <div class="ticket-company">Globex Holdings</div>
-                            <div class="ticket-subject">Reactivate account</div>
-                        </div>
                     </div>
                 </div>
 
                 <!-- Ticket Inspection Detail View Panel Column -->
                 <div class="col-grow-panel">
-                    <div class="glass-ticket-detail p-4 rounded-3">
+                    <div id="ticketDetailPanel" class="glass-ticket-detail p-4 rounded-3">
                         <h2 class="h5 fw-bold text-white mb-2">#TCK-1042 — Can't edit event capacity</h2>
                         
                         <div class="small text-secondary mb-4">
@@ -141,5 +119,7 @@
 
     <!-- Bootstrap 5.3.8 JS -->
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/tickets/ticketStatusLabel.js"></script>
+    
 </body>
 </html>

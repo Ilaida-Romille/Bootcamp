@@ -1,5 +1,22 @@
 {
   "dependencies": {
     "bootstrap": "^5.3.8"
-  }
+  },
+  "name": "bootstrap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "jsdom": "^29.1.1"
+  },
+  "scripts": {
+    "test": "jest --environment=jsdom",
+    "unit-test": "jest --environment=jsdom"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
 }

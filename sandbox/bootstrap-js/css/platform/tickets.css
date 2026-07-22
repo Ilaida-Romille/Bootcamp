@@ -15,12 +15,39 @@
 
 /* Glassmorphic Queue Stack Containers */
 .glass-tickets-list {
+    max-height: 405px; 
+    overflow-y: auto;
+    overflow-x: hidden;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
+
+/* Custom Scrollbar Styling (Optional for dark theme styling) */
+.glass-tickets-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.glass-tickets-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.glass-tickets-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.glass-tickets-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Fallback badge overrides if standard Bootstrap badges need background colors */
+.badge-danger { background-color: #dc3545; color: #fff; }
+.badge-warning { background-color: #ffc107; color: #000; }
+.badge-success { background-color: #198754; color: #fff; }
+.badge-secondary { background-color: #6c757d; color: #fff; }
 
 .ticket-item {
     padding: 1.25rem 1rem;

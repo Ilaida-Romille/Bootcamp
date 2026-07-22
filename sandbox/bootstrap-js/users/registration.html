@@ -146,6 +146,62 @@
             document.getElementById('eventDate').innerText = urlParams.get('date');
             document.getElementById('eventLocation').innerText = urlParams.get('location');
         }
+
+        //New
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('.registration-form');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // 1. Extract event ID from URI query params
+                const urlParams = new URLSearchParams(window.location.search);
+                const eventId = urlParams.get('id');
+
+                if (!eventId) {
+                    console.error('No Event ID found in URL parameters.');
+                    return;
+                }
+
+                // 2. Capture form fields
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('emailAddress').value.trim().toLowerCase();
+                const company = document.getElementById('companyDept').value.trim();
+                const dietary = document.getElementById('dietary').value.trim();
+
+                // 3. Retrieve existing registrants array from localStorage
+                let registrants = JSON.parse(localStorage.getItem('eventHub_registrants')) || [];
+
+                // 4. Check if this specific email is already registered for THIS event ID
+                const isAlreadyRegistered = registrants.some(
+                    attendee => attendee.email.toLowerCase() === email && attendee.eventId === eventId
+                );
+
+                if (!isAlreadyRegistered) {
+                    // New registrant entry
+                    const newRegistrant = {
+                        id: `ATT-${Date.now().toString().slice(-4)}`,
+                        name: fullName,
+                        email: email,
+                        company: company,
+                        dietaryRestrictions: dietary,
+                        eventId: eventId,
+                        registeredAt: new Date().toISOString()
+                    };
+
+                    // Append to array and save back to localStorage
+                    registrants.push(newRegistrant);
+                    localStorage.setItem('eventHub_registrants', JSON.stringify(registrants));
+                }
+
+                // 5. Store current event ID so agenda.html knows which event attendees to render
+                localStorage.setItem('eventHub_currentEventId', eventId);
+
+                // 6. Redirect to Agenda page
+                window.location.href = 'agenda.html';
+            });
+        });
     </script>
 
     <!-- Bootstrap 5.3.8 JS Bundle CDN -->

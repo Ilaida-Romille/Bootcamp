@@ -16,7 +16,7 @@
 </head>
 <body>
 
-    <!-- Nav Bar Section (Always expanded, no hamburger) -->
+    <!-- Nav Bar Section -->
     <header class="navbar glass-nav navbar-dark sticky-top">
         <div class="container-fluid px-4 d-flex align-items-center justify-content-between">
             
@@ -72,32 +72,34 @@
             <h1 class="h2 fw-bold text-white mb-4">Search Invoices (Historical)</h1>
 
             <!-- Filters Layer using Bootstrap Grid Layout -->
-            <form class="row g-3 align-items-end mb-4" onsubmit="event.preventDefault();">
-                <div class="col-md-5 col-lg-5">
-                    <label for="filterOrganizer" class="form-label small text-secondary">Organizer</label>
-                    <input type="text" id="filterOrganizer" class="form-control glass-form-input">
-                </div>
-                
-                <div class="col-md-5 col-lg-5">
-                    <div class="row g-0">
-                        <div class="col-6">
-                            <label for="filterFrom" class="form-label small text-secondary">From</label>
-                            <input type="text" id="filterFrom" class="form-control glass-form-input date-range-start">
-                        </div>
-                        <div class="col-6">
-                            <label for="filterTo" class="form-label small text-secondary">To</label>
-                            <input type="text" id="filterTo" class="form-control glass-form-input date-range-end">
+            <form id="billingFilterForm" class="row g-3 align-items-end mb-4">
+                    <div class="col-md-5 col-lg-5">
+                        <label for="filterOrganizer" class="form-label small text-secondary">Organizer / Invoice #</label>
+                        <input type="text" id="filterOrganizer" class="form-control glass-form-input" placeholder="Search organizer or INV-...">
+                    </div>
+                    
+                    <div class="col-md-5 col-lg-5">
+                        <div class="row g-0">
+                            <!-- From Date Field -->
+                            <div class="col-6 position-relative">
+                                <label for="filterFrom" class="form-label small text-secondary">From</label>
+                                <input type="month" id="filterFrom" class="form-control glass-form-input date-range-start custom-date-input">
+                            </div>
+                            <!-- To Date Field -->
+                            <div class="col-6 position-relative">
+                                <label for="filterTo" class="form-label small text-secondary">To</label>
+                                <input type="month" id="filterTo" class="form-control glass-form-input date-range-end custom-date-input">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-md-2 col-lg-2">
-                    <button type="submit" class="btn btn-dark w-100 fw-semibold tracking-wide" style="height: 42px;">Go</button>
-                </div>
-            </form>
+                    <div class="col-md-2 col-lg-2">
+                        <button type="submit" id="billingGoBtn" class="btn btn-dark w-100 fw-semibold tracking-wide" style="height: 42px;">Go</button>
+                    </div>
+                </form>
 
             <!-- Table Contents Component Container -->
-            <div class="glass-table-responsive rounded-3 mb-5">
+            <div class="glass-table-responsive rounded-3">
                 <table class="table glass-data-table mb-0 align-middle">
                     <thead>
                         <tr>
@@ -108,30 +110,31 @@
                             <th scope="col">Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td class="fw-medium text-white">INV-2026-0512</td>
-                            <td>Acme Events Co.</td>
-                            <td>May 2026</td>
-                            <td>₱ 84,200</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Paid</span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-medium text-white">INV-2026-0498</td>
-                            <td>Northwind Corp.</td>
-                            <td>May 2026</td>
-                            <td>₱ 22,750</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Paid</span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-medium text-white">INV-2026-0501</td>
-                            <td>Initech PH</td>
-                            <td>May 2026</td>
-                            <td>₱ 51,300</td>
-                            <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Overdue</span></td>
-                        </tr>
+                    <tbody id="invoice-table-body">
                     </tbody>
-                </table>
+                </table>  
+            </div>
+
+            <!-- Custom Glassmorphic Pagination System -->
+            <div class="d-flex flex-column align-items-center mt-2 mb-3">
+                <!-- Controls Container -->
+                <div class="d-flex justify-content-center w-100">
+                    <nav class="custom-pagination-container" aria-label="Page Navigation">
+                        <!-- Prev Button -->
+                        <a href="#" class="custom-page-link page-control" id="prevPageBtn" tabindex="-1" aria-disabled="true">« Prev</a>
+                        
+                        <!-- Page Numbers Container -->
+                        <div class="custom-page-numbers-wrapper" id="pageNumbersContainer"></div>
+                        
+                        <!-- Next Button -->
+                        <a href="#" class="custom-page-link page-control" id="nextPageBtn">Next »</a>
+                    </nav>
+                </div>
+                
+                <!-- Info Text Below -->
+                <small id="pagination-info" class="text-white-50 text-center mt-2">
+                    Showing 0 to 0 of 0 entries
+                </small>
             </div>
 
             <!-- Bottom Invoice Operations Layout Grid -->
@@ -145,7 +148,7 @@
                             <h3 class="h6 fw-bold text-white mb-2">All Organizers — This Month</h3>
                             <p class="small text-secondary mb-4">Runs monthly billing for every active organizer at once.</p>
                         </div>
-                        <button type="button" class="btn btn-dark w-100 fw-semibold custom-action-btn mt-auto">Generate Monthly Invoices (Batch)</button>
+                        <button type="button" id="btnGenerateBatch" class="btn btn-dark w-100 fw-semibold custom-action-btn mt-auto">Generate Monthly Invoices (Batch)</button>
                     </div>
                 </div>
 
@@ -156,16 +159,63 @@
                             <h3 class="h6 fw-bold text-white mb-2">Specific Organizer</h3>
                         </div>
                         <form class="row g-0 align-items-end mt-2" onsubmit="event.preventDefault();">
+                            <!-- Single Specific Organizer Invoice Generation Panel -->
                             <div class="col-sm-5 mb-3 mb-sm-0">
-                                <label for="genOrganizer" class="form-label small text-secondary">Organizer</label>
-                                <input type="text" id="genOrganizer" class="form-control glass-form-input specific-input-left">
+                                <label for="genOrgBtn" class="form-label small text-secondary">Organizer</label>
+                                <div class="dropup position-relative" id="genOrgDropdown">
+                                    <button 
+                                        class="btn glass-form-input specific-input-left dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" 
+                                        type="button" 
+                                        id="genOrgBtn" 
+                                        data-bs-toggle="dropdown" 
+                                        data-bs-auto-close="true"
+                                        data-value="" 
+                                        aria-expanded="false">
+                                        <span class="text-truncate me-2">Select organizer...</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-dark w-100 shadow" 
+                                        aria-labelledby="genOrgBtn" 
+                                        id="genOrgMenuList" 
+                                        style="max-height: 250px; overflow-y: auto; overflow-x: hidden;">
+                                        <!-- Dynamically populated via billing.js from invoices.json -->
+                                    </ul>
+                                </div>
                             </div>
+                            
+                            <!-- Custom Bootstrap Dropdown -->
                             <div class="col-sm-4 mb-3 mb-sm-0">
-                                <label for="genMonth" class="form-label small text-secondary">Month</label>
-                                <input type="text" id="genMonth" class="form-control glass-form-input specific-input-mid">
+                                <label for="genMonthBtn" class="form-label small text-secondary">Month</label>
+                                <div class="dropdown" id="genMonthDropdown">
+                                    <button 
+                                        class="btn glass-form-input specific-input-mid dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" 
+                                        type="button" 
+                                        id="genMonthBtn" 
+                                        data-bs-toggle="dropdown" 
+                                        data-value="" 
+                                        aria-expanded="false">
+                                        <span>Select month...</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-dark w-100 shadow" aria-labelledby="genMonthBtn">
+                                        <li><a class="dropdown-item" href="#" data-value="January 2026">January 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="February 2026">February 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="March 2026">March 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="April 2026">April 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="May 2026">May 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="June 2026">June 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="July 2026">July 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="August 2026">August 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="September 2026">September 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="October 2026">October 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="November 2026">November 2026</a></li>
+                                        <li><a class="dropdown-item" href="#" data-value="December 2026">December 2026</a></li>
+                                    </ul>
+                                </div>
                             </div>
+
                             <div class="col-sm-3">
-                                <button type="submit" class="btn btn-dark w-100 fw-semibold custom-action-btn specific-btn-right">Generate</button>
+                                <button type="submit" class="btn btn-dark w-100 fw-semibold custom-action-btn specific-btn-right ms-1">Generate</button>
                             </div>
                         </form>
                     </div>
@@ -175,7 +225,196 @@
         </main>
     </div>
 
+    <!-- Invoice Modal -->
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark text-light border-secondary">
+                
+                <!-- Modal Header -->
+                <div class="modal-header border-secondary px-4 py-3">
+                    <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2" id="invoiceModalLabel">
+                        <span>Invoice Preview</span>
+                        <span id="modalStatusBadge" class="badge bg-success-subtle text-success border border-success-subtle fs-6 ms-2">Paid</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Printable Invoice Body -->
+                <div class="modal-body p-4" id="printableInvoice">
+                    
+                    <!-- Invoice Header Details -->
+                    <div class="row mb-4 pb-3 border-bottom border-secondary">
+                        <div class="col-sm-6">
+                            <h3 class="fw-bold text-white mb-1">EventHub Inc.</h3>
+                            <p class="small text-secondary mb-0">Cloud Events Management Platform</p>
+                            <p class="small text-secondary">billing@eventhub.com</p>
+                        </div>
+                        <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                            <h4 class="fw-bold text-white mb-1" id="modalInvoiceNum">INV-2026-XXXX</h4>
+                            <p class="small text-secondary mb-0">Billing Period: <strong class="text-white" id="modalBillingPeriod">--</strong></p>
+                            <p class="small text-secondary">Issue Date: <span class="text-white" id="modalIssueDate">2026-05-31</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Billed To Section -->
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <span class="text-uppercase text-secondary fs-7 fw-semibold tracking-wider">Billed To</span>
+                            <h5 class="fw-bold text-white mt-1 mb-1" id="modalOrganizerName">Organizer Name</h5>
+                            <p class="small text-secondary mb-0" id="modalOrganizerEmail">organizer@company.com</p>
+                        </div>
+                        <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                            <span class="text-uppercase text-secondary fs-7 fw-semibold tracking-wider">Payment Status</span>
+                            <p class="small text-secondary mb-0">Payment Method: <strong class="text-white">Offline Bank Transfer / PO</strong></p>
+                            <p class="small text-secondary">Due Date: <strong class="text-white" id="modalDueDate">2026-06-30</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- Line Items Table -->
+                    <div class="table-responsive mb-4">
+                        <table class="table table-dark table-striped align-middle border-secondary mb-0">
+                            <thead class="table-secondary text-uppercase small">
+                                <tr>
+                                    <th scope="col" class="py-2">Description</th>
+                                    <th scope="col" class="text-center py-2">Attendees</th>
+                                    <th scope="col" class="text-end py-2">Rate / Attendee</th>
+                                    <th scope="col" class="text-end py-2">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold text-white">Event Registration & Usage Platform Fee</div>
+                                        <div class="small text-secondary">Per-attendee usage for corporate events hosted</div>
+                                    </td>
+                                    <td class="text-center fw-semibold" id="modalAttendeeCount">0</td>
+                                    <td class="text-end" id="modalRatePerAttendee">₱ 0.00</td>
+                                    <td class="text-end fw-bold text-white" id="modalLineTotal">₱ 0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Summary & Total Math -->
+                    <div class="row justify-content-end">
+                        <div class="col-sm-6 col-md-5">
+                            <div class="d-flex justify-content-between py-1 border-bottom border-secondary">
+                                <span class="text-secondary small">Subtotal</span>
+                                <span class="fw-semibold text-white" id="modalSubtotal">₱ 0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1 border-bottom border-secondary">
+                                <span class="text-secondary small">Tax / VAT (0%)</span>
+                                <span class="text-secondary small">Included</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-2 mt-1 fs-5">
+                                <span class="fw-bold text-white">Total Amount</span>
+                                <span class="fw-bold text-success" id="modalTotalAmount">₱ 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Remittance Footnote -->
+                    <div class="mt-4 pt-3 border-top border-secondary text-secondary small">
+                        <p class="mb-0"><strong>Note:</strong> Invoices are generated automatically based on registered attendee usage. Payments must be settled via corporate wire transfer within 30 days of issuance.</p>
+                    </div>
+
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success fw-semibold" onclick="window.print()">Print / Export PDF</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch Monthly Generation Results Modal -->
+    <div class="modal fade" id="batchSummaryModal" tabindex="-1" aria-labelledby="batchSummaryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark text-light border-secondary">
+                
+                <!-- Header -->
+                <div class="modal-header border-secondary px-4 py-3">
+                    <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2" id="batchSummaryModalLabel">
+                        <span>Monthly Batch Invoices</span>
+                        <span id="batchPeriodBadge" class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 ms-2">June 2026</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Body Table -->
+                <div class="modal-body p-4">
+                    
+                    <!-- Batch Summary Stats Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-4">
+                            <div class="bg-secondary bg-opacity-10 border border-secondary p-3 rounded">
+                                <span class="text-secondary small d-block">Organizers Processed</span>
+                                <span class="fw-bold text-white fs-5" id="batchTotalCount">0</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="bg-secondary bg-opacity-10 border border-secondary p-3 rounded">
+                                <span class="text-secondary small d-block">Total Attendees Billed</span>
+                                <span class="fw-bold text-white fs-5" id="batchTotalAttendees">0</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="bg-secondary bg-opacity-10 border border-secondary p-3 rounded">
+                                <span class="text-secondary small d-block">Total Period Billed</span>
+                                <span class="fw-bold text-success fs-5" id="batchTotalAmount">₱ 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generated Invoices Table -->
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped align-middle border-secondary mb-0">
+                            <thead class="table-secondary text-uppercase small">
+                                <tr>
+                                    <th scope="col" class="py-2">Invoice #</th>
+                                    <th scope="col" class="py-2">Organizer</th>
+                                    <th scope="col" class="text-center py-2">Attendees</th>
+                                    <th scope="col" class="text-end py-2">Amount</th>
+                                    <th scope="col" class="text-center py-2">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="batchInvoicesTableBody">
+                                <!-- Invoices dynamically injected via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="errorToastBody">
+                    No record found.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5.3.8 JS Bundle CDN -->
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../js/billing/billing.js"></script>
+    <script src="../js/billing/invoices-table.js"></script>
+
 </body>
 </html>
