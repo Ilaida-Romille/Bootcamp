@@ -20,12 +20,12 @@ export class AuthRoutingService {
         const email = rawEmail.trim().toLowerCase();
 
         if (email.endsWith('@eventhub.com')) {
-            return ROUTE_PATHS.attendeeDashboard;
+            return ROUTE_PATHS.platformOwnerDashboard;
         }
 
         const isNamedOrgAdmin = email === 'admin@company.com';
         const isDomainAdmin =
-            email.startsWith('admin') && (email.includes('@foundation.') || email.includes('@school.'));
+            email.startsWith('admin') && (email.includes('@foundation.') || email.includes('@school.') || email.includes('@org'));
 
         if (isNamedOrgAdmin || isDomainAdmin) {
             return ROUTE_PATHS.organizerDashboard;
@@ -35,7 +35,7 @@ export class AuthRoutingService {
             email.includes('@company.com') || email.includes('@school.') || email.includes('@foundation.');
 
         if (isRegisteredCorporateDomain) {
-            return ROUTE_PATHS.upcomingEvents;
+            return ROUTE_PATHS.attendeeDashboard;
         }
 
         return null;

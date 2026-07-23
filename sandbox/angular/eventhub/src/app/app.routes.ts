@@ -8,14 +8,21 @@ export const ROUTE_PATHS = {
     landing: '',
     attendeeDashboard: 'dashboard',
     organizerDashboard: 'organizer/dashboard',
-    upcomingEvents: 'users/upcoming-events',
+    platformOwnerDashboard: 'platform-owner/dashboard',
+} as const;
+
+export const PLATFORM_ROUTE_PATHS = {
+    dashboard: 'dashboard',
+    organizers: 'organizers',
+    billing: 'billing',
+    tickets: 'tickets',
 } as const;
 
 export const routes: Routes = [
     {
         path: ROUTE_PATHS.landing,
         loadComponent: () =>
-            import('./features/landing/landing').then((m) => m.LandingComponent),
+            import('./features/landing/landing.component').then((m) => m.LandingComponent),
         title: 'EventHub | Sign In',
     },
     {
@@ -23,7 +30,7 @@ export const routes: Routes = [
         // stubbed so the routing logic is real and testable today.
         path: ROUTE_PATHS.attendeeDashboard,
         loadComponent: () =>
-            import('./features/attendee-upcoming-events/attendee-upcoming-events').then(
+            import('./features/attendee-upcoming-events/attendee-upcoming-events.component').then(
                 (m) => m.UpcomingEventsComponent,
             ),
         title: 'EventHub | Dashboard',
@@ -37,12 +44,39 @@ export const routes: Routes = [
         title: 'EventHub | Organizer Dashboard',
     },
     {
-        path: ROUTE_PATHS.upcomingEvents,
+        path: ROUTE_PATHS.platformOwnerDashboard,
         loadComponent: () =>
-            import('./features/platform-owner-dashboard/platform-owner-dashboard').then(
-                (m) => m.AttendeeDashboardComponent,
+            import('./features/platform/dashboard/dashboard.component').then(
+                (m) => m.PlatformOwnerDashboardComponent,
             ),
         title: 'EventHub | Upcoming Events',
     },
-    { path: '**', redirectTo: '' },
+
+    {
+        path: ROUTE_PATHS.platformOwnerDashboard,
+        children: [
+            { path: '', redirectTo: PLATFORM_ROUTE_PATHS.dashboard, pathMatch: 'full' },
+            {
+                path: PLATFORM_ROUTE_PATHS.dashboard,
+                loadComponent: () => import('./features/platform/dashboard/dashboard.component').then(m => m.PlatformOwnerDashboardComponent),
+                title: 'EventHub | Platform Owner Dashboard',
+            },
+            {
+                path: PLATFORM_ROUTE_PATHS.organizers,
+                loadComponent: () => import('./features/platform/organizers/organizers.component').then(m => m.OrganizersComponent),
+                title: 'EventHub | Organizers',
+            },
+            {
+                path: PLATFORM_ROUTE_PATHS.billing,
+                loadComponent: () => import('./features/platform/billing/billing.component').then(m => m.BillingComponent),
+                title: 'EventHub | Billing & Invoices',
+            },
+            {
+                path: PLATFORM_ROUTE_PATHS.tickets,
+                loadComponent: () => import('./features/platform/tickets/tickets.component').then(m => m.TicketsComponent),
+                title: 'EventHub | Tickets & Requests',
+            },  
+        ]
+    },
+    { path: '**', redirectTo: './features/landing.component' },
 ];
