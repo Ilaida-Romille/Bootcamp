@@ -87,21 +87,3 @@ body {
 .glass-data-table tbody tr:hover td {
   background-color: rgba(255, 255, 255, 0.02) !important;
 }
-
-.actions-cell a {
-  color: var(--accent-blue);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
-}
-
-.actions-cell a:hover {
-  color: var(--text-main);
-  text-shadow: 0 0 8px rgba(100, 181, 246, 0.4);
-}
-
-.action-divider {
-  color: rgba(255, 255, 255, 0.15);
-  margin: 0 0.4rem;
-  font-size: 0.85rem;
-}

@@ -1,82 +1,47 @@
 import { Routes } from '@angular/router';
 
-/**
- * Route paths kept in one place so AuthRoutingService and the router
- * table can never drift apart. Update a destination in exactly one spot.
- */
 export const ROUTE_PATHS = {
-    landing: '',
-    attendeeDashboard: 'dashboard',
-    organizerDashboard: 'organizer/dashboard',
-    platformOwnerDashboard: 'platform-owner/dashboard',
-} as const;
-
-export const PLATFORM_ROUTE_PATHS = {
-    dashboard: 'dashboard',
-    organizers: 'organizers',
-    billing: 'billing',
-    tickets: 'tickets',
+  landing: '',
+  attendee: 'dashboard',
+  organizer: 'organizer',
+  platformOwner: 'platform-owner',
 } as const;
 
 export const routes: Routes = [
-    {
-        path: ROUTE_PATHS.landing,
-        loadComponent: () =>
-            import('./features/landing/landing.component').then((m) => m.LandingComponent),
-        title: 'EventHub | Sign In',
-    },
-    {
-        // Not built yet — routed to on purpose per the "@eventhub.com" domain rule,
-        // stubbed so the routing logic is real and testable today.
-        path: ROUTE_PATHS.attendeeDashboard,
-        loadComponent: () =>
-            import('./features/attendee-upcoming-events/attendee-upcoming-events.component').then(
-                (m) => m.UpcomingEventsComponent,
-            ),
-        title: 'EventHub | Dashboard',
-    },
-    {
-        path: ROUTE_PATHS.organizerDashboard,
-        loadComponent: () =>
-            import('./features/organizer-dashboard/organizer-dashboard').then(
-                (m) => m.OrganizerDashboardComponent,
-            ),
-        title: 'EventHub | Organizer Dashboard',
-    },
-    {
-        path: ROUTE_PATHS.platformOwnerDashboard,
-        loadComponent: () =>
-            import('./features/platform/dashboard/dashboard.component').then(
-                (m) => m.PlatformOwnerDashboardComponent,
-            ),
-        title: 'EventHub | Upcoming Events',
-    },
+  // 1. Public / Auth Routes
+  {
+    path: ROUTE_PATHS.landing,
+    loadComponent: () =>
+      import('./features/landing/landing.component').then((m) => m.LandingComponent),
+    title: 'EventHub | Sign In',
+  },
 
-    {
-        path: ROUTE_PATHS.platformOwnerDashboard,
-        children: [
-            { path: '', redirectTo: PLATFORM_ROUTE_PATHS.dashboard, pathMatch: 'full' },
-            {
-                path: PLATFORM_ROUTE_PATHS.dashboard,
-                loadComponent: () => import('./features/platform/dashboard/dashboard.component').then(m => m.PlatformOwnerDashboardComponent),
-                title: 'EventHub | Platform Owner Dashboard',
-            },
-            {
-                path: PLATFORM_ROUTE_PATHS.organizers,
-                loadComponent: () => import('./features/platform/organizers/organizers.component').then(m => m.OrganizersComponent),
-                title: 'EventHub | Organizers',
-            },
-            {
-                path: PLATFORM_ROUTE_PATHS.billing,
-                loadComponent: () => import('./features/platform/billing/billing.component').then(m => m.BillingComponent),
-                title: 'EventHub | Billing & Invoices',
-            },
-            {
-                path: PLATFORM_ROUTE_PATHS.tickets,
-                loadComponent: () => import('./features/platform/tickets/tickets.component').then(m => m.TicketsComponent),
-                title: 'EventHub | Tickets & Requests',
-            },  
-        ]
-    },
-    { path: '**', redirectTo: './features/landing.component' },
+  // 2. Attendee Feature Section
+  {
+    path: ROUTE_PATHS.attendee,
+    loadChildren: () =>
+      import('./features/attendee/attendee.routes').then((m) => m.ATTENDEE_ROUTES),
+  },
+
+  // 3. Organizer Feature Section (with optional layout wrapper)
+  {
+    path: ROUTE_PATHS.organizer,
+    // loadComponent: () => import('./layouts/organizer-layout.component').then((m) => m.OrganizerLayoutComponent),
+    loadChildren: () =>
+      import('./features/organizer/organizer.routes').then((m) => m.ORGANIZER_ROUTES),
+  },
+
+  // 4. Platform Owner Feature Section (with Sidebar layout wrapper)
+  {
+    path: ROUTE_PATHS.platformOwner,
+    // loadComponent: () => import('./layouts/platform-layout.component').then((m) => m.PlatformLayoutComponent),
+    loadChildren: () =>
+      import('./features/platform/platform.routes').then((m) => m.PLATFORM_ROUTES),
+  },
+
+  // 5. Catch-all Wildcard Route
+  { 
+    path: '**', 
+    redirectTo: ROUTE_PATHS.landing 
+  },
 ];

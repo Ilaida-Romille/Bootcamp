@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UpcomingEventsComponent } from './attendee-upcoming-events.component';
+import { UpcomingEventsComponent } from './upcoming-events.component';
 
 describe('AttendeeplatformOwnerDashboard', () => {
   let component: UpcomingEventsComponent;
