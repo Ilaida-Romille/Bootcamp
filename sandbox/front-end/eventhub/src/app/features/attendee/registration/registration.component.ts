@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ATTENDEE_ROUTE_PATHS } from '../attendee.routes';
+import { ROUTE_PATHS } from '../../../app.routes';
 
 // Custom validator to disallow public webmail domains
 export function corporateEmailValidator(control: AbstractControl): ValidationErrors | null {
@@ -124,6 +125,6 @@ export class RegistrationComponent implements OnInit {
     localStorage.setItem('eventHub_currentEventId', this.eventId);
 
     // Navigate to Agenda page
-    this.router.navigate(['../', ATTENDEE_ROUTE_PATHS.agenda], { relativeTo: this.route });
+    this.router.navigate(['../', ROUTE_PATHS.attendee, ATTENDEE_ROUTE_PATHS.agenda]);
   }
 }
