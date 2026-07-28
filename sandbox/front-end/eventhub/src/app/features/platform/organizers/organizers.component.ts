@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarItem } from '../../../layout/sidebar/sidebar.component';
 import { ROUTE_PATHS } from '../../../app.routes';
 import { PLATFORM_ROUTE_PATHS } from '../platform.routes';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { OrganizersDataService, OrganizerStatus } from './services/organizers-data.service';
 
 export interface Company {
   id: string;
@@ -39,28 +40,47 @@ export class OrganizersComponent implements OnInit {
   selectedStatus: string = 'All';
   searchTerm: string = '';
   statusOptions: string[] = ['All', 'Active', 'Suspended', 'Pending'];
+  dataLoadingError: string = '';
 
   // Pagination State
   currentPage: number = 1;
   itemsPerPage: number = 5;
 
   // Data State
-  companies: Company[] = [
-    { id: '1', name: 'Tech Events Inc.', eventsCount: 12, status: 'Active' },
-    { id: '2', name: 'Global Summit Co.', eventsCount: 5, status: 'Pending' },
-    { id: '3', name: 'Alpha Logistics', eventsCount: 0, status: 'Suspended' },
-    { id: '1', name: 'Tech Events Inc.', eventsCount: 12, status: 'Pending' },
-    { id: '2', name: 'Global Summit Co.', eventsCount: 5, status: 'Pending' },
-    { id: '3', name: 'Alpha Logistics', eventsCount: 0, status: 'Active' },
-    { id: '1', name: 'Tech Events Inc.', eventsCount: 12, status: 'Active' },
-    { id: '2', name: 'Global Summit Co.', eventsCount: 5, status: 'Suspended' },
-    { id: '3', name: 'Alpha Logistics', eventsCount: 0, status: 'Suspended' }
-  ];
+  companies: Company[] = [];
 
   filteredCompanies: Company[] = [];
 
+  constructor(
+    private readonly organizersDataService: OrganizersDataService,
+    private readonly cdr: ChangeDetectorRef
+  ) {}
+
   ngOnInit(): void {
-    this.applyFilter();
+    this.loadOrganizers();
+  }
+
+  private loadOrganizers(): void {
+    this.dataLoadingError = '';
+
+    this.organizersDataService.getOrganizers().subscribe({
+      next: (organizers) => {
+        this.companies = organizers.map((organizer: OrganizerStatus) => ({
+          id: organizer.id,
+          name: organizer.name,
+          eventsCount: organizer.eventIds.length,
+          status: organizer.status
+        }));
+        this.applyFilter();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.companies = [];
+        this.filteredCompanies = [];
+        this.dataLoadingError = 'Unable to load organizers data from /data/organizers.json.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   toggleDropdown(): void {

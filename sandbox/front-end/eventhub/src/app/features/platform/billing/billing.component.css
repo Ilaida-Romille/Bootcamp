@@ -187,3 +187,29 @@
   margin: 0 0.4rem;
   font-size: 0.85rem;
 }
+
+.generation-dropup-menu {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.generation-option {
+  display: block;
+}
+
+.generation-option-name,
+.generation-option-id {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.generation-option-name {
+  font-weight: 600;
+}
+
+.generation-option-id {
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
