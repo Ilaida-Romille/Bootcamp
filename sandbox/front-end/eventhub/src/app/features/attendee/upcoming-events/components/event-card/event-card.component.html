@@ -1,0 +1,45 @@
+<div class="card-flip-wrapper h-100">
+  <input 
+    type="checkbox" 
+    [id]="'flip-toggle-' + event.id" 
+    class="card-flip-toggle" 
+    [checked]="isFlipped" 
+    (change)="toggleFlip()"
+  >
+  
+  <div class="card-flip-inner">
+    <!-- FRONT CARD -->
+    <div class="card-front event-card rounded-3">
+      <label [for]="'flip-toggle-' + event.id" class="card-flip-trigger" aria-label="View event stats"></label>
+      <div class="event-banner-placeholder rounded-top-3"></div>
+      <div class="event-details flex-grow-1">
+        <h2 class="event-title">{{ event.title }}</h2>
+        <p class="event-date">{{ event.date }}</p>
+        <p class="event-organizer">Organized by {{ event.organizer }}</p>
+        <button type="button" [routerLink]="['../', ATTENDEE_PATHS.registration, event.id]" class="btn btn-glass-outline event-btn rounded-2">Register Now</button>
+      </div>
+    </div>
+
+    <!-- BACK CARD (3D Flipped Stats) -->
+    <div class="card-back rounded-3">
+      <span class="back-badge">Event Metrics</span>
+      <ul class="back-stats list-unstyled">
+        <li>
+          <span class="stat-label">Category</span>
+          <span class="stat-value">{{ event.category }}</span>
+        </li>
+        <li>
+          <span class="stat-label">Capacity</span>
+          <span class="stat-value">{{ event.capacity }}</span>
+        </li>
+        <li>
+          <span class="stat-label">Status</span>
+          <span class="stat-value" [ngClass]="event.statusClass">{{ event.status }}</span>
+        </li>
+      </ul>
+      <button type="button" class="back-to-details-btn" (click)="toggleFlip()">
+        &larr; Back to Details
+      </button>
+    </div>
+  </div>
+</div>

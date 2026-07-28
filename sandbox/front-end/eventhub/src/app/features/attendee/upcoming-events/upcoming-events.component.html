@@ -1,1 +1,46 @@
-<p>attendee-upcoming-events.component works!</p>
+<main class="custom-attendee-container">
+  <h1 class="custom-page-title">Upcoming Events</h1>
+
+  <!-- Grid for events cards -->
+  <section class="row g-4 matches-events-grid" id="eventsGridContainer">
+    <div class="col-12 col-md-6 col-lg-4" *ngFor="let eventItem of events">
+      <app-event-card [event]="eventItem"></app-event-card>
+    </div>
+  </section>
+
+  <!-- Pagination Section -->
+  <div class="d-flex justify-content-center">
+    <nav class="custom-pagination-container" aria-label="Page Navigation">
+      
+      <button 
+        type="button" 
+        class="custom-page-link page-control" 
+        [class.page-disabled]="currentPage === 1"
+        [disabled]="currentPage === 1"
+        (click)="setPage(currentPage - 1)">
+        « Prev
+      </button>
+      
+      <div class="custom-page-numbers-wrapper">
+        <button 
+          type="button"
+          *ngFor="let page of pages" 
+          class="custom-page-link" 
+          [class.page-active]="page === currentPage"
+          (click)="setPage(page)">
+          {{ page }}
+        </button>
+      </div>
+      
+      <button 
+        type="button" 
+        class="custom-page-link page-control" 
+        [class.page-disabled]="currentPage === totalPages"
+        [disabled]="currentPage === totalPages"
+        (click)="setPage(currentPage + 1)">
+        Next »
+      </button>
+      
+    </nav>
+  </div>
+</main>
