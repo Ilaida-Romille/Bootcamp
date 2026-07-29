@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
   ReactiveFormsModule, 
@@ -10,7 +10,9 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ATTENDEE_ROUTE_PATHS } from '../attendee.routes';
-import { ROUTE_PATHS } from '../../../app.routes';
+import { EventsDataService } from '../services/events-data.service';
+import { RegistrationService } from '../services/registration.service';
+import { EventDetail } from '../models/attendee.model';
 
 // Custom validator to disallow public webmail domains
 export function corporateEmailValidator(control: AbstractControl): ValidationErrors | null {
@@ -31,22 +33,24 @@ export function corporateEmailValidator(control: AbstractControl): ValidationErr
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly eventsDataService = inject(EventsDataService);
+  private readonly registrationService = inject(RegistrationService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   readonly ATTENDEE_PATHS = ATTENDEE_ROUTE_PATHS;
 
   eventId: string | null = null;
-  eventTitle = 'Loading Event...';
-  eventDate = '---';
-  eventLocation = '---';
-
+  event: EventDetail | null = null;
   registrationForm!: FormGroup;
+  isSubmitting = false;
+  submissionError = '';
 
   ngOnInit(): void {
     this.initForm();
-    this.readQueryParams();
+    this.readRouteParams();
   }
 
   private initForm(): void {
@@ -68,12 +72,28 @@ export class RegistrationComponent implements OnInit {
     });
   }
 
-  private readQueryParams(): void {
-    this.route.queryParamMap.subscribe((params) => {
-      this.eventId = params.get('eventId') || params.get('id') || '1';
-      this.eventTitle = params.get('title') || 'Tech Summit 2026';
-      this.eventDate = params.get('date') || 'October 12, 2026';
-      this.eventLocation = params.get('location') || 'Main Auditorium';
+  private readRouteParams(): void {
+    this.route.paramMap.subscribe((params) => {
+      this.eventId = params.get('id');
+      if (this.eventId) {
+        this.loadEventDetails();
+      }
+    });
+  }
+
+  private loadEventDetails(): void {
+    if (!this.eventId) return;
+
+    this.eventsDataService.getEventById(this.eventId).subscribe({
+      next: (event) => {
+        this.event = event;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.event = null;
+        this.submissionError = 'Unable to load event details.';
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -83,48 +103,32 @@ export class RegistrationComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.registrationForm.invalid) {
+    if (this.registrationForm.invalid || !this.eventId) {
       this.registrationForm.markAllAsTouched();
       return;
     }
 
-    if (!this.eventId) {
-      console.error('No Event ID found.');
+    const email = this.registrationForm.value.emailAddress.trim().toLowerCase();
+
+    // Check for duplicate registration
+    if (this.registrationService.isEmailRegisteredForEvent(email, this.eventId)) {
+      this.submissionError = 'This email is already registered for this event.';
       return;
     }
 
-    const formValues = this.registrationForm.value;
-    const email = formValues.emailAddress.trim().toLowerCase();
+    this.isSubmitting = true;
+    this.submissionError = '';
 
-    // Retrieve existing registrants array from localStorage
-    const existingRegistrantsRaw = localStorage.getItem('eventHub_registrants');
-    let registrants: any[] = existingRegistrantsRaw ? JSON.parse(existingRegistrantsRaw) : [];
+    this.registrationService.registerAttendee({
+      eventId: this.eventId,
+      fullName: this.registrationForm.value.fullName.trim(),
+      emailAddress: email,
+      companyDept: this.registrationForm.value.companyDept.trim(),
+      dietary: this.registrationForm.value.dietary.trim(),
+      additionalNotes: this.registrationForm.value.additionalNotes.trim()
+    });
 
-    // Check if email already registered for this event
-    const isAlreadyRegistered = registrants.some(
-      (attendee) => attendee.email.toLowerCase() === email && attendee.eventId === this.eventId
-    );
-
-    if (!isAlreadyRegistered) {
-      const newRegistrant = {
-        id: `ATT-${Date.now().toString().slice(-4)}`,
-        name: formValues.fullName.trim(),
-        email: email,
-        company: formValues.companyDept.trim(),
-        dietaryRestrictions: formValues.dietary.trim(),
-        additionalNotes: formValues.additionalNotes.trim(),
-        eventId: this.eventId,
-        registeredAt: new Date().toISOString()
-      };
-
-      registrants.push(newRegistrant);
-      localStorage.setItem('eventHub_registrants', JSON.stringify(registrants));
-    }
-
-    // Set current active event ID
-    localStorage.setItem('eventHub_currentEventId', this.eventId);
-
-    // Navigate to Agenda page
-    this.router.navigate(['../', ROUTE_PATHS.attendee, ATTENDEE_ROUTE_PATHS.agenda]);
+    // Navigate to agenda with event ID using absolute path
+    this.router.navigate(['/dashboard', ATTENDEE_ROUTE_PATHS.agenda, this.eventId]);
   }
 }

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EventCardComponent } from './components/event-card/event-card.component';
-import { EventItem } from '../../../core/models/event.model';
+import { EventsDataService } from '../services/events-data.service';
+import { EventItemDisplay, EventDetail } from '../models/attendee.model';
 
 @Component({
   selector: 'app-upcoming-events',
@@ -12,81 +13,54 @@ import { EventItem } from '../../../core/models/event.model';
 })
 export class UpcomingEventsComponent implements OnInit {
   currentPage = 1;
-  totalPages = 3;
-  pages: number[] = [1, 2, 3];
+  itemsPerPage = 6;
+  totalPages = 1;
+  pages: number[] = [];
 
-  events: EventItem[] = [];
+  events: EventItemDisplay[] = [];
+  allEvents: EventDetail[] = [];
+  dataLoadingError: string = '';
+
+  constructor(
+    private readonly eventsDataService: EventsDataService,
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    // Populate dummy events (or fetch from API service)
-    this.events = [
-      {
-        id: 1,
-        title: 'Tech Summit 2026',
-        date: 'October 12, 2026',
-        organizer: 'Innovation Labs',
-        category: 'Technology',
-        capacity: '450 / 500',
-        status: 'Filling Fast',
-        statusClass: 'status-filling'
+    this.loadEvents();
+  }
+
+  private loadEvents(): void {
+    this.dataLoadingError = '';
+
+    this.eventsDataService.getEvents().subscribe({
+      next: (events: EventDetail[]) => {
+        this.allEvents = events;
+        this.events = events.map((e) => this.eventsDataService.mapToDisplayEvent(e));
+        this.calculatePagination();
+        this.cdr.detectChanges();
       },
-      {
-        id: 2,
-        title: 'Global Leadership Conference',
-        date: 'November 05, 2026',
-        organizer: 'Enterprise Core',
-        category: 'Management',
-        capacity: '200 / 200',
-        status: 'Full',
-        statusClass: 'status-full'
-      },
-      {
-        id: 3,
-        title: 'AI & Future of Work Forum',
-        date: 'December 01, 2026',
-        organizer: 'Data Dynamics',
-        category: 'AI & Data',
-        capacity: '120 / 300',
-        status: 'Open',
-        statusClass: 'status-open'
-      },
-      {
-        id: 4,
-        title: 'Tech Summit 2026',
-        date: 'October 12, 2026',
-        organizer: 'Innovation Labs',
-        category: 'Technology',
-        capacity: '450 / 500',
-        status: 'Filling Fast',
-        statusClass: 'status-filling'
-      },
-      {
-        id: 5,
-        title: 'AI & Future of Work Forum',
-        date: 'December 01, 2026',
-        organizer: 'Data Dynamics',
-        category: 'AI & Data',
-        capacity: '120 / 300',
-        status: 'Open',
-        statusClass: 'status-open'
-      },
-      {
-        id: 6,
-        title: 'Global Leadership Conference',
-        date: 'November 05, 2026',
-        organizer: 'Enterprise Core',
-        category: 'Management',
-        capacity: '200 / 200',
-        status: 'Full',
-        statusClass: 'status-full'
+      error: () => {
+        this.dataLoadingError = 'Unable to load events from /data/events.json.';
+        this.cdr.detectChanges();
       }
-    ];
+    });
+  }
+
+  private calculatePagination(): void {
+    this.totalPages = Math.ceil(this.events.length / this.itemsPerPage);
+    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    this.currentPage = 1;
+  }
+
+  get paginatedEvents(): EventItemDisplay[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.events.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
   setPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      // Trigger pagination data load logic here
     }
   }
 }

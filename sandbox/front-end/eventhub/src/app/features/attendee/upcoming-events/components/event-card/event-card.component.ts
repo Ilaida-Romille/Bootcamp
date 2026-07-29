@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EventItem } from '../../../../../core/models/event.model';
 import { RouterLink } from '@angular/router';
 import { ATTENDEE_ROUTE_PATHS } from '../../../attendee.routes';
+import { EventItemDisplay } from '../../../models/attendee.model';
 
 @Component({
   selector: 'app-event-card',
@@ -12,14 +12,17 @@ import { ATTENDEE_ROUTE_PATHS } from '../../../attendee.routes';
   styleUrls: ['./event-card.component.css']
 })
 export class EventCardComponent {
-  @Input({ required: true }) event!: EventItem;
+  @Input({ required: true }) event!: EventItemDisplay;
 
   readonly ATTENDEE_PATHS = ATTENDEE_ROUTE_PATHS;
   
-  // Controls pure 3D flip card toggle via state or unique CSS ID dynamically
   isFlipped = false;
 
   toggleFlip(): void {
     this.isFlipped = !this.isFlipped;
+  }
+
+  get capacityDisplay(): string {
+    return `${this.event.currentAttendees} / ${this.event.capacity}`;
   }
 }

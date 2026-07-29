@@ -26,7 +26,7 @@ export const ATTENDEE_ROUTES: Routes = [
         title: 'EventHub | Registration'
       },
       {
-        path: ATTENDEE_ROUTE_PATHS.agenda,
+        path: `${ATTENDEE_ROUTE_PATHS.agenda}/:eventId`,
         loadComponent: () =>
           import('./agenda/agenda.component').then((m) => m.AgendaComponent),
         title: 'EventHub | Agenda'

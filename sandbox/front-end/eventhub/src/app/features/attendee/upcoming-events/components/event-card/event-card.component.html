@@ -14,9 +14,9 @@
       <div class="event-banner-placeholder rounded-top-3"></div>
       <div class="event-details flex-grow-1">
         <h2 class="event-title">{{ event.title }}</h2>
-        <p class="event-date">{{ event.date }}</p>
-        <p class="event-organizer">Organized by {{ event.organizer }}</p>
-        <button type="button" [routerLink]="['../', ATTENDEE_PATHS.registration, event.id]" class="btn btn-glass-outline event-btn rounded-2">Register Now</button>
+        <p class="event-date">{{ event.date | date:'MMM dd, yyyy' }}</p>
+        <p class="event-organizer">Organized by {{ event.organizerName }}</p>
+        <button type="button" [routerLink]="['/dashboard', ATTENDEE_PATHS.registration, event.id]" class="btn btn-glass-outline event-btn rounded-2">Register Now</button>
       </div>
     </div>
 
@@ -25,12 +25,12 @@
       <span class="back-badge">Event Metrics</span>
       <ul class="back-stats list-unstyled">
         <li>
-          <span class="stat-label">Category</span>
-          <span class="stat-value">{{ event.category }}</span>
+          <span class="stat-label">Capacity</span>
+          <span class="stat-value">{{ capacityDisplay }}</span>
         </li>
         <li>
-          <span class="stat-label">Capacity</span>
-          <span class="stat-value">{{ event.capacity }}</span>
+          <span class="stat-label">Remaining Slots</span>
+          <span class="stat-value">{{ event.remainingSlots }}</span>
         </li>
         <li>
           <span class="stat-label">Status</span>

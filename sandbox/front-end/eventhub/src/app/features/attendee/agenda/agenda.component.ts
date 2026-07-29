@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-// Import Child Components
+import { ActivatedRoute } from '@angular/router';
 import { AgendaTimelineComponent, AgendaItem } from './components/agenda-timeline/agenda-timeline.component';
-import { AttendeeListWidgetComponent, Attendee } from './components/attendee-list-widget/attendee-list-widget.component';
+import { AttendeeListWidgetComponent } from './components/attendee-list-widget/attendee-list-widget.component';
 import { VenueMapWidgetComponent } from './components/venue-map-widget/venue-map-widget.component';
 import { ContactOrganizerWidgetComponent } from './components/contact-organizer-widget/contact-organizer-widget.component';
+import { RegistrationService } from '../services/registration.service';
+import { RegisteredAttendee } from '../models/attendee.model';
 
 @Component({
   selector: 'app-agenda',
@@ -21,6 +22,11 @@ import { ContactOrganizerWidgetComponent } from './components/contact-organizer-
   styleUrls: ['./agenda.component.css']
 })
 export class AgendaComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly registrationService = inject(RegistrationService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  eventId: string | null = null;
   agendaItems: AgendaItem[] = [
     { time: '9:00 AM', details: 'Registration & Welcome Coffee' },
     { time: '9:30 AM', details: 'Opening Keynote — Main Hall' },
@@ -30,21 +36,31 @@ export class AgendaComponent implements OnInit {
     { time: '4:00 PM', details: 'Closing Remarks' }
   ];
 
-  attendees: Attendee[] = [];
+  attendees: RegisteredAttendee[] = [];
+  loadingError: string = '';
 
   ngOnInit(): void {
-    this.loadRegistrants();
+    this.route.paramMap.subscribe((params) => {
+      this.eventId = params.get('eventId');
+      if (this.eventId) {
+        this.loadAttendees();
+      }
+    });
   }
 
-  private loadRegistrants(): void {
-    const activeEventId = localStorage.getItem('eventHub_currentEventId') || '1';
-    const registrantsRaw = localStorage.getItem('eventHub_registrants');
+  private loadAttendees(): void {
+    if (!this.eventId) return;
 
-    if (registrantsRaw) {
-      const allRegistrants: Attendee[] = JSON.parse(registrantsRaw);
-      this.attendees = allRegistrants.filter(
-        (attendee: any) => attendee.eventId === activeEventId
-      );
-    }
+    this.registrationService.getRegistrationsByEventId(this.eventId).subscribe({
+      next: (attendees) => {
+        this.attendees = attendees;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.attendees = [];
+        this.loadingError = 'Unable to load attendees.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

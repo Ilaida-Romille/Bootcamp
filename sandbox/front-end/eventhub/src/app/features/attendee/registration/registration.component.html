@@ -2,14 +2,18 @@
   
   <!-- Event Summary Up Top -->
   <div class="event-summary-card rounded-1">
-    <h1 class="event-display-title">{{ eventTitle }}</h1>
+    <h1 class="event-display-title">{{ event?.title || 'Loading...' }}</h1>
     <div class="event-display-meta">
-      <span>{{ eventDate }}</span> 
+      <span>{{ (event?.date | date:'MMM dd, yyyy') ?? '---' }}</span> 
       <span class="meta-divider">•</span> 
       <span>9:00 AM — 5:00 PM</span> 
       <span class="meta-divider">•</span> 
-      <span>{{ eventLocation }}</span>
+      <span>{{ event?.organizerName || '---' }}</span>
     </div>
+  </div>
+
+  <div *ngIf="submissionError" class="alert alert-danger" role="alert">
+    {{ submissionError }}
   </div>
 
   <!-- Forms Section -->
@@ -29,7 +33,7 @@
             class="form-input rounded-1" 
             [class.is-invalid]="f['fullName'].touched && f['fullName'].invalid"
           >
-          <span class="field-error" *if="f['fullName'].touched && f['fullName'].invalid">
+          <span class="field-error" *ngIf="f['fullName'].touched && f['fullName'].invalid">
             This field is required.
           </span>
         </div>
@@ -44,12 +48,12 @@
             placeholder="you@company.com"
             [class.is-invalid]="f['emailAddress'].touched && f['emailAddress'].invalid"
           >
-          <div class="field-error" *if="f['emailAddress'].touched && f['emailAddress'].invalid">
-            <span *if="f['emailAddress'].errors?.['required']">Email is required.</span>
-            <span *if="f['emailAddress'].errors?.['email'] || f['emailAddress'].errors?.['minlength'] || f['emailAddress'].errors?.['maxlength']">
+          <div class="field-error" *ngIf="f['emailAddress'].touched && f['emailAddress'].invalid">
+            <span *ngIf="f['emailAddress'].errors?.['required']">Email is required.</span>
+            <span *ngIf="f['emailAddress'].errors?.['email'] || f['emailAddress'].errors?.['minlength'] || f['emailAddress'].errors?.['maxlength']">
               Email must be 15-100 characters in standard email format.
             </span>
-            <span *if="f['emailAddress'].errors?.['publicEmailNotAllowed']">
+            <span *ngIf="f['emailAddress'].errors?.['publicEmailNotAllowed']">
               Please use a valid corporate email address (public webmail domains are not allowed).
             </span>
           </div>
@@ -67,7 +71,7 @@
             class="form-input rounded-1"
             [class.is-invalid]="f['companyDept'].touched && f['companyDept'].invalid"
           >
-          <span class="field-error" *if="f['companyDept'].touched && f['companyDept'].invalid">
+          <span class="field-error" *ngIf="f['companyDept'].touched && f['companyDept'].invalid">
             This field is required.
           </span>
         </div>
@@ -97,15 +101,15 @@
       <!-- Form Action Buttons Block -->
       <div class="custom-form-actions">
         <a 
-          [routerLink]="['../', ATTENDEE_PATHS.events]" 
+          [routerLink]="['/dashboard', ATTENDEE_PATHS.events]" 
           class="btn btn-outline-light action-btn rounded-1">
           Cancel
         </a>
         <button 
           type="submit" 
-          [disabled]="registrationForm.invalid" 
+          [disabled]="registrationForm.invalid || isSubmitting" 
           class="btn btn-dark action-btn rounded-1">
-          Register
+          {{ isSubmitting ? 'Registering...' : 'Register' }}
         </button>
       </div>
 

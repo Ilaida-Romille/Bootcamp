@@ -1,9 +1,13 @@
 <main class="custom-attendee-container">
   <h1 class="custom-page-title">Upcoming Events</h1>
 
+  <div *ngIf="dataLoadingError" class="alert alert-danger" role="alert">
+    {{ dataLoadingError }}
+  </div>
+
   <!-- Grid for events cards -->
   <section class="row g-4 matches-events-grid" id="eventsGridContainer">
-    <div class="col-12 col-md-6 col-lg-4" *ngFor="let eventItem of events">
+    <div class="col-12 col-md-6 col-lg-4" *ngFor="let eventItem of paginatedEvents">
       <app-event-card [event]="eventItem"></app-event-card>
     </div>
   </section>
