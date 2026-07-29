@@ -16,7 +16,7 @@
             </nav>
 
             <!-- User Dropdown Section -->
-            <div class="navbar-nav mt-3 mt-md-0" *ngIf="currentRole">
+            <div class="navbar-nav mt-3 mt-md-0" *ngIf="currentRole && !isOnLandingPage">
                 <div class="nav-item dropdown">
                     <button 
                         class="btn btn-link nav-link dropdown-toggle text-secondary"

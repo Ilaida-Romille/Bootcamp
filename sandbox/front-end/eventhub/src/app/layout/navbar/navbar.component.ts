@@ -1,7 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { SessionService } from '../../core/services/session.service';
 import { SessionUtilityService } from '../../core/services/session-utility.service';
 import { NavbarContextService, NavbarContext } from '../../core/services/navbar-context.service';
@@ -29,12 +30,14 @@ export class NavbarComponent implements OnInit {
   private readonly sessionService = inject(SessionService);
   private readonly sessionUtility = inject(SessionUtilityService);
   private readonly navbarContext = inject(NavbarContextService);
+  private readonly router = inject(Router);
 
   session$!: Observable<Session | null>;
   navbarContext$!: Observable<NavbarContext>;
   navItems: NavItem[] = [];
   currentRole: UserRole | null = null;
   dropdownOpen = false;
+  isOnLandingPage = false;
 
   ngOnInit(): void {
     this.session$ = this.sessionService.getSession();
@@ -50,6 +53,13 @@ export class NavbarComponent implements OnInit {
     this.navbarContext$.subscribe(() => {
       this.updateNavItems();
     });
+
+    // Subscribe to route changes to update navbar when navigating
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.updateNavItems();
+    });
   }
 
   /**
@@ -57,8 +67,21 @@ export class NavbarComponent implements OnInit {
    */
   private updateNavItems(): void {
     const context = this.navbarContext.getCurrentContext();
-    const landingPageLinks: NavItem[] = [{label: 'About', route: null}, {label: 'How it Works', route: null}, {label: 'Contact', route: null}]
+    const landingPageLinks: NavItem[] = [
+      { label: 'About', route: null },
+      { label: 'How it Works', route: null },
+      { label: 'Contact', route: null }
+    ];
 
+    // If on landing page, always show landing page links regardless of session state
+    if (this.router.url === '' || this.router.url === '/') {
+      this.navItems = landingPageLinks;
+      this.isOnLandingPage = true;
+      return;
+    }
+
+    // Otherwise, show role-based nav items
+    this.isOnLandingPage = false;
     switch (this.currentRole) {
       case 'organizer':
         this.navItems = this.getOrganizerNavItems();
