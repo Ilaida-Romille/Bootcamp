@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthRoutingService } from '../../../../core/services/auth-routing.service';
+import { SessionService } from '../../../../core/services/session.service';
 import {
   EMAIL_MAX_LENGTH,
   EMAIL_MIN_LENGTH,
@@ -28,6 +29,7 @@ export class LoginFormComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly authRouting = inject(AuthRoutingService);
+  private readonly sessionService = inject(SessionService);
 
   /** Whether the login column has been revealed by the hero's "Get Started" button. */
   readonly started = input(false);
@@ -74,15 +76,27 @@ export class LoginFormComponent {
     }
 
     const { email, password: _password } = this.form.getRawValue();
-    const destination = this.authRouting.resolveRoute(email);
-
-    if (!destination) {
+    
+    // Resolve the user's role based on email
+    const role = this.authRouting.resolveRole(email);
+    if (!role) {
       this.accessDeniedMessage.set(
         'This corporate domain or email configuration is unregistered. Contact your organization admin for access.',
       );
       return;
     }
 
-    this.router.navigateByUrl(destination);
+    // Create a new session
+    this.sessionService.login({
+      email,
+      password: _password,
+      role
+    });
+
+    // Navigate to the appropriate destination
+    const destination = this.authRouting.resolveRoute(email);
+    if (destination) {
+      this.router.navigateByUrl(destination);
+    }
   }
 }

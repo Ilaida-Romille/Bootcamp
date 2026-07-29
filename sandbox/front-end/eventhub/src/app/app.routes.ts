@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const ROUTE_PATHS = {
   landing: '',
@@ -16,25 +18,29 @@ export const routes: Routes = [
     title: 'EventHub | Sign In',
   },
 
-  // 2. Attendee Feature Section
+  // 2. Attendee Feature Section (Protected - requires login as attendee)
   {
     path: ROUTE_PATHS.attendee,
+    canActivate: [authGuard, roleGuard],
+    data: { requiredRole: 'attendee' },
     loadChildren: () =>
       import('./features/attendee/attendee.routes').then((m) => m.ATTENDEE_ROUTES),
   },
 
-  // 3. Organizer Feature Section (with optional layout wrapper)
+  // 3. Organizer Feature Section (Protected - requires login as organizer)
   {
     path: ROUTE_PATHS.organizer,
-    // loadComponent: () => import('./layouts/organizer-layout.component').then((m) => m.OrganizerLayoutComponent),
+    canActivate: [authGuard, roleGuard],
+    data: { requiredRole: 'organizer' },
     loadChildren: () =>
       import('./features/organizer/organizer.routes').then((m) => m.ORGANIZER_ROUTES),
   },
 
-  // 4. Platform Owner Feature Section (with Sidebar layout wrapper)
+  // 4. Platform Owner Feature Section (Protected - requires login as platformOwner)
   {
     path: ROUTE_PATHS.platformOwner,
-    // loadComponent: () => import('./layouts/platform-layout.component').then((m) => m.PlatformLayoutComponent),
+    canActivate: [authGuard, roleGuard],
+    data: { requiredRole: 'platformOwner' },
     loadChildren: () =>
       import('./features/platform/platform.routes').then((m) => m.PLATFORM_ROUTES),
   },
