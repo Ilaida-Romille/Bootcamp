@@ -6,11 +6,40 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
-            <nav class="navbar-nav gap-2 mt-3 mt-md-0">
-                <a href="#" class="nav-link text-secondary">About</a>
-                <a href="#" class="nav-link text-secondary">How It Works</a>
-                <a href="#" class="nav-link text-secondary">Contact</a>
+            <!-- Role-based Navigation Items -->
+            <nav class="navbar-nav gap-3 mt-3 mt-md-0">
+                <span *ngFor="let item of navItems" 
+                   
+                   class="nav-link text-secondary">
+                    {{ item.label }}
+                </span>
             </nav>
+
+            <!-- User Dropdown Section -->
+            <div class="navbar-nav mt-3 mt-md-0" *ngIf="currentRole">
+                <div class="nav-item dropdown">
+                    <button 
+                        class="btn btn-link nav-link dropdown-toggle text-secondary"
+                        type="button"
+                        id="userDropdown"
+                        (click)="toggleDropdown()"
+                        aria-expanded="false">
+                        {{ dropdownLabel }}
+                    </button>
+                    <ul class="dropdown-menu" 
+                        [ngClass]="{ 'show': dropdownOpen }"
+                        aria-labelledby="userDropdown">
+                        <li>
+                            <button 
+                                type="button"
+                                (click)="onLogout()"
+                                class="dropdown-item">
+                                Logout
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </header>

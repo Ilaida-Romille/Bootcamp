@@ -6,7 +6,9 @@ import { AttendeeListWidgetComponent } from './components/attendee-list-widget/a
 import { VenueMapWidgetComponent } from './components/venue-map-widget/venue-map-widget.component';
 import { ContactOrganizerWidgetComponent } from './components/contact-organizer-widget/contact-organizer-widget.component';
 import { RegistrationService } from '../services/registration.service';
-import { RegisteredAttendee } from '../models/attendee.model';
+import { EventsDataService } from '../services/events-data.service';
+import { NavbarContextService } from '../../../core/services/navbar-context.service';
+import { RegisteredAttendee, EventDetail } from '../models/attendee.model';
 
 @Component({
   selector: 'app-agenda',
@@ -24,9 +26,12 @@ import { RegisteredAttendee } from '../models/attendee.model';
 export class AgendaComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly registrationService = inject(RegistrationService);
+  private readonly eventsDataService = inject(EventsDataService);
+  private readonly navbarContext = inject(NavbarContextService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   eventId: string | null = null;
+  eventDetail: EventDetail | null = null;
   agendaItems: AgendaItem[] = [
     { time: '9:00 AM', details: 'Registration & Welcome Coffee' },
     { time: '9:30 AM', details: 'Opening Keynote — Main Hall' },
@@ -41,9 +46,28 @@ export class AgendaComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
-      this.eventId = params.get('eventId');
-      if (this.eventId) {
+      const id = params.get('eventId');
+      if (id && id !== this.eventId) {
+        this.eventId = id;
+        this.loadEventDetails();
         this.loadAttendees();
+      }
+    });
+  }
+
+  private loadEventDetails(): void {
+    if (!this.eventId) return;
+
+    this.eventsDataService.getEventById(this.eventId).subscribe({
+      next: (event) => {
+        this.eventDetail = event;
+        // Update navbar with event name
+        this.navbarContext.setEventName(event.title);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.eventDetail = null;
+        this.cdr.detectChanges();
       }
     });
   }

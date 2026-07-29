@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EventCardComponent } from './components/event-card/event-card.component';
 import { EventsDataService } from '../services/events-data.service';
+import { NavbarContextService } from '../../../core/services/navbar-context.service';
 import { EventItemDisplay, EventDetail } from '../models/attendee.model';
 
 @Component({
@@ -23,10 +24,14 @@ export class UpcomingEventsComponent implements OnInit {
 
   constructor(
     private readonly eventsDataService: EventsDataService,
+    private readonly navbarContext: NavbarContextService,
     private readonly cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    // Update navbar context for events page
+    this.navbarContext.setCurrentPage('events');
+    this.navbarContext.setEventName(null);
     this.loadEvents();
   }
 

@@ -12,6 +12,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ATTENDEE_ROUTE_PATHS } from '../attendee.routes';
 import { EventsDataService } from '../services/events-data.service';
 import { RegistrationService } from '../services/registration.service';
+import { NavbarContextService } from '../../../core/services/navbar-context.service';
 import { EventDetail } from '../models/attendee.model';
 
 // Custom validator to disallow public webmail domains
@@ -38,6 +39,7 @@ export class RegistrationComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly eventsDataService = inject(EventsDataService);
   private readonly registrationService = inject(RegistrationService);
+  private readonly navbarContext = inject(NavbarContextService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   readonly ATTENDEE_PATHS = ATTENDEE_ROUTE_PATHS;
@@ -76,6 +78,9 @@ export class RegistrationComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       this.eventId = params.get('id');
       if (this.eventId) {
+        // Update navbar context for registration page
+        this.navbarContext.setCurrentPage('registration');
+        this.navbarContext.setEventName(null);
         this.loadEventDetails();
       }
     });
