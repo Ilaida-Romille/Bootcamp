@@ -1,0 +1,145 @@
+<section class="organizer-employees-page">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h1 class="h2 fw-bold text-white mb-1">Manage Employees</h1>
+      <p class="text-secondary mb-0">Data source: Employees API (/api/employees)</p>
+    </div>
+    <button type="button" class="btn btn-outline-light btn-sm" (click)="loadEmployees()" [disabled]="isLoading || isLookupLoading">
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="dataLoadingError" class="alert alert-danger" role="alert">
+    {{ dataLoadingError }}
+  </div>
+
+  <div *ngIf="isLoading" class="alert alert-info">
+    Loading employees...
+  </div>
+
+  <form class="row g-3 align-items-end mb-4" (submit)="$event.preventDefault(); applyFilters()">
+    <div class="col-12 col-lg-4">
+      <label class="form-label small text-secondary" for="employeeSearch">Search</label>
+      <input
+        id="employeeSearch"
+        type="text"
+        class="form-control glass-form-input"
+        name="employeeSearch"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilters()"
+        placeholder="Name, email, or job title" />
+    </div>
+
+    <div class="col-6 col-lg-2">
+      <label class="form-label small text-secondary" for="companyFilter">Company</label>
+      <select
+        id="companyFilter"
+        class="form-select glass-form-input"
+        name="companyFilter"
+        [(ngModel)]="selectedCompany"
+        (ngModelChange)="applyFilters()">
+        <option *ngFor="let option of companyOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div class="col-6 col-lg-2">
+      <label class="form-label small text-secondary" for="departmentFilter">Department</label>
+      <select
+        id="departmentFilter"
+        class="form-select glass-form-input"
+        name="departmentFilter"
+        [(ngModel)]="selectedDepartment"
+        (ngModelChange)="applyFilters()">
+        <option *ngFor="let option of departmentOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-lg-2">
+      <label class="form-label small text-secondary" for="eventFilter">Registered Event ID</label>
+      <input
+        id="eventFilter"
+        type="text"
+        class="form-control glass-form-input"
+        name="eventFilter"
+        [(ngModel)]="eventIdFilter"
+        (ngModelChange)="applyFilters()"
+        placeholder="evt_001" />
+    </div>
+
+    <div class="col-12 col-lg-2 d-flex gap-2">
+      <button type="button" class="btn btn-dark w-100" (click)="clearLookupAndFilters()">Reset</button>
+    </div>
+  </form>
+
+  <form class="row g-3 align-items-end mb-4" (submit)="$event.preventDefault(); lookupById()">
+    <div class="col-12 col-md-7 col-lg-8">
+      <label class="form-label small text-secondary" for="employeeIdLookup">Get Employee by ID (GET /employees/&#123;id&#125;)</label>
+      <input
+        id="employeeIdLookup"
+        type="text"
+        class="form-control glass-form-input"
+        name="employeeIdLookup"
+        [(ngModel)]="employeeIdQuery"
+        placeholder="emp_001" />
+    </div>
+    <div class="col-6 col-md-3 col-lg-2">
+      <button type="submit" class="btn btn-primary w-100" [disabled]="isLookupLoading || !employeeIdQuery.trim()">
+        {{ isLookupLoading ? 'Loading...' : 'Find by ID' }}
+      </button>
+    </div>
+    <div class="col-6 col-md-2 col-lg-2">
+      <button type="button" class="btn btn-outline-light w-100" (click)="applyFilters()" [disabled]="isLookupLoading">
+        Back to List
+      </button>
+    </div>
+  </form>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <small class="text-secondary">
+      Showing {{ filteredEmployees.length }} employee(s)
+      <span *ngIf="isLookupMode">from ID lookup</span>
+    </small>
+  </div>
+
+  <div class="glass-table-responsive rounded-3">
+    <table class="table glass-data-table mb-0 align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Employee</th>
+          <th scope="col">Email</th>
+          <th scope="col">Company</th>
+          <th scope="col">Department</th>
+          <th scope="col">Job Title</th>
+          <th scope="col">Registered Events</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of paginatedEmployees">
+          <td>
+            <div class="fw-semibold text-white">{{ employee.firstName }} {{ employee.lastName }}</div>
+            <div class="text-secondary small">{{ employee.id }}</div>
+          </td>
+          <td>{{ employee.email }}</td>
+          <td>{{ employee.company }}</td>
+          <td>{{ employee.department }}</td>
+          <td>{{ employee.jobTitle }}</td>
+          <td>
+            <span class="badge text-bg-secondary me-1" *ngFor="let eventId of employee.registeredEventIds">
+              {{ eventId }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="!isLoading && filteredEmployees.length === 0">
+          <td colspan="6" class="text-center text-muted py-4">No employees matched your filters.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <app-pagination
+    [currentPage]="currentPage"
+    [totalItems]="filteredEmployees.length"
+    [itemsPerPage]="itemsPerPage"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
+</section>

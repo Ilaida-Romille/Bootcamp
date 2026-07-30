@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { SessionService } from '../../core/services/session.service';
 import { SessionUtilityService } from '../../core/services/session-utility.service';
 import { NavbarContextService, NavbarContext } from '../../core/services/navbar-context.service';
 import { UserRole, Session } from '../../core/models/session.model';
+import { ROUTE_PATHS } from '../../app.routes';
 
 interface NavItem {
   label: string;
@@ -31,6 +32,7 @@ export class NavbarComponent implements OnInit {
   private readonly sessionUtility = inject(SessionUtilityService);
   private readonly navbarContext = inject(NavbarContextService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   session$!: Observable<Session | null>;
   navbarContext$!: Observable<NavbarContext>;
@@ -47,11 +49,13 @@ export class NavbarComponent implements OnInit {
     this.session$.subscribe((session) => {
       this.currentRole = session?.user.role ?? null;
       this.updateNavItems();
+      this.cdr.markForCheck();
     });
 
     // Subscribe to context changes to update nav items
     this.navbarContext$.subscribe(() => {
       this.updateNavItems();
+      this.cdr.markForCheck();
     });
 
     // Subscribe to route changes to update navbar when navigating
@@ -59,6 +63,7 @@ export class NavbarComponent implements OnInit {
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       this.updateNavItems();
+      this.cdr.markForCheck();
     });
   }
 
@@ -82,7 +87,9 @@ export class NavbarComponent implements OnInit {
 
     // Otherwise, show role-based nav items
     this.isOnLandingPage = false;
-    switch (this.currentRole) {
+    const effectiveRole = this.currentRole ?? this.resolveRoleFromUrl(this.router.url);
+
+    switch (effectiveRole) {
       case 'organizer':
         this.navItems = this.getOrganizerNavItems();
         break;
@@ -95,6 +102,25 @@ export class NavbarComponent implements OnInit {
       default:
         this.navItems = landingPageLinks;
     }
+  }
+
+  /**
+   * Fallback role resolution from URL (helps during initial hydration before session emits).
+   */
+  private resolveRoleFromUrl(url: string): UserRole | null {
+    if (url.startsWith(`/${ROUTE_PATHS.organizer}`)) {
+      return 'organizer';
+    }
+
+    if (url.startsWith(`/${ROUTE_PATHS.platformOwner}`)) {
+      return 'platformOwner';
+    }
+
+    if (url.startsWith(`/${ROUTE_PATHS.attendee}`)) {
+      return 'attendee';
+    }
+
+    return null;
   }
 
   /**
