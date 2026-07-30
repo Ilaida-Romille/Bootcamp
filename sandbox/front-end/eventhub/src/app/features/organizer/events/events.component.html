@@ -1,0 +1,147 @@
+<section class="organizer-events-page">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h1 class="h2 fw-bold text-white mb-1">Manage Events</h1>
+      <p class="text-secondary mb-0">Data source: Events API (/api/events)</p>
+    </div>
+    <button type="button" class="btn btn-outline-light btn-sm" (click)="loadEvents()" [disabled]="isLoading || isLookupLoading">
+      Refresh
+    </button>
+  </div>
+
+  <div *ngIf="dataLoadingError" class="alert alert-danger" role="alert">
+    {{ dataLoadingError }}
+  </div>
+
+  <div *ngIf="isLoading" class="alert alert-info">
+    Loading events...
+  </div>
+
+  <form class="row g-3 align-items-end mb-4" (submit)="$event.preventDefault(); applyFilters()">
+    <div class="col-12 col-lg-4">
+      <label class="form-label small text-secondary" for="eventSearch">Search</label>
+      <input
+        id="eventSearch"
+        type="text"
+        class="form-control glass-form-input"
+        name="eventSearch"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilters()"
+        placeholder="Title, description, or venue" />
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <label class="form-label small text-secondary" for="organizerFilter">Organizer</label>
+      <select
+        id="organizerFilter"
+        class="form-select glass-form-input"
+        name="organizerFilter"
+        [(ngModel)]="selectedOrganizer"
+        (ngModelChange)="applyFilters()">
+        <option *ngFor="let option of organizerOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <label class="form-label small text-secondary" for="statusFilter">Status</label>
+      <select
+        id="statusFilter"
+        class="form-select glass-form-input"
+        name="statusFilter"
+        [(ngModel)]="selectedStatus"
+        (ngModelChange)="applyFilters()">
+        <option *ngFor="let option of statusOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-lg-2 d-flex gap-2">
+      <button type="button" class="btn btn-dark w-100" (click)="clearLookupAndFilters()">Reset</button>
+    </div>
+  </form>
+
+  <form class="row g-3 align-items-end mb-4" (submit)="$event.preventDefault(); lookupById()">
+    <div class="col-12 col-md-7 col-lg-8">
+      <label class="form-label small text-secondary" for="eventIdLookup">Get Event by ID (GET /events/&#123;id&#125;)</label>
+      <input
+        id="eventIdLookup"
+        type="text"
+        class="form-control glass-form-input"
+        name="eventIdLookup"
+        [(ngModel)]="eventIdQuery"
+        placeholder="evt_001" />
+    </div>
+    <div class="col-6 col-md-3 col-lg-2">
+      <button type="submit" class="btn btn-primary w-100" [disabled]="isLookupLoading || !eventIdQuery.trim()">
+        {{ isLookupLoading ? 'Loading...' : 'Find by ID' }}
+      </button>
+    </div>
+    <div class="col-6 col-md-2 col-lg-2">
+      <button type="button" class="btn btn-outline-light w-100" (click)="applyFilters()" [disabled]="isLookupLoading">
+        Back to List
+      </button>
+    </div>
+  </form>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <small class="text-secondary">
+      Showing {{ filteredEvents.length }} event(s)
+      <span *ngIf="isLookupMode">from ID lookup</span>
+    </small>
+  </div>
+
+  <div class="glass-table-responsive rounded-3">
+    <table class="table glass-data-table mb-0 align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Event</th>
+          <th scope="col">Organizer</th>
+          <th scope="col">Status</th>
+          <th scope="col">Schedule</th>
+          <th scope="col">Registration Window</th>
+          <th scope="col">Venue</th>
+          <th scope="col">Capacity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of paginatedEvents">
+          <td>
+            <div class="fw-semibold text-white">{{ event.title }}</div>
+            <div class="text-secondary small">{{ event.id }}</div>
+          </td>
+          <td>
+            <div>{{ event.organizerName }}</div>
+            <div class="text-secondary small">{{ event.organizerId }}</div>
+          </td>
+          <td>
+            <span class="badge event-status-badge" [ngClass]="getStatusBadgeClass(event.status)">
+              {{ formatStatus(event.status) }}
+            </span>
+          </td>
+          <td>
+            <div>{{ event.startDateTime | date:'medium' }}</div>
+            <div class="text-secondary small">to {{ event.endDateTime | date:'shortTime' }}</div>
+          </td>
+          <td>
+            <div>{{ event.registrationOpensAt | date:'mediumDate' }}</div>
+            <div class="text-secondary small">until {{ event.registrationClosesAt | date:'mediumDate' }}</div>
+          </td>
+          <td>{{ event.venue }}</td>
+          <td>
+            <div>{{ event.capacity.registered }} / {{ event.capacity.maximum }}</div>
+            <div class="text-secondary small">{{ event.agenda.length }} agenda item(s)</div>
+          </td>
+        </tr>
+        <tr *ngIf="!isLoading && filteredEvents.length === 0">
+          <td colspan="7" class="text-center text-muted py-4">No events matched your filters.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <app-pagination
+    [currentPage]="currentPage"
+    [totalItems]="filteredEvents.length"
+    [itemsPerPage]="itemsPerPage"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
+</section>
