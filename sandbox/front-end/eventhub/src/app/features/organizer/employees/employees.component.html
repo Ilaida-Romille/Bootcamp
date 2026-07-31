@@ -1,106 +1,112 @@
 <section class="organizer-employees-page">
-  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+  <!-- Header with Title and Add Button -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="h2 fw-bold text-white mb-1">Manage Employees</h1>
       <p class="text-secondary mb-0">Data source: Employees API (/api/employees)</p>
     </div>
-    <button type="button" class="btn btn-outline-light btn-sm" (click)="loadEmployees()" [disabled]="isLoading || isLookupLoading">
-      Refresh
+    <button
+      type="button"
+      class="btn btn-primary btn-lg px-4"
+      (click)="openAddEmployeeModal()"
+      [disabled]="isLoading || isFormSubmitting">
+      <i class="bi bi-plus-lg"></i> Add Employee
     </button>
   </div>
 
-  <div *ngIf="dataLoadingError" class="alert alert-danger" role="alert">
+  <!-- Error Alert -->
+  <div *ngIf="dataLoadingError" class="alert alert-danger alert-dismissible fade show" role="alert">
     {{ dataLoadingError }}
+    <button type="button" class="btn-close" (click)="dataLoadingError = ''"></button>
   </div>
 
+  <!-- Loading State -->
   <div *ngIf="isLoading" class="alert alert-info">
-    Loading employees...
+    <i class="bi bi-hourglass-split"></i> Loading employees...
   </div>
 
-  <form class="row g-3 align-items-end mb-4" (submit)="$event.preventDefault(); applyFilters()">
-    <div class="col-12 col-lg-4">
-      <label class="form-label small text-secondary" for="employeeSearch">Search</label>
-      <input
-        id="employeeSearch"
-        type="text"
-        class="form-control glass-form-input"
-        name="employeeSearch"
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="applyFilters()"
-        placeholder="Name, email, or job title" />
-    </div>
+  <!-- Single Row Filter Bar -->
+  <div class="filter-bar mb-4">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-lg-3">
+        <label class="form-label small text-secondary" for="employeeSearch">Search</label>
+        <input
+          id="employeeSearch"
+          name="employeeSearch"
+          type="text"
+          class="form-control glass-form-input"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+          placeholder="Name, email, or job title" />
+      </div>
 
-    <div class="col-6 col-lg-2">
-      <label class="form-label small text-secondary" for="companyFilter">Company</label>
-      <select
-        id="companyFilter"
-        class="form-select glass-form-input"
-        name="companyFilter"
-        [(ngModel)]="selectedCompany"
-        (ngModelChange)="applyFilters()">
-        <option *ngFor="let option of companyOptions" [value]="option">{{ option }}</option>
-      </select>
-    </div>
+      <div class="col-6 col-lg-2">
+        <label class="form-label small text-secondary" for="companyFilter">Company</label>
+        <select
+          id="companyFilter"
+          name="companyFilter"
+          class="form-select glass-form-input"
+          [(ngModel)]="selectedCompany"
+          (ngModelChange)="applyFilters()">
+          <option *ngFor="let option of companyOptions" [value]="option">{{ option }}</option>
+        </select>
+      </div>
 
-    <div class="col-6 col-lg-2">
-      <label class="form-label small text-secondary" for="departmentFilter">Department</label>
-      <select
-        id="departmentFilter"
-        class="form-select glass-form-input"
-        name="departmentFilter"
-        [(ngModel)]="selectedDepartment"
-        (ngModelChange)="applyFilters()">
-        <option *ngFor="let option of departmentOptions" [value]="option">{{ option }}</option>
-      </select>
-    </div>
+      <div class="col-6 col-lg-2">
+        <label class="form-label small text-secondary" for="departmentFilter">Department</label>
+        <select
+          id="departmentFilter"
+          name="departmentFilter"
+          class="form-select glass-form-input"
+          [(ngModel)]="selectedDepartment"
+          (ngModelChange)="applyFilters()">
+          <option *ngFor="let option of departmentOptions" [value]="option">{{ option }}</option>
+        </select>
+      </div>
 
-    <div class="col-12 col-lg-2">
-      <label class="form-label small text-secondary" for="eventFilter">Registered Event ID</label>
-      <input
-        id="eventFilter"
-        type="text"
-        class="form-control glass-form-input"
-        name="eventFilter"
-        [(ngModel)]="eventIdFilter"
-        (ngModelChange)="applyFilters()"
-        placeholder="evt_001" />
-    </div>
+      <div class="col-12 col-lg-2">
+        <label class="form-label small text-secondary" for="eventFilter">Registered Event ID</label>
+        <input
+          id="eventFilter"
+          name="eventFilter"
+          type="text"
+          class="form-control glass-form-input"
+          [(ngModel)]="eventIdFilter"
+          (ngModelChange)="applyFilters()"
+          placeholder="evt_001" />
+      </div>
 
-    <div class="col-12 col-lg-2 d-flex gap-2">
-      <button type="button" class="btn btn-dark w-100" (click)="clearLookupAndFilters()">Reset</button>
+      <div class="col-12 col-lg-3 d-flex gap-2">
+        <button
+          type="button"
+          class="btn btn-dark w-100"
+          (click)="clearLookupAndFilters()"
+          [disabled]="isLoading">
+          <i class="bi bi-arrow-clockwise"></i> Reset Filters
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-light w-100"
+          (click)="loadEmployees()"
+          [disabled]="isLoading">
+          <i class="bi bi-arrow-repeat"></i> Refresh
+        </button>
+      </div>
     </div>
-  </form>
+  </div>
 
-  <form class="row g-3 align-items-end mb-4" (submit)="$event.preventDefault(); lookupById()">
-    <div class="col-12 col-md-7 col-lg-8">
-      <label class="form-label small text-secondary" for="employeeIdLookup">Get Employee by ID (GET /employees/&#123;id&#125;)</label>
-      <input
-        id="employeeIdLookup"
-        type="text"
-        class="form-control glass-form-input"
-        name="employeeIdLookup"
-        [(ngModel)]="employeeIdQuery"
-        placeholder="emp_001" />
-    </div>
-    <div class="col-6 col-md-3 col-lg-2">
-      <button type="submit" class="btn btn-primary w-100" [disabled]="isLookupLoading || !employeeIdQuery.trim()">
-        {{ isLookupLoading ? 'Loading...' : 'Find by ID' }}
-      </button>
-    </div>
-    <div class="col-6 col-md-2 col-lg-2">
-      <button type="button" class="btn btn-outline-light w-100" (click)="applyFilters()" [disabled]="isLookupLoading">
-        Back to List
-      </button>
-    </div>
-  </form>
 
+
+  <!-- Result Count -->
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
     <small class="text-secondary">
-      Showing {{ filteredEmployees.length }} employee(s)
-      <span *ngIf="isLookupMode">from ID lookup</span>
+      <i class="bi bi-info-circle"></i>
+      Showing <strong>{{ filteredEmployees.length }}</strong> employee(s)
+      <span *ngIf="isLookupMode">(from ID lookup)</span>
     </small>
   </div>
 
+  <!-- Data Table -->
   <div class="glass-table-responsive rounded-3">
     <table class="table glass-data-table mb-0 align-middle">
       <thead>
@@ -111,6 +117,7 @@
           <th scope="col">Department</th>
           <th scope="col">Job Title</th>
           <th scope="col">Registered Events</th>
+          <th scope="col" class="text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -128,18 +135,216 @@
               {{ eventId }}
             </span>
           </td>
+          <td class="text-center">
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="btn btn-sm btn-action btn-view"
+                title="View Details"
+                (click)="viewEmployeeDetails(employee)"
+                [disabled]="isLookupLoading">
+                <i class="bi bi-eye"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-action btn-edit"
+                title="Edit Employee"
+                (click)="openEditEmployeeModal(employee)"
+                [disabled]="isFormSubmitting">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-action btn-delete"
+                title="Delete Employee"
+                (click)="openDeleteConfirm(employee)"
+                [disabled]="isDeleting">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
         </tr>
         <tr *ngIf="!isLoading && filteredEmployees.length === 0">
-          <td colspan="6" class="text-center text-muted py-4">No employees matched your filters.</td>
+          <td colspan="7" class="text-center text-muted py-4">
+            <i class="bi bi-inbox"></i> No employees matched your filters.
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
 
+  <!-- Pagination -->
   <app-pagination
     [currentPage]="currentPage"
     [totalItems]="filteredEmployees.length"
     [itemsPerPage]="itemsPerPage"
     (pageChange)="onPageChange($event)">
   </app-pagination>
+
+  <!-- Add/Edit Employee Modal -->
+  <div *ngIf="isModalOpen" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeModal()" (keydown.escape)="closeModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-person-plus'"></i>
+            {{ isEditMode ? 'Edit Employee' : 'Add New Employee' }}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+        </div>
+
+        <div class="modal-body">
+          <div *ngIf="formError" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ formError }}
+            <button type="button" class="btn-close btn-close-white" (click)="formError = ''"></button>
+          </div>
+
+          <form>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="firstName">First Name *</label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  class="form-control glass-form-input"
+                  [(ngModel)]="formData.firstName"
+                  placeholder="Enter first name" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="lastName">Last Name *</label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  class="form-control glass-form-input"
+                  [(ngModel)]="formData.lastName"
+                  placeholder="Enter last name" />
+              </div>
+
+              <div class="col-12">
+                <label class="form-label" for="email">Email *</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  class="form-control glass-form-input"
+                  [(ngModel)]="formData.email"
+                  placeholder="email@example.com" />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="company">Company *</label>
+                <input
+                  id="company"
+                  name="company"
+                  type="text"
+                  class="form-control glass-form-input"
+                  [(ngModel)]="formData.company"
+                  placeholder="Enter company name" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="department">Department *</label>
+                <input
+                  id="department"
+                  name="department"
+                  type="text"
+                  class="form-control glass-form-input"
+                  [(ngModel)]="formData.department"
+                  placeholder="Enter department" />
+              </div>
+
+              <div class="col-12">
+                <label class="form-label" for="jobTitle">Job Title *</label>
+                <input
+                  id="jobTitle"
+                  name="jobTitle"
+                  type="text"
+                  class="form-control glass-form-input"
+                  [(ngModel)]="formData.jobTitle"
+                  placeholder="Enter job title" />
+              </div>
+
+              <div class="col-12">
+                <label class="form-label" for="avatarUrl">Avatar URL</label>
+                <input
+                  id="avatarUrl"
+                  name="avatarUrl"
+                  type="text"
+                  class="form-control glass-form-input"
+                  [(ngModel)]="formData.avatarUrl"
+                  placeholder="/assets/images/employees/emp_001.jpg" />
+              </div>
+
+              <div class="col-12">
+                <label class="form-label" for="registeredEventIds">Registered Event IDs</label>
+                <input
+                  id="registeredEventIds"
+                  name="registeredEventIds"
+                  type="text"
+                  class="form-control glass-form-input"
+                  [(ngModel)]="eventIdsDisplay"
+                  placeholder="evt_001, evt_002, evt_003" />
+                <small class="text-secondary d-block mt-2">Comma-separated list of event IDs</small>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-light"
+            (click)="closeModal()"
+            [disabled]="isFormSubmitting">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="submitForm()"
+            [disabled]="isFormSubmitting">
+            {{ isFormSubmitting ? 'Saving...' : (isEditMode ? 'Update Employee' : 'Add Employee') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div *ngIf="showDeleteConfirm" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeDeleteConfirm()" (keydown.escape)="closeDeleteConfirm()">
+    <div class="modal-dialog modal-sm" (click)="$event.stopPropagation()">
+      <div class="modal-content">
+        <div class="modal-header border-danger">
+          <h5 class="modal-title text-danger">
+            <i class="bi bi-exclamation-triangle"></i> Confirm Delete
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeDeleteConfirm()"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="mb-0">
+            Are you sure you want to delete <strong>{{ deleteConfirmName }}</strong>? This action cannot be undone.
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-light"
+            (click)="closeDeleteConfirm()"
+            [disabled]="isDeleting">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="confirmDelete()"
+            [disabled]="isDeleting">
+            {{ isDeleting ? 'Deleting...' : 'Delete Employee' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
