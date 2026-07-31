@@ -15,7 +15,7 @@ export class EventCardComponent {
   @Input({ required: true }) event!: EventItemDisplay;
 
   readonly ATTENDEE_PATHS = ATTENDEE_ROUTE_PATHS;
-  
+
   isFlipped = false;
 
   toggleFlip(): void {
@@ -23,6 +23,10 @@ export class EventCardComponent {
   }
 
   get capacityDisplay(): string {
-    return `${this.event.currentAttendees} / ${this.event.capacity}`;
+    return `${this.event.capacity.registered} / ${this.event.capacity.maximum}`;
+  }
+
+  get canRegister(): boolean {
+    return this.event.status === 'registration_open' && this.event.remainingSlots > 0;
   }
 }

@@ -1,20 +1,43 @@
+export type EventStatus =
+  | 'draft'
+  | 'registration_open'
+  | 'registration_closed'
+  | 'ongoing'
+  | 'completed'
+  | 'cancelled';
+
+export interface ApiAgendaItem {
+  id: string;
+  startDateTime: string;
+  endDateTime: string;
+  title: string;
+  description?: string;
+  location?: string;
+  speaker?: string;
+  isBreak: boolean;
+}
+
 export interface EventDetail {
   id: string;
   title: string;
-  date: string;
+  description: string;
   organizerId: string;
   organizerName: string;
-  currentAttendees: number;
-  status: 'Registration Open' | 'Filling Fast' | 'Almost Full';
-  remainingSlots: number;
-  capacity: number;
-  cateringProvided: boolean;
-  description: string;
-  attendeeIds: string[];
+  status: EventStatus;
+  startDateTime: string;
+  endDateTime: string;
+  registrationOpensAt: string;
+  registrationClosesAt: string;
+  venue: string;
+  bannerImageUrl: string;
+  capacity: { maximum: number; registered: number };
+  agenda: ApiAgendaItem[];
 }
 
 export interface EventItemDisplay extends EventDetail {
-  statusClass: 'status-open' | 'status-filling' | 'status-full';
+  statusLabel: string;
+  statusClass: 'status-open' | 'status-filling' | 'status-full' | 'status-closed' | 'status-draft' | 'status-cancelled';
+  remainingSlots: number;
 }
 
 export interface Registration {

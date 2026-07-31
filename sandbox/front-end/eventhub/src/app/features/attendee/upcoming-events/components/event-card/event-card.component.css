@@ -20,7 +20,52 @@
     height: 120px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.25) 100%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    position: relative;
 }
+
+.event-banner-status-badge {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.event-venue {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.stat-sm {
+    font-size: 0.85rem !important;
+}
+
+.stat-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+}
+
+.stat-value.status-open      { color: #66bb6a; }
+.stat-value.status-filling    { color: #ffa726; }
+.stat-value.status-full       { color: #ef5350; }
+.stat-value.status-closed     { color: var(--text-muted); }
+.stat-value.status-draft      { color: var(--text-muted); }
+.stat-value.status-cancelled  { color: #ef5350; }
+
+.event-banner-status-badge.status-open     { color: #66bb6a; border-color: rgba(102, 187, 106, 0.4); }
+.event-banner-status-badge.status-filling  { color: #ffa726; border-color: rgba(255, 167, 38, 0.4); }
+.event-banner-status-badge.status-full     { color: #ef5350; border-color: rgba(239, 83, 80, 0.4); }
+.event-banner-status-badge.status-closed   { color: var(--text-muted); }
+.event-banner-status-badge.status-draft    { color: var(--text-muted); }
+.event-banner-status-badge.status-cancelled { color: #ef5350; border-color: rgba(239, 83, 80, 0.4); }
 
 .event-details {
     padding: 1.5rem;
@@ -118,23 +163,22 @@
     margin-bottom: 1rem;
 }
 
-.back-stats {
-    margin: 0;
+.back-stats-grid {
     flex: 1;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 0.75rem;
+    align-content: start;
 }
 
-.back-stats li {
+.back-stat-cell {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.65rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.back-stats li:last-child {
-    border-bottom: none;
+    gap: 0.1rem;
+    padding: 0.55rem 0.6rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
 }
 
 .stat-label {
@@ -151,9 +195,7 @@
     color: var(--text-main);
 }
 
-.stat-value.status-open    { color: #66bb6a; }
-.stat-value.status-filling { color: #ffa726; }
-.stat-value.status-full    { color: #ef5350; }
+/* status-* color rules are defined above */
 
 .back-to-details-btn {
     display: inline-flex;

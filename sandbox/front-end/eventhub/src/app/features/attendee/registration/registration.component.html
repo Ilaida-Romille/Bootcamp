@@ -4,10 +4,12 @@
   <div class="event-summary-card rounded-1">
     <h1 class="event-display-title">{{ event?.title || 'Loading...' }}</h1>
     <div class="event-display-meta">
-      <span>{{ (event?.date | date:'MMM dd, yyyy') ?? '---' }}</span> 
-      <span class="meta-divider">•</span> 
-      <span>9:00 AM — 5:00 PM</span> 
-      <span class="meta-divider">•</span> 
+      <span>{{ (event?.startDateTime | date:'MMM dd, yyyy') ?? '---' }}</span>
+      <span class="meta-divider">•</span>
+      <span>{{ (event?.startDateTime | date:'shortTime') ?? '---' }} — {{ (event?.endDateTime | date:'shortTime') ?? '---' }}</span>
+      <span class="meta-divider">•</span>
+      <span>{{ event?.venue || '---' }}</span>
+      <span class="meta-divider">•</span>
       <span>{{ event?.organizerName || '---' }}</span>
     </div>
   </div>

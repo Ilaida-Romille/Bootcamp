@@ -1,52 +1,54 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { EventDetail, EventItemDisplay } from '../models/attendee.model';
+
+type EventsListResponse = EventDetail[] | { content?: EventDetail[]; items?: EventDetail[]; data?: EventDetail[] };
 
 @Injectable({ providedIn: 'root' })
 export class EventsDataService {
-  private readonly dataUrl = '/data/events.json';
-  private eventsCache$ = new BehaviorSubject<EventDetail[]>([]);
+  private readonly baseUrl = '/api/events';
 
   constructor(private readonly http: HttpClient) {}
 
   getEvents(): Observable<EventDetail[]> {
-    if (this.eventsCache$.value.length > 0) {
-      return this.eventsCache$.asObservable();
-    }
-
-    return this.http.get<EventDetail[]>(this.dataUrl).pipe(
-      tap((events) => this.eventsCache$.next(events))
+    return this.http.get<EventsListResponse>(`${this.baseUrl}?all=true`).pipe(
+      map((response) => {
+        if (Array.isArray(response)) return response;
+        return response.content ?? response.items ?? response.data ?? [];
+      })
     );
   }
 
   getEventById(eventId: string): Observable<EventDetail> {
-    return new Observable((observer) => {
-      this.getEvents().subscribe((events) => {
-        const event = events.find((e) => e.id === eventId);
-        if (event) {
-          observer.next(event);
-          observer.complete();
-        } else {
-          observer.error(new Error(`Event ${eventId} not found`));
-        }
-      });
-    });
+    return this.http.get<EventDetail>(`${this.baseUrl}/${encodeURIComponent(eventId)}`);
   }
 
   mapToDisplayEvent(event: EventDetail): EventItemDisplay {
-    let statusClass: 'status-open' | 'status-filling' | 'status-full';
-    if (event.status === 'Almost Full') {
-      statusClass = 'status-full';
-    } else if (event.status === 'Filling Fast') {
-      statusClass = 'status-filling';
-    } else {
-      statusClass = 'status-open';
+    const remaining = event.capacity.maximum - event.capacity.registered;
+    const fillRatio = event.capacity.maximum > 0 ? event.capacity.registered / event.capacity.maximum : 0;
+
+    let statusLabel: string;
+    let statusClass: EventItemDisplay['statusClass'];
+
+    switch (event.status) {
+      case 'registration_open':
+        if (fillRatio >= 0.9) { statusLabel = 'Almost Full'; statusClass = 'status-full'; }
+        else if (fillRatio >= 0.7) { statusLabel = 'Filling Fast'; statusClass = 'status-filling'; }
+        else { statusLabel = 'Registration Open'; statusClass = 'status-open'; }
+        break;
+      case 'registration_closed':
+        statusLabel = 'Registration Closed'; statusClass = 'status-closed'; break;
+      case 'ongoing':
+        statusLabel = 'Ongoing'; statusClass = 'status-open'; break;
+      case 'completed':
+        statusLabel = 'Completed'; statusClass = 'status-closed'; break;
+      case 'cancelled':
+        statusLabel = 'Cancelled'; statusClass = 'status-cancelled'; break;
+      default:
+        statusLabel = 'Draft'; statusClass = 'status-draft';
     }
 
-    return {
-      ...event,
-      statusClass
-    };
+    return { ...event, statusLabel, statusClass, remainingSlots: Math.max(0, remaining) };
   }
 }

@@ -46,7 +46,7 @@ export class UpcomingEventsComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.dataLoadingError = 'Unable to load events from /data/events.json.';
+        this.dataLoadingError = 'Unable to load events from the API.';
         this.cdr.detectChanges();
       }
     });

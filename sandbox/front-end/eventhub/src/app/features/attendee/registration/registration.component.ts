@@ -1,29 +1,25 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { 
-  ReactiveFormsModule, 
-  FormBuilder, 
-  FormGroup, 
-  Validators, 
-  AbstractControl, 
-  ValidationErrors 
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ATTENDEE_ROUTE_PATHS } from '../attendee.routes';
 import { EventsDataService } from '../services/events-data.service';
 import { RegistrationService } from '../services/registration.service';
 import { NavbarContextService } from '../../../core/services/navbar-context.service';
+import { SessionService } from '../../../core/services/session.service';
 import { EventDetail } from '../models/attendee.model';
 
-// Custom validator to disallow public webmail domains
 export function corporateEmailValidator(control: AbstractControl): ValidationErrors | null {
-  if (!control.value) {
-    return null;
-  }
+  if (!control.value) return null;
   const publicDomainsRegex = /@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com|aol\.com|icloud\.com|protonmail\.com|mail\.com)$/i;
-  const isPublicDomain = publicDomainsRegex.test(control.value.trim());
-  
-  return isPublicDomain ? { publicEmailNotAllowed: true } : null;
+  return publicDomainsRegex.test(control.value.trim()) ? { publicEmailNotAllowed: true } : null;
 }
 
 @Component({
@@ -40,6 +36,7 @@ export class RegistrationComponent implements OnInit {
   private readonly eventsDataService = inject(EventsDataService);
   private readonly registrationService = inject(RegistrationService);
   private readonly navbarContext = inject(NavbarContextService);
+  private readonly sessionService = inject(SessionService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   readonly ATTENDEE_PATHS = ATTENDEE_ROUTE_PATHS;
@@ -56,14 +53,18 @@ export class RegistrationComponent implements OnInit {
   }
 
   private initForm(): void {
+    const session = this.sessionService.getCurrentSession();
+    const prefillEmail = session?.user.email ?? '';
+    const prefillName = session?.user.name ?? '';
+
     this.registrationForm = this.fb.group({
-      fullName: ['', [Validators.required]],
+      fullName: [prefillName, [Validators.required]],
       emailAddress: [
-        '', 
+        prefillEmail,
         [
-          Validators.required, 
-          Validators.email, 
-          Validators.minLength(15), 
+          Validators.required,
+          Validators.email,
+          Validators.minLength(15),
           Validators.maxLength(100),
           corporateEmailValidator
         ]
@@ -78,7 +79,6 @@ export class RegistrationComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       this.eventId = params.get('id');
       if (this.eventId) {
-        // Update navbar context for registration page
         this.navbarContext.setCurrentPage('registration');
         this.navbarContext.setEventName(null);
         this.loadEventDetails();
@@ -102,9 +102,12 @@ export class RegistrationComponent implements OnInit {
     });
   }
 
-  // Convenience getter for form controls
   get f() {
     return this.registrationForm.controls;
+  }
+
+  get isRegistrationOpen(): boolean {
+    return this.event?.status === 'registration_open';
   }
 
   onSubmit(): void {
@@ -115,7 +118,6 @@ export class RegistrationComponent implements OnInit {
 
     const email = this.registrationForm.value.emailAddress.trim().toLowerCase();
 
-    // Check for duplicate registration
     if (this.registrationService.isEmailRegisteredForEvent(email, this.eventId)) {
       this.submissionError = 'This email is already registered for this event.';
       return;
@@ -133,7 +135,6 @@ export class RegistrationComponent implements OnInit {
       additionalNotes: this.registrationForm.value.additionalNotes.trim()
     });
 
-    // Navigate to agenda with event ID using absolute path
     this.router.navigate(['/dashboard', ATTENDEE_ROUTE_PATHS.agenda, this.eventId]);
   }
 }
