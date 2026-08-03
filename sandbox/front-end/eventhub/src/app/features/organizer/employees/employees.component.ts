@@ -308,6 +308,8 @@ export class OrganizerEmployeesComponent implements OnInit {
   viewEmployeeDetails(employee: Employee): void {
     this.viewingEmployee = employee;
     this.isViewModalOpen = true;
+
+    console.log(this.viewingEmployee.avatarUrl);
   }
 
   closeViewModal(): void {

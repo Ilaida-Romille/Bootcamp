@@ -332,10 +332,12 @@
                 [src]="viewingEmployee.avatarUrl"
                 [alt]="viewingEmployee.firstName + ' ' + viewingEmployee.lastName"
                 class="view-avatar-img" />
+
               <ng-template #avatarInitials>
-                <div class="view-avatar-initials">
-                  {{ viewingEmployee.firstName.charAt(0) }}{{ viewingEmployee.lastName.charAt(0) }}
-                </div>
+                <img 
+                  src="/assets/images/employees/emp_107.jpg" 
+                  alt="Default Avatar" 
+                  class="view-avatar-img" />
               </ng-template>
             </div>
             <div class="view-profile-info">

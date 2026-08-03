@@ -48,6 +48,10 @@ export class OrganizerEventsComponent implements OnInit {
   isEditMode = false;
   editingEventId: string | null = null;
 
+  // Wizard
+  wizardStep = 1;
+  readonly totalWizardSteps = 4;
+
   // Confirmation dialog
   showDeleteConfirm = false;
   deleteConfirmId: string | null = null;
@@ -168,6 +172,7 @@ export class OrganizerEventsComponent implements OnInit {
     this.editingEventId = null;
     this.formData = this.getDefaultFormData();
     this.formError = '';
+    this.wizardStep = 1;
     this.isModalOpen = true;
   }
 
@@ -176,6 +181,7 @@ export class OrganizerEventsComponent implements OnInit {
     this.editingEventId = event.id;
     this.formData = { ...event };
     this.formError = '';
+    this.wizardStep = 1;
     this.isModalOpen = true;
   }
 
@@ -185,6 +191,57 @@ export class OrganizerEventsComponent implements OnInit {
     this.editingEventId = null;
     this.formData = this.getDefaultFormData();
     this.formError = '';
+    this.wizardStep = 1;
+  }
+
+  nextStep(): void {
+    if (this.isCurrentStepValid() && this.wizardStep < this.totalWizardSteps) {
+      this.wizardStep++;
+    }
+  }
+
+  prevStep(): void {
+    if (this.wizardStep > 1) {
+      this.formError = '';
+      this.wizardStep--;
+    }
+  }
+
+  private isCurrentStepValid(): boolean {
+    const { title, description, organizerId, organizerName, startDateTime, endDateTime, venue, capacity } = this.formData;
+    let error = '';
+
+    switch (this.wizardStep) {
+      case 1:
+        if (!title.trim() || !description.trim()) {
+          error = 'Event title and description are required.';
+        }
+        break;
+      case 2:
+        if (!organizerId.trim() || !organizerName.trim()) {
+          error = 'Organizer ID and organizer name are required.';
+        }
+        break;
+      case 3:
+        if (!startDateTime.trim() || !endDateTime.trim()) {
+          error = 'Start date/time and end date/time are required.';
+        }
+        break;
+      case 4:
+        if (!venue.trim() || capacity.maximum <= 0) {
+          error = 'Venue and a valid max capacity are required.';
+        }
+        break;
+    }
+
+    if (error) {
+      this.formError = error;
+      this.cdr.detectChanges();
+      return false;
+    }
+
+    this.formError = '';
+    return true;
   }
 
   submitForm(): void {

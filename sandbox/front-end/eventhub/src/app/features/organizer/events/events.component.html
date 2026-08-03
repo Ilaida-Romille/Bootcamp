@@ -28,7 +28,7 @@
   <!-- Single Row Filter Bar -->
   <div class="filter-bar mb-4">
     <div class="row g-2 align-items-end">
-      <div class="col-12 col-lg-4">
+      <div class="col-12 col-lg-3">
         <label class="form-label small text-secondary" for="eventSearch">Search</label>
         <input
           id="eventSearch"
@@ -64,7 +64,7 @@
         </select>
       </div>
 
-      <div class="col-12 col-lg-2 d-flex gap-2">
+      <div class="col-12 col-lg-3 d-flex gap-2">
         <button
           type="button"
           class="btn btn-dark w-100"
@@ -176,18 +176,48 @@
     (pageChange)="onPageChange($event)">
   </app-pagination>
 
-  <!-- Add/Edit Event Modal -->
+  <!-- Add/Edit Event Modal - Wizard -->
   <div *ngIf="isModalOpen" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeModal()" (keydown.escape)="closeModal()">
-    <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-dialog modal-wizard" (click)="$event.stopPropagation()">
       <div class="modal-content">
+
+        <!-- Header -->
         <div class="modal-header">
-          <h5 class="modal-title">
-            <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-calendar-plus'"></i>
-            {{ isEditMode ? 'Edit Event' : 'Add New Event' }}
-          </h5>
+          <div>
+            <h5 class="modal-title">
+              <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-calendar-plus'"></i>
+              {{ isEditMode ? 'Edit Event' : 'Add New Event' }}
+            </h5>
+          </div>
           <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
         </div>
 
+        <!-- Wizard Progress Bar -->
+        <div class="wizard-progress">
+          <div class="wizard-steps">
+            <div class="wizard-step" [class.active]="wizardStep >= 1" [class.current]="wizardStep === 1">
+              <div class="wizard-step-dot"><i class="bi bi-file-text"></i></div>
+              <span>Details</span>
+            </div>
+            <div class="wizard-connector" [class.active]="wizardStep >= 2"></div>
+            <div class="wizard-step" [class.active]="wizardStep >= 2" [class.current]="wizardStep === 2">
+              <div class="wizard-step-dot"><i class="bi bi-person-badge"></i></div>
+              <span>Organizer</span>
+            </div>
+            <div class="wizard-connector" [class.active]="wizardStep >= 3"></div>
+            <div class="wizard-step" [class.active]="wizardStep >= 3" [class.current]="wizardStep === 3">
+              <div class="wizard-step-dot"><i class="bi bi-calendar-range"></i></div>
+              <span>Schedule</span>
+            </div>
+            <div class="wizard-connector" [class.active]="wizardStep >= 4"></div>
+            <div class="wizard-step" [class.active]="wizardStep >= 4" [class.current]="wizardStep === 4">
+              <div class="wizard-step-dot"><i class="bi bi-geo-alt"></i></div>
+              <span>Venue</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Body -->
         <div class="modal-body">
           <div *ngIf="formError" class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ formError }}
@@ -195,156 +225,209 @@
           </div>
 
           <form>
-            <div class="row g-3">
-              <div class="col-12">
-                <label class="form-label" for="title">Event Title *</label>
-                <input
-                  id="title"
-                  name="title"
-                  type="text"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.title"
-                  placeholder="Enter event title" />
-              </div>
 
-              <div class="col-12">
-                <label class="form-label" for="description">Description *</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.description"
-                  placeholder="Enter event description"
-                  rows="3"></textarea>
+            <!-- Step 1: Event Details -->
+            <div *ngIf="wizardStep === 1">
+              <div class="wizard-step-header mb-3">
+                <h6>Event Details</h6>
+                <p>Enter the core information about this event.</p>
               </div>
-
-              <div class="col-md-6">
-                <label class="form-label" for="organizerId">Organizer ID *</label>
-                <input
-                  id="organizerId"
-                  name="organizerId"
-                  type="text"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.organizerId"
-                  placeholder="org_001" />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="organizerName">Organizer Name *</label>
-                <input
-                  id="organizerName"
-                  name="organizerName"
-                  type="text"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.organizerName"
-                  placeholder="Organization name" />
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label" for="startDateTime">Start Date & Time *</label>
-                <input
-                  id="startDateTime"
-                  name="startDateTime"
-                  type="datetime-local"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.startDateTime" />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="endDateTime">End Date & Time *</label>
-                <input
-                  id="endDateTime"
-                  name="endDateTime"
-                  type="datetime-local"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.endDateTime" />
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label" for="registrationOpensAt">Registration Opens *</label>
-                <input
-                  id="registrationOpensAt"
-                  name="registrationOpensAt"
-                  type="datetime-local"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.registrationOpensAt" />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="registrationClosesAt">Registration Closes *</label>
-                <input
-                  id="registrationClosesAt"
-                  name="registrationClosesAt"
-                  type="datetime-local"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.registrationClosesAt" />
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label" for="venue">Venue *</label>
-                <input
-                  id="venue"
-                  name="venue"
-                  type="text"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.venue"
-                  placeholder="Event venue" />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="maxCapacity">Max Capacity *</label>
-                <input
-                  id="maxCapacity"
-                  name="maxCapacity"
-                  type="number"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.capacity.maximum"
-                  placeholder="0"
-                  min="1" />
-              </div>
-
-              <div class="col-12">
-                <label class="form-label" for="bannerImageUrl">Banner Image URL</label>
-                <input
-                  id="bannerImageUrl"
-                  name="bannerImageUrl"
-                  type="text"
-                  class="form-control glass-form-input"
-                  [(ngModel)]="formData.bannerImageUrl"
-                  placeholder="/assets/images/events/evt_001.jpg" />
-              </div>
-
-              <div class="col-12">
-                <label class="form-label" for="status">Status *</label>
-                <select
-                  id="status"
-                  name="status"
-                  class="form-select glass-form-input"
-                  [(ngModel)]="formData.status">
-                  <option value="draft">Draft</option>
-                  <option value="registration_open">Registration Open</option>
-                  <option value="registration_closed">Registration Closed</option>
-                  <option value="ongoing">Ongoing</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label" for="title">Event Title *</label>
+                  <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.title"
+                    placeholder="Enter event title" />
+                </div>
+                <div class="col-12">
+                  <label class="form-label" for="description">Description *</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.description"
+                    placeholder="Enter event description"
+                    rows="4"></textarea>
+                </div>
+                <div class="col-12">
+                  <label class="form-label" for="bannerImageUrl">Banner Image URL</label>
+                  <input
+                    id="bannerImageUrl"
+                    name="bannerImageUrl"
+                    type="text"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.bannerImageUrl"
+                    placeholder="/assets/images/events/evt_001.jpg" />
+                </div>
               </div>
             </div>
+
+            <!-- Step 2: Organizer & Status -->
+            <div *ngIf="wizardStep === 2">
+              <div class="wizard-step-header mb-3">
+                <h6>Organizer &amp; Status</h6>
+                <p>Assign an organizer and set the current event status.</p>
+              </div>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label" for="organizerId">Organizer ID *</label>
+                  <input
+                    id="organizerId"
+                    name="organizerId"
+                    type="text"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.organizerId"
+                    placeholder="org_001" />
+                </div>
+                <div class="col-12">
+                  <label class="form-label" for="organizerName">Organizer Name *</label>
+                  <input
+                    id="organizerName"
+                    name="organizerName"
+                    type="text"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.organizerName"
+                    placeholder="Organization name" />
+                </div>
+                <div class="col-12">
+                  <label class="form-label" for="status">Status *</label>
+                  <select
+                    id="status"
+                    name="status"
+                    class="form-select glass-form-input"
+                    [(ngModel)]="formData.status">
+                    <option value="draft">Draft</option>
+                    <option value="registration_open">Registration Open</option>
+                    <option value="registration_closed">Registration Closed</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: Schedule -->
+            <div *ngIf="wizardStep === 3">
+              <div class="wizard-step-header mb-3">
+                <h6>Schedule</h6>
+                <p>Set the event dates and the registration window.</p>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="startDateTime">Start Date &amp; Time *</label>
+                  <input
+                    id="startDateTime"
+                    name="startDateTime"
+                    type="datetime-local"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.startDateTime" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="endDateTime">End Date &amp; Time *</label>
+                  <input
+                    id="endDateTime"
+                    name="endDateTime"
+                    type="datetime-local"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.endDateTime" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="registrationOpensAt">Registration Opens</label>
+                  <input
+                    id="registrationOpensAt"
+                    name="registrationOpensAt"
+                    type="datetime-local"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.registrationOpensAt" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="registrationClosesAt">Registration Closes</label>
+                  <input
+                    id="registrationClosesAt"
+                    name="registrationClosesAt"
+                    type="datetime-local"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.registrationClosesAt" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: Venue & Capacity -->
+            <div *ngIf="wizardStep === 4">
+              <div class="wizard-step-header mb-3">
+                <h6>Venue &amp; Capacity</h6>
+                <p>Specify where the event takes place and how many can attend.</p>
+              </div>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label" for="venue">Venue *</label>
+                  <input
+                    id="venue"
+                    name="venue"
+                    type="text"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.venue"
+                    placeholder="Event venue" />
+                </div>
+                <div class="col-12">
+                  <label class="form-label" for="maxCapacity">Max Capacity *</label>
+                  <input
+                    id="maxCapacity"
+                    name="maxCapacity"
+                    type="number"
+                    class="form-control glass-form-input"
+                    [(ngModel)]="formData.capacity.maximum"
+                    placeholder="0"
+                    min="1" />
+                </div>
+              </div>
+            </div>
+
           </form>
         </div>
 
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-outline-light"
-            (click)="closeModal()"
-            [disabled]="isFormSubmitting">
-            Cancel
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            (click)="submitForm()"
-            [disabled]="isFormSubmitting">
-            {{ isFormSubmitting ? 'Saving...' : (isEditMode ? 'Update Event' : 'Add Event') }}
-          </button>
+        <!-- Footer Navigation -->
+        <div class="modal-footer wizard-footer">
+          <span class="wizard-step-counter">Step {{ wizardStep }} of {{ totalWizardSteps }}</span>
+          <div class="d-flex gap-2">
+            <button
+              type="button"
+              class="btn btn-outline-light"
+              (click)="closeModal()"
+              [disabled]="isFormSubmitting">
+              Cancel
+            </button>
+            <button
+              *ngIf="wizardStep > 1"
+              type="button"
+              class="btn btn-dark"
+              (click)="prevStep()"
+              [disabled]="isFormSubmitting">
+              <i class="bi bi-arrow-left"></i> Back
+            </button>
+            <button
+              *ngIf="wizardStep < totalWizardSteps"
+              type="button"
+              class="btn btn-primary"
+              (click)="nextStep()">
+              Next <i class="bi bi-arrow-right"></i>
+            </button>
+            <button
+              *ngIf="wizardStep === totalWizardSteps"
+              type="button"
+              class="btn btn-primary"
+              (click)="submitForm()"
+              [disabled]="isFormSubmitting">
+              {{ isFormSubmitting ? 'Saving...' : (isEditMode ? 'Update Event' : 'Add Event') }}
+            </button>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
