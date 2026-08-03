@@ -56,6 +56,10 @@ export class OrganizerEventsComponent implements OnInit {
   // Employee lookup mode
   isLookupMode = false;
 
+  // View details modal
+  isViewModalOpen = false;
+  viewingEvent: Event | null = null;
+
   // Form data
   formData: EventInput = this.getDefaultFormData();
 
@@ -289,8 +293,13 @@ export class OrganizerEventsComponent implements OnInit {
 
   // ============ View Details ============
   viewEventDetails(event: Event): void {
-    this.eventIdQuery = event.id;
-    this.lookupById();
+    this.viewingEvent = event;
+    this.isViewModalOpen = true;
+  }
+
+  closeViewModal(): void {
+    this.isViewModalOpen = false;
+    this.viewingEvent = null;
   }
 
   // ============ Helper Methods ============

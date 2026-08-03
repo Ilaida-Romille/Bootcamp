@@ -57,6 +57,10 @@ export class OrganizerEmployeesComponent implements OnInit {
   // Employee lookup mode
   isLookupMode = false;
 
+  // View details modal
+  isViewModalOpen = false;
+  viewingEmployee: Employee | null = null;
+
   // Form data
   formData: EmployeeInput = this.getDefaultFormData();
 
@@ -302,8 +306,13 @@ export class OrganizerEmployeesComponent implements OnInit {
 
   // ============ View Details ============
   viewEmployeeDetails(employee: Employee): void {
-    this.employeeIdQuery = employee.id;
-    this.lookupById();
+    this.viewingEmployee = employee;
+    this.isViewModalOpen = true;
+  }
+
+  closeViewModal(): void {
+    this.isViewModalOpen = false;
+    this.viewingEmployee = null;
   }
 
   // ============ Helper Methods ============

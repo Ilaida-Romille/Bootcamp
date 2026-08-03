@@ -311,6 +311,87 @@
     </div>
   </div>
 
+  <!-- View Employee Details Modal -->
+  <div *ngIf="isViewModalOpen && viewingEmployee" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeViewModal()" (keydown.escape)="closeViewModal()">
+    <div class="modal-dialog modal-view" (click)="$event.stopPropagation()">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-person-badge"></i> Employee Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeViewModal()"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Profile Header -->
+          <div class="view-profile-header">
+            <div class="view-avatar">
+              <img
+                *ngIf="viewingEmployee.avatarUrl; else avatarInitials"
+                [src]="viewingEmployee.avatarUrl"
+                [alt]="viewingEmployee.firstName + ' ' + viewingEmployee.lastName"
+                class="view-avatar-img" />
+              <ng-template #avatarInitials>
+                <div class="view-avatar-initials">
+                  {{ viewingEmployee.firstName.charAt(0) }}{{ viewingEmployee.lastName.charAt(0) }}
+                </div>
+              </ng-template>
+            </div>
+            <div class="view-profile-info">
+              <h4 class="view-name">{{ viewingEmployee.firstName }} {{ viewingEmployee.lastName }}</h4>
+              <p class="view-job-title">{{ viewingEmployee.jobTitle }}</p>
+              <span class="view-id-badge">{{ viewingEmployee.id }}</span>
+            </div>
+          </div>
+
+          <!-- Detail Cards -->
+          <div class="view-details-grid">
+            <div class="view-detail-card">
+              <span class="view-detail-label"><i class="bi bi-envelope"></i> Email</span>
+              <span class="view-detail-value">{{ viewingEmployee.email }}</span>
+            </div>
+            <div class="view-detail-card">
+              <span class="view-detail-label"><i class="bi bi-building"></i> Company</span>
+              <span class="view-detail-value">{{ viewingEmployee.company }}</span>
+            </div>
+            <div class="view-detail-card">
+              <span class="view-detail-label"><i class="bi bi-diagram-3"></i> Department</span>
+              <span class="view-detail-value">{{ viewingEmployee.department }}</span>
+            </div>
+            <div class="view-detail-card">
+              <span class="view-detail-label"><i class="bi bi-briefcase"></i> Job Title</span>
+              <span class="view-detail-value">{{ viewingEmployee.jobTitle }}</span>
+            </div>
+          </div>
+
+          <!-- Registered Events -->
+          <div class="view-events-section">
+            <span class="view-detail-label"><i class="bi bi-calendar-event"></i> Registered Events</span>
+            <div class="view-events-list mt-2">
+              <span
+                *ngFor="let eventId of viewingEmployee.registeredEventIds"
+                class="view-event-badge">
+                {{ eventId }}
+              </span>
+              <span *ngIf="viewingEmployee.registeredEventIds.length === 0" class="text-secondary fst-italic small">
+                No registered events
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-light" (click)="closeViewModal()">Close</button>
+          <button type="button" class="btn btn-outline-success" (click)="closeViewModal(); openEditEmployeeModal(viewingEmployee!)">
+            <i class="bi bi-pencil"></i> Edit
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- Delete Confirmation Modal -->
   <div *ngIf="showDeleteConfirm" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeDeleteConfirm()" (keydown.escape)="closeDeleteConfirm()">
     <div class="modal-dialog modal-sm" (click)="$event.stopPropagation()">

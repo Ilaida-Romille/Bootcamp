@@ -349,6 +349,99 @@
     </div>
   </div>
 
+  <!-- View Event Details Modal -->
+  <div *ngIf="isViewModalOpen && viewingEvent" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeViewModal()" (keydown.escape)="closeViewModal()">
+    <div class="modal-dialog modal-view-event" (click)="$event.stopPropagation()">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-calendar-event"></i> Event Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeViewModal()"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Banner -->
+          <div *ngIf="viewingEvent.bannerImageUrl" class="view-event-banner mb-4">
+            <img [src]="viewingEvent.bannerImageUrl" [alt]="viewingEvent.title" class="view-event-banner-img" />
+          </div>
+
+          <!-- Title & Status Header -->
+          <div class="view-event-header mb-4">
+            <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap">
+              <div>
+                <h4 class="view-event-title mb-1">{{ viewingEvent.title }}</h4>
+                <span class="view-id-badge">{{ viewingEvent.id }}</span>
+              </div>
+              <span class="badge event-status-badge" [ngClass]="getStatusBadgeClass(viewingEvent.status)">
+                {{ formatStatus(viewingEvent.status) }}
+              </span>
+            </div>
+            <p class="view-event-description mt-3 mb-0">{{ viewingEvent.description }}</p>
+          </div>
+
+          <!-- Detail Grid -->
+          <div class="view-event-grid">
+            <div class="view-detail-card">
+              <span class="view-detail-label"><i class="bi bi-person-badge"></i> Organizer</span>
+              <span class="view-detail-value">{{ viewingEvent.organizerName }}</span>
+              <span class="view-detail-sub">{{ viewingEvent.organizerId }}</span>
+            </div>
+            <div class="view-detail-card">
+              <span class="view-detail-label"><i class="bi bi-geo-alt"></i> Venue</span>
+              <span class="view-detail-value">{{ viewingEvent.venue }}</span>
+            </div>
+            <div class="view-detail-card">
+              <span class="view-detail-label"><i class="bi bi-calendar-range"></i> Schedule</span>
+              <span class="view-detail-value">{{ viewingEvent.startDateTime | date:'mediumDate' }}</span>
+              <span class="view-detail-sub">{{ viewingEvent.startDateTime | date:'shortTime' }} – {{ viewingEvent.endDateTime | date:'shortTime' }}</span>
+            </div>
+            <div class="view-detail-card">
+              <span class="view-detail-label"><i class="bi bi-pencil-square"></i> Registration Window</span>
+              <span class="view-detail-value">{{ viewingEvent.registrationOpensAt | date:'mediumDate' }}</span>
+              <span class="view-detail-sub">until {{ viewingEvent.registrationClosesAt | date:'mediumDate' }}</span>
+            </div>
+            <div class="view-detail-card">
+              <span class="view-detail-label"><i class="bi bi-people"></i> Capacity</span>
+              <span class="view-detail-value">{{ viewingEvent.capacity.registered }} / {{ viewingEvent.capacity.maximum }} registered</span>
+              <div class="view-capacity-bar mt-2">
+                <div
+                  class="view-capacity-fill"
+                  [style.width.%]="viewingEvent.capacity.maximum > 0 ? (viewingEvent.capacity.registered / viewingEvent.capacity.maximum) * 100 : 0">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agenda -->
+          <div *ngIf="viewingEvent.agenda && viewingEvent.agenda.length > 0" class="view-agenda-section mt-3">
+            <span class="view-detail-label mb-2 d-block"><i class="bi bi-list-task"></i> Agenda</span>
+            <div class="view-agenda-list">
+              <div *ngFor="let item of viewingEvent.agenda" class="view-agenda-item" [class.view-agenda-break]="item.isBreak">
+                <div class="view-agenda-time">{{ item.startDateTime | date:'shortTime' }}</div>
+                <div class="view-agenda-body">
+                  <div class="view-agenda-title">{{ item.title }}</div>
+                  <div *ngIf="item.speaker" class="view-agenda-speaker"><i class="bi bi-mic"></i> {{ item.speaker }}</div>
+                  <div *ngIf="item.location" class="view-agenda-location"><i class="bi bi-geo-alt"></i> {{ item.location }}</div>
+                  <div *ngIf="item.description" class="view-agenda-desc">{{ item.description }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-light" (click)="closeViewModal()">Close</button>
+          <button type="button" class="btn btn-outline-success" (click)="closeViewModal(); openEditEventModal(viewingEvent!)">
+            <i class="bi bi-pencil"></i> Edit
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- Delete Confirmation Modal -->
   <div *ngIf="showDeleteConfirm" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeDeleteConfirm()" (keydown.escape)="closeDeleteConfirm()">
     <div class="modal-dialog modal-sm" (click)="$event.stopPropagation()">
