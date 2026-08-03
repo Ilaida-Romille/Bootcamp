@@ -22,8 +22,6 @@ export interface EmployeeInput {
   company: string;
   department: string;
   jobTitle: string;
-  avatarUrl?: string;
-  registeredEventIds: string[];
 }
 
 export interface EmployeePatch {

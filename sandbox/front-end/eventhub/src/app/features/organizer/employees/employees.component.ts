@@ -325,9 +325,7 @@ export class OrganizerEmployeesComponent implements OnInit {
       email: '',
       company: '',
       department: '',
-      jobTitle: '',
-      avatarUrl: '',
-      registeredEventIds: []
+      jobTitle: ''
     };
   }
 
@@ -358,15 +356,4 @@ export class OrganizerEmployeesComponent implements OnInit {
     return typeof message === 'string' && message.trim().length > 0 ? message : fallback;
   }
 
-  // Handle comma-separated event IDs
-  get eventIdsDisplay(): string {
-    return this.formData.registeredEventIds.join(', ');
-  }
-
-  set eventIdsDisplay(value: string) {
-    this.formData.registeredEventIds = value
-      .split(',')
-      .map((id) => id.trim())
-      .filter((id) => id.length > 0);
-  }
 }
