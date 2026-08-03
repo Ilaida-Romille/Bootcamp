@@ -22,6 +22,7 @@ export interface EmployeeInput {
   company: string;
   department: string;
   jobTitle: string;
+  registeredEventIds?: string[];
 }
 
 export interface EmployeePatch {

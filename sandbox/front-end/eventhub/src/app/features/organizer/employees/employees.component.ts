@@ -54,6 +54,7 @@ export class OrganizerEmployeesComponent implements OnInit {
   isModalOpen = false;
   isEditMode = false;
   editingEmployeeId: string | null = null;
+  editRegisteredEventIds: string[] = [];
 
   // Confirmation dialog
   showDeleteConfirm = false;
@@ -190,6 +191,7 @@ export class OrganizerEmployeesComponent implements OnInit {
     this.isEditMode = true;
     this.editingEmployeeId = employee.id;
     this.formData = { ...employee };
+    this.editRegisteredEventIds = [...employee.registeredEventIds];
     this.formError = '';
     this.isModalOpen = true;
   }
@@ -200,6 +202,7 @@ export class OrganizerEmployeesComponent implements OnInit {
     this.editingEmployeeId = null;
     this.formData = this.getDefaultFormData();
     this.formError = '';
+    this.editRegisteredEventIds = [];
   }
 
   submitForm(): void {
@@ -247,7 +250,10 @@ export class OrganizerEmployeesComponent implements OnInit {
     this.isFormSubmitting = true;
     this.formError = '';
 
-    this.employeesApi.updateEmployee(this.editingEmployeeId, this.formData).subscribe({
+    this.employeesApi.updateEmployee(this.editingEmployeeId, {
+      ...this.formData,
+      registeredEventIds: this.editRegisteredEventIds
+    }).subscribe({
       next: (updatedEmployee) => {
         const index = this.employees.findIndex((emp) => emp.id === this.editingEmployeeId);
         if (index !== -1) {
@@ -310,6 +316,10 @@ export class OrganizerEmployeesComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  unregisterEvent(eventId: string): void {
+    this.editRegisteredEventIds = this.editRegisteredEventIds.filter((id) => id !== eventId);
   }
 
   // ============ View Details ============

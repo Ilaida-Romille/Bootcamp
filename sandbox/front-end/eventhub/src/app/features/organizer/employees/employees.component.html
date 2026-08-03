@@ -266,6 +266,30 @@
               </div>
             </div>
           </form>
+
+          <!-- Registered Events (edit mode only) -->
+          <div *ngIf="isEditMode" class="mt-4">
+            <label class="form-label d-block">
+              <i class="bi bi-calendar-event me-1"></i> Registered Events
+            </label>
+            <div *ngIf="editRegisteredEventIds.length === 0" class="text-secondary fst-italic small">
+              No registered events.
+            </div>
+            <ul class="list-group list-group-flush">
+              <li
+                *ngFor="let eventId of editRegisteredEventIds"
+                class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 bg-transparent text-white border-secondary">
+                <span class="small"><i class="bi bi-tag me-2 text-secondary"></i>{{ eventId }}</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  title="Unregister from event"
+                  (click)="unregisterEvent(eventId)">
+                  <i class="bi bi-x-lg"></i> Unregister
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div class="modal-footer">
