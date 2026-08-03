@@ -561,4 +561,27 @@
       </div>
     </div>
   </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div
+      *ngIf="showToastNotif"
+      class="toast show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true">
+      <div
+        class="toast-header"
+        [ngClass]="toastType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'">
+        <i class="bi me-2" [ngClass]="toastType === 'success' ? 'bi-check-circle-fill' : 'bi-trash-fill'"></i>
+        <strong class="me-auto">{{ toastType === 'success' ? 'Event Created' : 'Event Deleted' }}</strong>
+        <button type="button" class="btn-close btn-close-white" (click)="showToastNotif = false"></button>
+      </div>
+      <div 
+      class="toast-body"
+      [ngClass]="toastType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'">
+        {{ toastMessage }}
+      </div>
+    </div>
+  </div>
 </section>

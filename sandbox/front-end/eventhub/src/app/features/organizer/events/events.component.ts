@@ -43,6 +43,12 @@ export class OrganizerEventsComponent implements OnInit {
   dataLoadingError = '';
   formError = '';
 
+  // Toast
+  showToastNotif = false;
+  toastMessage = '';
+  toastType: 'success' | 'danger' = 'success';
+  private toastTimer: ReturnType<typeof setTimeout> | null = null;
+
   // Modal state
   isModalOpen = false;
   isEditMode = false;
@@ -268,6 +274,7 @@ export class OrganizerEventsComponent implements OnInit {
         this.editingEventId = null;
         this.formData = this.getDefaultFormData();
         this.formError = '';
+        this.triggerToast('Event created successfully.', 'success');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -334,6 +341,7 @@ export class OrganizerEventsComponent implements OnInit {
         this.showDeleteConfirm = false;
         this.deleteConfirmId = null;
         this.deleteConfirmName = '';
+        this.triggerToast('Event deleted successfully.', 'danger');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -397,6 +405,20 @@ export class OrganizerEventsComponent implements OnInit {
     }
 
     return true;
+  }
+
+  private triggerToast(message: string, type: 'success' | 'danger'): void {
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+    }
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToastNotif = true;
+    this.cdr.detectChanges();
+    this.toastTimer = setTimeout(() => {
+      this.showToastNotif = false;
+      this.cdr.detectChanges();
+    }, 4000);
   }
 
   private getApiErrorMessage(error: HttpErrorResponse, fallback: string): string {

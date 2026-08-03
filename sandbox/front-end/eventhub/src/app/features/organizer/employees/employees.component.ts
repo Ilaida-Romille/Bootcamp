@@ -44,6 +44,12 @@ export class OrganizerEmployeesComponent implements OnInit {
   dataLoadingError = '';
   formError = '';
 
+  // Toast
+  showToastNotif = false;
+  toastMessage = '';
+  toastType: 'success' | 'danger' = 'success';
+  private toastTimer: ReturnType<typeof setTimeout> | null = null;
+
   // Modal state
   isModalOpen = false;
   isEditMode = false;
@@ -224,6 +230,7 @@ export class OrganizerEmployeesComponent implements OnInit {
         this.editingEmployeeId = null;
         this.formData = this.getDefaultFormData();
         this.formError = '';
+        this.triggerToast('Employee added successfully.', 'success');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -290,6 +297,7 @@ export class OrganizerEmployeesComponent implements OnInit {
         this.showDeleteConfirm = false;
         this.deleteConfirmId = null;
         this.deleteConfirmName = '';
+        this.triggerToast('Employee deleted successfully.', 'danger');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -345,6 +353,20 @@ export class OrganizerEmployeesComponent implements OnInit {
     }
 
     return true;
+  }
+
+  private triggerToast(message: string, type: 'success' | 'danger'): void {
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+    }
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToastNotif = true;
+    this.cdr.detectChanges();
+    this.toastTimer = setTimeout(() => {
+      this.showToastNotif = false;
+      this.cdr.detectChanges();
+    }, 4000);
   }
 
   private isValidEmail(email: string): boolean {
