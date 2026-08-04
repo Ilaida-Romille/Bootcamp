@@ -56,7 +56,7 @@ export class OrganizerEventsComponent implements OnInit {
 
   // Wizard
   wizardStep = 1;
-  readonly totalWizardSteps = 4;
+  readonly totalWizardSteps = 5;
 
   // Confirmation dialog
   showDeleteConfirm = false;
@@ -231,12 +231,17 @@ export class OrganizerEventsComponent implements OnInit {
       case 3:
         if (!startDateTime.trim() || !endDateTime.trim()) {
           error = 'Start date/time and end date/time are required.';
+        } else if (!this.formData.registrationOpensAt.trim() || !this.formData.registrationClosesAt.trim()) {
+          error = 'Registration open and close dates are required.';
         }
         break;
       case 4:
         if (!venue.trim() || capacity.maximum <= 0) {
           error = 'Venue and a valid max capacity are required.';
         }
+        break;
+      case 5:
+        // Agenda is optional; no required fields
         break;
     }
 
@@ -264,7 +269,7 @@ export class OrganizerEventsComponent implements OnInit {
     this.isFormSubmitting = true;
     this.formError = '';
 
-    this.eventsApi.createEvent(this.formData).subscribe({
+    this.eventsApi.createEvent(this.buildEventPayload()).subscribe({
       next: (newEvent) => {
         this.events.push(newEvent);
         this.events.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime());
@@ -291,7 +296,7 @@ export class OrganizerEventsComponent implements OnInit {
     this.isFormSubmitting = true;
     this.formError = '';
 
-    this.eventsApi.updateEvent(this.editingEventId, this.formData).subscribe({
+    this.eventsApi.updateEvent(this.editingEventId, this.buildEventPayload()).subscribe({
       next: (updatedEvent) => {
         const index = this.events.findIndex((evt) => evt.id === this.editingEventId);
         if (index !== -1) {
@@ -356,6 +361,25 @@ export class OrganizerEventsComponent implements OnInit {
     });
   }
 
+  addAgendaItem(): void {
+    this.formData.agenda = [
+      ...this.formData.agenda,
+      {
+        startDateTime: '',
+        endDateTime: '',
+        title: '',
+        description: '',
+        location: '',
+        speaker: '',
+        isBreak: false
+      }
+    ];
+  }
+
+  removeAgendaItem(index: number): void {
+    this.formData.agenda = this.formData.agenda.filter((_, i) => i !== index);
+  }
+
   // ============ View Details ============
   viewEventDetails(event: Event): void {
     this.viewingEvent = event;
@@ -383,6 +407,14 @@ export class OrganizerEventsComponent implements OnInit {
       bannerImageUrl: '',
       capacity: { maximum: 0, registered: 0 },
       agenda: []
+    };
+  }
+
+  // Strips id from agenda items without a server-assigned id to satisfy the API
+  private buildEventPayload(): EventInput {
+    return {
+      ...this.formData,
+      agenda: this.formData.agenda.map(({ id, ...rest }) => (id ? { id, ...rest } : rest))
     };
   }
 

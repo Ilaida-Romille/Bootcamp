@@ -3,7 +3,6 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="h2 fw-bold text-white mb-1">Manage Events</h1>
-      <p class="text-secondary mb-0">Data source: Events API (/api/events)</p>
     </div>
     <button
       type="button"
@@ -214,6 +213,11 @@
               <div class="wizard-step-dot"><i class="bi bi-geo-alt"></i></div>
               <span>Venue</span>
             </div>
+            <div class="wizard-connector" [class.active]="wizardStep >= 5"></div>
+            <div class="wizard-step" [class.active]="wizardStep >= 5" [class.current]="wizardStep === 5">
+              <div class="wizard-step-dot"><i class="bi bi-list-task"></i></div>
+              <span>Agenda</span>
+            </div>
           </div>
         </div>
 
@@ -386,6 +390,108 @@
                     min="1" />
                 </div>
               </div>
+            </div>
+
+            <!-- Step 5: Agenda -->
+            <div *ngIf="wizardStep === 5">
+              <div class="wizard-step-header mb-3">
+                <h6>Agenda</h6>
+                <p>Add and manage the schedule items for this event. All fields are optional.</p>
+              </div>
+
+              <div *ngFor="let item of formData.agenda; let i = index" class="card mb-3 border-secondary bg-transparent">
+                <div class="card-header d-flex justify-content-between align-items-center border-secondary py-2">
+                  <span class="small text-white fw-semibold">
+                    Item {{ i + 1 }}<span *ngIf="item.isBreak" class="text-secondary"> &mdash; Break</span>
+                  </span>
+                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeAgendaItem(i)">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label" [for]="'agendaStart' + i">Start Time</label>
+                      <input
+                        [id]="'agendaStart' + i"
+                        [name]="'agendaStart' + i"
+                        type="datetime-local"
+                        class="form-control glass-form-input"
+                        [(ngModel)]="item.startDateTime" />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label" [for]="'agendaEnd' + i">End Time</label>
+                      <input
+                        [id]="'agendaEnd' + i"
+                        [name]="'agendaEnd' + i"
+                        type="datetime-local"
+                        class="form-control glass-form-input"
+                        [(ngModel)]="item.endDateTime" />
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label" [for]="'agendaTitle' + i">Title *</label>
+                      <input
+                        [id]="'agendaTitle' + i"
+                        [name]="'agendaTitle' + i"
+                        type="text"
+                        class="form-control glass-form-input"
+                        [(ngModel)]="item.title"
+                        placeholder="Session title" />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label" [for]="'agendaSpeaker' + i">Speaker</label>
+                      <input
+                        [id]="'agendaSpeaker' + i"
+                        [name]="'agendaSpeaker' + i"
+                        type="text"
+                        class="form-control glass-form-input"
+                        [(ngModel)]="item.speaker"
+                        placeholder="Speaker name" />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label" [for]="'agendaLocation' + i">Location</label>
+                      <input
+                        [id]="'agendaLocation' + i"
+                        [name]="'agendaLocation' + i"
+                        type="text"
+                        class="form-control glass-form-input"
+                        [(ngModel)]="item.location"
+                        placeholder="Room or area" />
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label" [for]="'agendaDesc' + i">Description</label>
+                      <textarea
+                        [id]="'agendaDesc' + i"
+                        [name]="'agendaDesc' + i"
+                        class="form-control glass-form-input"
+                        [(ngModel)]="item.description"
+                        rows="2"
+                        placeholder="Brief description"></textarea>
+                    </div>
+                    <div class="col-12">
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          [id]="'agendaBreak' + i"
+                          [name]="'agendaBreak' + i"
+                          [(ngModel)]="item.isBreak" />
+                        <label class="form-check-label text-secondary" [for]="'agendaBreak' + i">
+                          This is a break / intermission
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p *ngIf="formData.agenda.length === 0" class="text-secondary fst-italic small mb-3">
+                No agenda items yet. Click &ldquo;Add Item&rdquo; to create one.
+              </p>
+
+              <button type="button" class="btn btn-outline-primary w-100" (click)="addAgendaItem()">
+                <i class="bi bi-plus-lg"></i> Add Agenda Item
+              </button>
             </div>
 
           </form>
