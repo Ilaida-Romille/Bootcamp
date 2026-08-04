@@ -46,6 +46,7 @@ export class OrganizerEventsComponent implements OnInit {
   // Toast
   showToastNotif = false;
   toastMessage = '';
+  toastTitle = '';
   toastType: 'success' | 'danger' = 'success';
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -279,7 +280,7 @@ export class OrganizerEventsComponent implements OnInit {
         this.editingEventId = null;
         this.formData = this.getDefaultFormData();
         this.formError = '';
-        this.triggerToast('Event created successfully.', 'success');
+        this.triggerToast('Event created successfully.', 'success', 'Event Created');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -309,6 +310,7 @@ export class OrganizerEventsComponent implements OnInit {
         this.editingEventId = null;
         this.formData = this.getDefaultFormData();
         this.formError = '';
+        this.triggerToast('Event updated successfully.', 'success', 'Event Updated');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -346,7 +348,7 @@ export class OrganizerEventsComponent implements OnInit {
         this.showDeleteConfirm = false;
         this.deleteConfirmId = null;
         this.deleteConfirmName = '';
-        this.triggerToast('Event deleted successfully.', 'danger');
+        this.triggerToast('Event deleted successfully.', 'danger', 'Event Deleted');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -439,11 +441,12 @@ export class OrganizerEventsComponent implements OnInit {
     return true;
   }
 
-  private triggerToast(message: string, type: 'success' | 'danger'): void {
+  private triggerToast(message: string, type: 'success' | 'danger', title: string): void {
     if (this.toastTimer) {
       clearTimeout(this.toastTimer);
     }
     this.toastMessage = message;
+    this.toastTitle = title;
     this.toastType = type;
     this.showToastNotif = true;
     this.cdr.detectChanges();

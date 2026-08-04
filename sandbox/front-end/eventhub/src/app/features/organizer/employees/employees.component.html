@@ -144,22 +144,6 @@
                 [disabled]="isLookupLoading">
                 <i class="bi bi-eye"></i>
               </button>
-              <button
-                type="button"
-                class="btn btn-sm btn-action btn-edit"
-                title="Edit Employee"
-                (click)="openEditEmployeeModal(employee)"
-                [disabled]="isFormSubmitting">
-                <i class="bi bi-pencil"></i>
-              </button>
-              <button
-                type="button"
-                class="btn btn-sm btn-action btn-delete"
-                title="Delete Employee"
-                (click)="openDeleteConfirm(employee)"
-                [disabled]="isDeleting">
-                <i class="bi bi-trash"></i>
-              </button>
             </div>
           </td>
         </tr>
@@ -385,7 +369,10 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-light" (click)="closeViewModal()">Close</button>
-          <button type="button" class="btn btn-outline-success" (click)="closeViewModal(); openEditEmployeeModal(viewingEmployee!)">
+          <button type="button" class="btn btn-outline-danger" (click)="openDeleteConfirm(viewingEmployee!); closeViewModal()" [disabled]="isDeleting">
+            <i class="bi bi-trash"></i> Delete
+          </button>
+          <button type="button" class="btn btn-outline-success" (click)="openEditEmployeeModal(viewingEmployee!); closeViewModal()">
             <i class="bi bi-pencil"></i> Edit
           </button>
         </div>
@@ -443,7 +430,7 @@
         class="toast-header"
         [ngClass]="toastType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'">
         <i class="bi me-2" [ngClass]="toastType === 'success' ? 'bi-check-circle-fill' : 'bi-trash-fill'"></i>
-        <strong class="me-auto">{{ toastType === 'success' ? 'Employee Added' : 'Employee Deleted' }}</strong>
+        <strong class="me-auto">{{ toastTitle }}</strong>
         <button type="button" class="btn-close btn-close-white" (click)="showToastNotif = false"></button>
       </div>
       <div

@@ -47,6 +47,7 @@ export class OrganizerEmployeesComponent implements OnInit {
   // Toast
   showToastNotif = false;
   toastMessage = '';
+  toastTitle = '';
   toastType: 'success' | 'danger' = 'success';
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -233,7 +234,7 @@ export class OrganizerEmployeesComponent implements OnInit {
         this.editingEmployeeId = null;
         this.formData = this.getDefaultFormData();
         this.formError = '';
-        this.triggerToast('Employee added successfully.', 'success');
+        this.triggerToast('Employee added successfully.', 'success', 'Employee Added');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -266,6 +267,7 @@ export class OrganizerEmployeesComponent implements OnInit {
         this.editingEmployeeId = null;
         this.formData = this.getDefaultFormData();
         this.formError = '';
+        this.triggerToast('Employee updated successfully.', 'success', 'Employee Updated');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -303,7 +305,7 @@ export class OrganizerEmployeesComponent implements OnInit {
         this.showDeleteConfirm = false;
         this.deleteConfirmId = null;
         this.deleteConfirmName = '';
-        this.triggerToast('Employee deleted successfully.', 'danger');
+        this.triggerToast('Employee deleted successfully.', 'danger', 'Employee Deleted');
         this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
@@ -365,11 +367,12 @@ export class OrganizerEmployeesComponent implements OnInit {
     return true;
   }
 
-  private triggerToast(message: string, type: 'success' | 'danger'): void {
+  private triggerToast(message: string, type: 'success' | 'danger', title: string): void {
     if (this.toastTimer) {
       clearTimeout(this.toastTimer);
     }
     this.toastMessage = message;
+    this.toastTitle = title;
     this.toastType = type;
     this.showToastNotif = true;
     this.cdr.detectChanges();
