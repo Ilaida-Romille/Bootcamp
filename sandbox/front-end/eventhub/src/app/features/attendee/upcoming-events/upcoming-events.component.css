@@ -14,6 +14,48 @@
     }
 }
 
+/* ============ Filter Bar ============ */
+.filter-bar {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.filter-bar:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.filter-bar .form-label {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.glass-form-input {
+    height: 42px;
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: var(--text-main) !important;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-form-input::placeholder {
+    color: rgba(255, 255, 255, 0.48);
+}
+
+.glass-form-input:focus {
+    border-color: var(--accent-blue) !important;
+    box-shadow: 0 0 10px rgba(100, 181, 246, 0.15) !important;
+    outline: none;
+}
+
 /* Page Title Definitions */
 .custom-page-title {
     font-size: 1.5rem;
