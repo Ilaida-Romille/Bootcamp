@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -13,7 +13,7 @@ export interface OrganizerStatus {
 export class OrganizersDataService {
   private readonly dataUrl = '/data/organizers.json';
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   getOrganizers(): Observable<OrganizerStatus[]> {
     return this.http.get<OrganizerStatus[]>(this.dataUrl);

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -67,10 +67,8 @@ export class VenueMapWidgetComponent {
   @Input() pinTitle = 'Main Hall';
   @Input() pinZone = 'Building A — Tech Zone';
   
-  safeMapUrl: SafeResourceUrl;
-
-  constructor(private sanitizer: DomSanitizer) {
-    const rawUrl = 'https://maps.google.com/maps?q=Makati+Convention+Center,+Makati+City,+Philippines&hl=en&z=15&output=embed';
-    this.safeMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
-  }
+  private readonly sanitizer = inject(DomSanitizer);
+  safeMapUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+    'https://maps.google.com/maps?q=Makati+Convention+Center,+Makati+City,+Philippines&hl=en&z=15&output=embed'
+  );
 }

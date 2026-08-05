@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { Employee } from '../models/employee.model';
@@ -40,7 +40,7 @@ export interface EmployeePatch {
 export class OrganizerEmployeesApiService {
   private readonly baseUrl = '/api/employees';
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   getEmployees(query: EmployeeListQuery = {}): Observable<Employee[]> {
     const mergedQuery: Required<EmployeeListQuery> = {

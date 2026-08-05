@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import {
@@ -13,7 +13,7 @@ import {
 export class BillingDataService {
   private readonly dataUrl = '/data/invoices.json';
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   getBillingData(): Observable<BillingFeatureData> {
     return this.http.get<BillingDataResponse>(this.dataUrl).pipe(

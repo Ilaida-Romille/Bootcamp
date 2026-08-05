@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidebarItem } from '../../../layout/sidebar/sidebar.component';
@@ -71,10 +71,8 @@ export class BillingComponent implements OnInit {
 
   filteredInvoices: Invoice[] = [];
 
-  constructor(
-    private readonly billingDataService: BillingDataService,
-    private readonly cdr: ChangeDetectorRef
-  ) {}
+  private readonly billingDataService = inject(BillingDataService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.loadBillingData();

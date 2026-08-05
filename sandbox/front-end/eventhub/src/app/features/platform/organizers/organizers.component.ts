@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarItem } from '../../../layout/sidebar/sidebar.component';
 import { ROUTE_PATHS } from '../../../app.routes';
@@ -51,10 +51,8 @@ export class OrganizersComponent implements OnInit {
 
   filteredCompanies: Company[] = [];
 
-  constructor(
-    private readonly organizersDataService: OrganizersDataService,
-    private readonly cdr: ChangeDetectorRef
-  ) {}
+  private readonly organizersDataService = inject(OrganizersDataService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.loadOrganizers();

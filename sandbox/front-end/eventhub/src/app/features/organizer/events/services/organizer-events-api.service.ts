@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { Event } from '../models/event.model';
@@ -61,7 +61,7 @@ export interface EventPatch {
 export class OrganizerEventsApiService {
   private readonly baseUrl = '/api/events';
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   getEvents(): Observable<Event[]> {
     return this.http.get<EventsListResponse>(this.baseUrl).pipe(

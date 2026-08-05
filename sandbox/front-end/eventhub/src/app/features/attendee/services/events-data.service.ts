@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { EventDetail, EventItemDisplay } from '../models/attendee.model';
@@ -9,7 +9,7 @@ type EventsListResponse = EventDetail[] | { content?: EventDetail[]; items?: Eve
 export class EventsDataService {
   private readonly baseUrl = '/api/events';
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   getEvents(): Observable<EventDetail[]> {
     return this.http.get<EventsListResponse>(`${this.baseUrl}?all=true`).pipe(

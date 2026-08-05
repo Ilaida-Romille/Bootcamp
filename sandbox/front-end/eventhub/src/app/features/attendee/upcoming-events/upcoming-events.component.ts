@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EventCardComponent } from './components/event-card/event-card.component';
@@ -32,11 +32,9 @@ export class UpcomingEventsComponent implements OnInit {
   filteredEvents: EventItemDisplay[] = [];
   dataLoadingError: string = '';
 
-  constructor(
-    private readonly eventsDataService: EventsDataService,
-    private readonly navbarContext: NavbarContextService,
-    private readonly cdr: ChangeDetectorRef
-  ) {}
+  private readonly eventsDataService = inject(EventsDataService);
+  private readonly navbarContext = inject(NavbarContextService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     // Update navbar context for events page
