@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FeatureCardComponent, FeatureCardData } from './components/feature-card/feature-card.component';
-
+import { OrganizerEmployeesApiService } from '../employees/services/organizer-employees-api.service';
 
 @Component({
   selector: 'app-organizer-dashboard',
@@ -10,7 +10,15 @@ import { FeatureCardComponent, FeatureCardData } from './components/feature-card
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class OrganizerDashboardComponent {
+export class OrganizerDashboardComponent implements OnInit{
+  readonly apiService = inject(OrganizerEmployeesApiService)
+
+  readonly employee = this.apiService.employees;
+
+  ngOnInit(): void{
+    this.apiService.getEmployees().subscribe();
+  }
+
   companyName = 'Acme Events Co.';
 
   featureNodes: FeatureCardData[] = [
@@ -45,7 +53,7 @@ export class OrganizerDashboardComponent {
   ];
 
   onCardAction(cardId: string): void {
-    console.log(`Action triggered for card: ${cardId}`);
+    // console.log(`Action triggered for card: ${cardId}`);
     // Future implementation handlers go here
   }
 }

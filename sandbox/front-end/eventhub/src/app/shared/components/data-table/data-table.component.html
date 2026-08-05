@@ -1,0 +1,58 @@
+<div class="glass-table-responsive rounded-3">
+  <table class="table glass-data-table mb-0 align-middle">
+    <thead>
+      <tr>
+        @for (col of columns; track col.key) {
+          <th
+            scope="col"
+            [class]="col.cssClass ?? ''"
+            [class.dt-sortable]="col.sortable !== false"
+            (click)="onHeaderClick(col.key)">
+            {{ col.header }}
+            @if (col.sortable !== false) {
+              <i
+                class="bi ms-1 dt-sort-icon"
+                [class.bi-arrow-up]="sortKey === col.key && sortDir === 'asc'"
+                [class.bi-arrow-down]="sortKey === col.key && sortDir === 'desc'"
+                [class.bi-arrow-down-up]="sortKey !== col.key"
+                [class.dt-sort-inactive]="sortKey !== col.key">
+              </i>
+            }
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @if (loading) {
+        <tr>
+          <td [attr.colspan]="columns.length" class="text-center text-muted py-4">
+            <i class="bi bi-hourglass-split me-1"></i> Loading...
+          </td>
+        </tr>
+      } @else if (data.length === 0) {
+        <tr>
+          <td [attr.colspan]="columns.length" class="text-center text-muted py-4">
+            <i class="bi bi-inbox me-1"></i> {{ emptyMessage }}
+          </td>
+        </tr>
+      } @else {
+        @for (row of data; track $index) {
+          <tr>
+            @for (col of columns; track col.key) {
+              <td [class]="col.cssClass ?? ''">
+                @if (getCellDirective(col.key); as cell) {
+                  <ng-container
+                    [ngTemplateOutlet]="cell.template"
+                    [ngTemplateOutletContext]="{ $implicit: row }">
+                  </ng-container>
+                } @else {
+                  {{ getCellValue(row, col.key) }}
+                }
+              </td>
+            }
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>

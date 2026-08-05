@@ -114,61 +114,40 @@
   </div>
 
   <!-- Data Table -->
-  <div class="glass-table-responsive rounded-3">
-    <table class="table glass-data-table mb-0 align-middle">
-      <thead>
-        <tr>
-          <th scope="col">Employee</th>
-          <th scope="col">Email</th>
-          <th scope="col">Company</th>
-          <th scope="col">Department</th>
-          <th scope="col">Job Title</th>
-          <th scope="col">Registered Events</th>
-          <th scope="col" class="text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (employee of paginatedEmployees; track employee.id) {
-          <tr>
-            <td>
-              <div class="fw-semibold text-white">{{ employee.firstName }} {{ employee.lastName }}</div>
-              <div class="text-secondary small">{{ employee.id }}</div>
-            </td>
-            <td>{{ employee.email }}</td>
-            <td>{{ employee.company }}</td>
-            <td>{{ employee.department }}</td>
-            <td>{{ employee.jobTitle }}</td>
-            <td>
-              @for (eventId of employee.registeredEventIds; track eventId) {
-                <span class="badge text-bg-secondary me-1">
-                  {{ eventId }}
-                </span>
-              }
-            </td>
-            <td class="text-center">
-              <div class="action-buttons">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-action btn-view"
-                  title="View Details"
-                  (click)="viewEmployeeDetails(employee)"
-                  [disabled]="isLookupLoading">
-                  <i class="bi bi-eye"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        }
-        @if (!isLoading && filteredEmployees.length === 0) {
-          <tr>
-            <td colspan="7" class="text-center text-muted py-4">
-              <i class="bi bi-inbox"></i> No employees matched your filters.
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+  <app-data-table
+    [columns]="columns"
+    [data]="paginatedEmployees"
+    [loading]="isLoading"
+    [sortKey]="sortKey"
+    [sortDir]="sortDir"
+    emptyMessage="No employees matched your filters."
+    (sortChange)="onSortChange($event)">
+
+    <ng-template appDtCell="name" let-emp>
+      <div class="fw-semibold text-white">{{ $any(emp).firstName }} {{ $any(emp).lastName }}</div>
+      <div class="text-secondary small">{{ $any(emp).id }}</div>
+    </ng-template>
+
+    <ng-template appDtCell="registeredEventIds" let-emp>
+      @for (eventId of $any(emp).registeredEventIds; track eventId) {
+        <span class="badge text-bg-secondary me-1">{{ eventId }}</span>
+      }
+    </ng-template>
+
+    <ng-template appDtCell="actions" let-emp>
+      <div class="action-buttons">
+        <button
+          type="button"
+          class="btn btn-sm btn-action btn-view"
+          title="View Details"
+          (click)="viewEmployeeDetails($any(emp))"
+          [disabled]="isLookupLoading">
+          <i class="bi bi-eye"></i>
+        </button>
+      </div>
+    </ng-template>
+
+  </app-data-table>
 
   <!-- Pagination -->
   <app-pagination

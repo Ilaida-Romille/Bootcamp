@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { DataTableComponent, ColumnDef, SortEvent } from '../../../shared/components/data-table/data-table.component';
+import { DataTableCellDirective } from '../../../shared/components/data-table/data-table-cell.directive';
 import { Event, EventStatus } from './models/event.model';
 import { OrganizerEventsApiService, EventInput } from './services/organizer-events-api.service';
 import {
@@ -15,7 +17,7 @@ import {
 @Component({
   selector: 'app-organizer-events',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, DataTableComponent, DataTableCellDirective],
   templateUrl: './events.component.html',
   styleUrl: './events.component.css',
 })
@@ -26,6 +28,19 @@ export class OrganizerEventsComponent implements OnInit {
   // Data
   events: Event[] = [];
   filteredEvents: Event[] = [];
+
+  readonly columns: ColumnDef[] = [
+    { key: 'event',        header: 'Event' },
+    { key: 'organizer',    header: 'Organizer' },
+    { key: 'status',       header: 'Status',              sortable: false },
+    { key: 'schedule',     header: 'Schedule' },
+    { key: 'registration', header: 'Registration Window' },
+    { key: 'venue',        header: 'Venue' },
+    { key: 'actions',      header: 'Actions',             sortable: false, cssClass: 'text-center' }
+  ];
+
+  sortKey = 'schedule';
+  sortDir: 'asc' | 'desc' = 'asc';
 
   // Filters
   searchTerm = '';
@@ -175,8 +190,28 @@ export class OrganizerEventsComponent implements OnInit {
   }
 
   get paginatedEvents(): Event[] {
+    const getSortVal = (e: Event): string => {
+      switch (this.sortKey) {
+        case 'event':        return e.title;
+        case 'organizer':    return e.organizerName;
+        case 'schedule':     return e.startDateTime;
+        case 'registration': return e.registrationOpensAt;
+        case 'venue':        return e.venue;
+        default:             return '';
+      }
+    };
+    const sorted = [...this.filteredEvents].sort((a, b) => {
+      const cmp = getSortVal(a).localeCompare(getSortVal(b));
+      return this.sortDir === 'asc' ? cmp : -cmp;
+    });
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredEvents.slice(start, start + this.itemsPerPage);
+    return sorted.slice(start, start + this.itemsPerPage);
+  }
+
+  onSortChange(event: SortEvent): void {
+    this.sortKey = event.key;
+    this.sortDir = event.dir;
+    this.currentPage = 1;
   }
 
   // ============ Modal & Form Management ============

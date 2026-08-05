@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { DataTableComponent, ColumnDef, SortEvent } from '../../../shared/components/data-table/data-table.component';
+import { DataTableCellDirective } from '../../../shared/components/data-table/data-table-cell.directive';
 import { OrganizerEmployeesApiService, EmployeeInput } from './services/organizer-employees-api.service';
 import { Employee } from './models/employee.model';
 
 @Component({
   selector: 'app-organizer-employees',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, DataTableComponent, DataTableCellDirective],
   templateUrl: './employees.component.html',
   styleUrl: './employees.component.css',
 })
@@ -20,6 +22,19 @@ export class OrganizerEmployeesComponent implements OnInit {
   // Data
   employees: Employee[] = [];
   filteredEmployees: Employee[] = [];
+
+  readonly columns: ColumnDef[] = [
+    { key: 'name',               header: 'Employee' },
+    { key: 'email',              header: 'Email' },
+    { key: 'company',            header: 'Company' },
+    { key: 'department',         header: 'Department' },
+    { key: 'jobTitle',           header: 'Job Title' },
+    { key: 'registeredEventIds', header: 'Registered Events', sortable: false },
+    { key: 'actions',            header: 'Actions',           sortable: false, cssClass: 'text-center' }
+  ];
+
+  sortKey = 'name';
+  sortDir: 'asc' | 'desc' = 'asc';
 
   // Filters
   searchTerm = '';
@@ -175,8 +190,28 @@ export class OrganizerEmployeesComponent implements OnInit {
   }
 
   get paginatedEmployees(): Employee[] {
+    const getSortVal = (e: Employee): string => {
+      switch (this.sortKey) {
+        case 'name':       return `${e.firstName} ${e.lastName}`;
+        case 'email':      return e.email;
+        case 'company':    return e.company;
+        case 'department': return e.department;
+        case 'jobTitle':   return e.jobTitle;
+        default:           return '';
+      }
+    };
+    const sorted = [...this.filteredEmployees].sort((a, b) => {
+      const cmp = getSortVal(a).localeCompare(getSortVal(b));
+      return this.sortDir === 'asc' ? cmp : -cmp;
+    });
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredEmployees.slice(start, start + this.itemsPerPage);
+    return sorted.slice(start, start + this.itemsPerPage);
+  }
+
+  onSortChange(event: SortEvent): void {
+    this.sortKey = event.key;
+    this.sortDir = event.dir;
+    this.currentPage = 1;
   }
 
   // ============ Modal & Form Management ============

@@ -100,68 +100,55 @@
   </div>
 
   <!-- Data Table -->
-  <div class="glass-table-responsive rounded-3">
-    <table class="table glass-data-table mb-0 align-middle">
-      <thead>
-        <tr>
-          <th scope="col">Event</th>
-          <th scope="col">Organizer</th>
-          <th scope="col">Status</th>
-          <th scope="col">Schedule</th>
-          <th scope="col">Registration Window</th>
-          <th scope="col">Venue</th>
-          <th scope="col" class="text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (event of paginatedEvents; track event.id) {
-          <tr>
-            <td>
-              <div class="fw-semibold text-white">{{ event.title }}</div>
-              <div class="text-secondary small">{{ event.id }}</div>
-            </td>
-            <td>
-              <div>{{ event.organizerName }}</div>
-              <div class="text-secondary small">{{ event.organizerId }}</div>
-            </td>
-            <td>
-              <span class="badge event-status-badge" [ngClass]="getStatusBadgeClass(event.status)">
-                {{ formatStatus(event.status) }}
-              </span>
-            </td>
-            <td>
-              <div>{{ event.startDateTime | date:'MMM d, y' }}</div>
-              <div class="text-secondary small">{{ event.startDateTime | date:'shortTime' }} – {{ event.endDateTime | date:'shortTime' }}</div>
-            </td>
-            <td>
-              <div>{{ event.registrationOpensAt | date:'MMM d, y' }}</div>
-              <div class="text-secondary small">closes {{ event.registrationClosesAt | date:'MMM d, y' }}</div>
-            </td>
-            <td>{{ event.venue }}</td>
-            <td class="text-center">
-              <div class="action-buttons">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-action btn-view"
-                  title="View Details"
-                  (click)="viewEventDetails(event)"
-                  [disabled]="isLookupLoading">
-                  <i class="bi bi-eye"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        }
-        @if (!isLoading && filteredEvents.length === 0) {
-          <tr>
-            <td colspan="7" class="text-center text-muted py-4">
-              <i class="bi bi-inbox"></i> No events matched your filters.
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+  <app-data-table
+    [columns]="columns"
+    [data]="paginatedEvents"
+    [loading]="isLoading"
+    [sortKey]="sortKey"
+    [sortDir]="sortDir"
+    emptyMessage="No events matched your filters."
+    (sortChange)="onSortChange($event)">
+
+    <ng-template appDtCell="event" let-ev>
+      <div class="fw-semibold text-white">{{ $any(ev).title }}</div>
+      <div class="text-secondary small">{{ $any(ev).id }}</div>
+    </ng-template>
+
+    <ng-template appDtCell="organizer" let-ev>
+      <div>{{ $any(ev).organizerName }}</div>
+      <div class="text-secondary small">{{ $any(ev).organizerId }}</div>
+    </ng-template>
+
+    <ng-template appDtCell="status" let-ev>
+      <span class="badge event-status-badge" [ngClass]="getStatusBadgeClass($any(ev).status)">
+        {{ formatStatus($any(ev).status) }}
+      </span>
+    </ng-template>
+
+    <ng-template appDtCell="schedule" let-ev>
+      <div>{{ $any(ev).startDateTime | date:'MMM d, y' }}</div>
+      <div class="text-secondary small">{{ $any(ev).startDateTime | date:'shortTime' }} – {{ $any(ev).endDateTime | date:'shortTime' }}</div>
+    </ng-template>
+
+    <ng-template appDtCell="registration" let-ev>
+      <div>{{ $any(ev).registrationOpensAt | date:'MMM d, y' }}</div>
+      <div class="text-secondary small">closes {{ $any(ev).registrationClosesAt | date:'MMM d, y' }}</div>
+    </ng-template>
+
+    <ng-template appDtCell="actions" let-ev>
+      <div class="action-buttons">
+        <button
+          type="button"
+          class="btn btn-sm btn-action btn-view"
+          title="View Details"
+          (click)="viewEventDetails($any(ev))"
+          [disabled]="isLookupLoading">
+          <i class="bi bi-eye"></i>
+        </button>
+      </div>
+    </ng-template>
+
+  </app-data-table>
 
   <!-- Pagination -->
   <app-pagination

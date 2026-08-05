@@ -1,0 +1,88 @@
+.glass-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-data-table {
+  width: 100%;
+  min-width: 860px;
+  background: transparent !important;
+  border-collapse: collapse;
+}
+
+.glass-data-table td,
+.glass-data-table th {
+  padding: 0.9rem 1rem !important;
+  color: var(--text-main) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.04) !important;
+  background: transparent !important;
+  vertical-align: middle;
+}
+
+.glass-data-table thead th {
+  color: var(--text-main) !important;
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.glass-data-table th:last-child,
+.glass-data-table td:last-child {
+  border-right: none !important;
+}
+
+.glass-data-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.glass-data-table tbody tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.glass-data-table .small {
+  opacity: 0.75;
+}
+
+/* Badge style for projected cell content */
+:host ::ng-deep .badge.text-bg-secondary {
+  background: rgba(29, 79, 122, 0.7) !important;
+  border: 1px solid rgba(125, 188, 244, 0.45);
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* ============ Sort Controls ============ */
+.dt-sortable {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.dt-sortable:hover {
+  color: var(--text-main, #fff);
+}
+
+.dt-sort-icon {
+  font-size: 0.7rem;
+  vertical-align: middle;
+}
+
+.dt-sort-inactive {
+  opacity: 0.35;
+}
+
+@media (max-width: 767.98px) {
+  .glass-data-table {
+    min-width: 700px;
+  }
+}
