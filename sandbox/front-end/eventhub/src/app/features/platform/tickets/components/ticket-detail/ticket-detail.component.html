@@ -1,4 +1,5 @@
-<div class="glass-ticket-detail p-4 rounded-3" *ngIf="ticket; else noTicketSelected">
+@if (ticket) {
+<div class="glass-ticket-detail p-4 rounded-3">
   <h2 class="h5 fw-bold text-white mb-2">#{{ ticket.ticketNumber }} — {{ ticket.subject }}</h2>
   
   <div class="small text-secondary mb-4">
@@ -50,9 +51,8 @@
     </div>
   </form>
 </div>
-
-<ng-template #noTicketSelected>
+} @else {
   <div class="glass-ticket-detail p-5 rounded-3 text-center text-muted">
     <p class="mb-0">Select a ticket from the queue to view details.</p>
   </div>
-</ng-template>
+}

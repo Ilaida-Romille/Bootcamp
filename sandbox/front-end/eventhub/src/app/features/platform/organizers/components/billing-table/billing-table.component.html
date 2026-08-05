@@ -12,25 +12,29 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let invoice of invoices">
-        <td class="fw-semibold">{{ invoice.id }}</td>
-        <td>{{ invoice.companyName }}</td>
-        <td>{{ invoice.amount | currency }}</td>
-        <td>{{ invoice.dueDate }}</td>
-        <td>
-          <span [ngClass]="getStatusBadgeClass(invoice.status)" class="fw-semibold">
-            {{ invoice.status }}
-          </span>
-        </td>
-        <td class="actions-cell">
-          <a href="javascript:void(0)" (click)="viewInvoice.emit(invoice.id)">View</a>
-          <span class="action-divider">|</span>
-          <a href="javascript:void(0)" (click)="downloadInvoice.emit(invoice.id)">Download</a>
-        </td>
-      </tr>
-      <tr *ngIf="invoices.length === 0">
-        <td colspan="6" class="text-center text-muted py-4">No records found.</td>
-      </tr>
+      @for (invoice of invoices; track invoice.id) {
+        <tr>
+          <td class="fw-semibold">{{ invoice.id }}</td>
+          <td>{{ invoice.companyName }}</td>
+          <td>{{ invoice.amount | currency }}</td>
+          <td>{{ invoice.dueDate }}</td>
+          <td>
+            <span [ngClass]="getStatusBadgeClass(invoice.status)" class="fw-semibold">
+              {{ invoice.status }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <a href="javascript:void(0)" (click)="viewInvoice.emit(invoice.id)">View</a>
+            <span class="action-divider">|</span>
+            <a href="javascript:void(0)" (click)="downloadInvoice.emit(invoice.id)">Download</a>
+          </td>
+        </tr>
+      }
+      @if (invoices.length === 0) {
+        <tr>
+          <td colspan="6" class="text-center text-muted py-4">No records found.</td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>

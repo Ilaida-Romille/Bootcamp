@@ -6,14 +6,14 @@
 
   <!-- Features Grid Layout -->
   <section class="row g-4 matches-features-grid">
-    <div 
-      *ngFor="let feature of featureNodes" 
-      class="col-md-6 col-xl-6 d-flex">
-      <app-feature-card 
-        [data]="feature" 
-        (cardClick)="onCardAction($event)" 
-        class="w-100">
-      </app-feature-card>
-    </div>
+    @for (feature of featureNodes; track feature) {
+      <div class="col-md-6 col-xl-6 d-flex">
+        <app-feature-card 
+          [data]="feature" 
+          (cardClick)="onCardAction($event)" 
+          class="w-100">
+        </app-feature-card>
+      </div>
+    }
   </section>
 </main>

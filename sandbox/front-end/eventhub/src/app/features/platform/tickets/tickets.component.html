@@ -6,12 +6,13 @@
     <!-- Ticket List Queue Column -->
     <div class="col-100-lg-350 col-100-md-100">
         <div class="glass-tickets-list rounded-3">
-            <app-ticket-list-item
-                *ngFor="let ticket of tickets"
-                [ticket]="ticket"
-                [isSelected]="selectedTicket?.id === ticket.id"
-                (selectTicket)="selectTicket($event)">
-            </app-ticket-list-item>
+            @for (ticket of tickets; track ticket.id) {
+              <app-ticket-list-item
+                  [ticket]="ticket"
+                  [isSelected]="selectedTicket?.id === ticket.id"
+                  (selectTicket)="selectTicket($event)">
+              </app-ticket-list-item>
+            }
         </div>
     </div>
 

@@ -13,14 +13,15 @@
 
       <!-- Page Numbers -->
       <div class="custom-page-numbers-wrapper d-flex gap-1">
-        <a 
-          *ngFor="let page of pages" 
-          href="javascript:void(0)" 
-          class="custom-page-link"
-          [class.page-active]="page === currentPage"
-          (click)="selectPage(page)">
-          {{ page }}
-        </a>
+        @for (page of pages; track page) {
+          <a 
+            href="javascript:void(0)" 
+            class="custom-page-link"
+            [class.page-active]="page === currentPage"
+            (click)="selectPage(page)">
+            {{ page }}
+          </a>
+        }
       </div>
 
       <!-- Next Button -->

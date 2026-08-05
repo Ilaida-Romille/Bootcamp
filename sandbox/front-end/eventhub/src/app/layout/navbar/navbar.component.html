@@ -8,15 +8,16 @@
         <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
             <!-- Role-based Navigation Items -->
             <nav class="navbar-nav gap-3 mt-3 mt-md-0">
-                <span *ngFor="let item of navItems" 
-                   
-                   class="nav-link text-secondary">
-                    {{ item.label }}
-                </span>
+                @for (item of navItems; track item.label) {
+                  <span class="nav-link text-secondary">
+                      {{ item.label }}
+                  </span>
+                }
             </nav>
 
             <!-- User Dropdown Section -->
-            <div class="navbar-nav mt-3 mt-md-0" *ngIf="currentRole && !isOnLandingPage">
+            @if (currentRole && !isOnLandingPage) {
+              <div class="navbar-nav mt-3 mt-md-0">
                 <div class="nav-item dropdown">
                     <button 
                         class="btn btn-link nav-link dropdown-toggle text-secondary"
@@ -39,7 +40,8 @@
                         </li>
                     </ul>
                 </div>
-            </div>
+              </div>
+            }
         </div>
     </div>
 </header>

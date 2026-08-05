@@ -5,14 +5,17 @@
       <div class="modal-header border-secondary px-4 py-3">
         <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2" id="batchSummaryModalLabel">
           <span>Monthly Batch Invoices</span>
-          <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 ms-2" *ngIf="batchSummary">
-            {{ batchSummary.period }}
-          </span>
+          @if (batchSummary) {
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 ms-2">
+              {{ batchSummary.period }}
+            </span>
+          }
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <div class="modal-body p-4" *ngIf="batchSummary">
+      @if (batchSummary) {
+        <div class="modal-body p-4">
         <div class="row g-3 mb-4">
           <div class="col-sm-4">
             <div class="bg-secondary bg-opacity-10 border border-secondary p-3 rounded">
@@ -46,22 +49,23 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let inv of batchSummary.invoices">
-                <td class="fw-semibold text-white">{{ inv.invoiceNumber }}</td>
-                <td>{{ inv.organizerName }}</td>
-                <td class="text-center">{{ inv.attendeesCount }}</td>
-                <td class="text-end">₱ {{ inv.amount | number:'1.2-2' }}</td>
-                <td class="text-center">
-                  <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
-                    {{ inv.status }}
-                  </span>
-                </td>
-              </tr>
+              @for (inv of batchSummary.invoices; track inv.invoiceNumber) {
+                <tr>
+                  <td class="fw-semibold text-white">{{ inv.invoiceNumber }}</td>
+                  <td>{{ inv.organizerName }}</td>
+                  <td class="text-center">{{ inv.attendeesCount }}</td>
+                  <td class="text-end">₱ {{ inv.amount | number:'1.2-2' }}</td>
+                  <td class="text-center">
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                      {{ inv.status }}
+                    </span>
+                  </td>
+                </tr>
+              }
             </tbody>
           </table>
         </div>
-      </div>
-
+      </div>      }
       <div class="modal-footer border-secondary">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
       </div>

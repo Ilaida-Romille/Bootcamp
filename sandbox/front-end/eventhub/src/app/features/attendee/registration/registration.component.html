@@ -14,9 +14,11 @@
     </div>
   </div>
 
-  <div *ngIf="submissionError" class="alert alert-danger" role="alert">
-    {{ submissionError }}
-  </div>
+  @if (submissionError) {
+    <div class="alert alert-danger" role="alert">
+      {{ submissionError }}
+    </div>
+  }
 
   <!-- Forms Section -->
   <section class="registration-form-section">
@@ -35,9 +37,11 @@
             class="form-input rounded-1" 
             [class.is-invalid]="f['fullName'].touched && f['fullName'].invalid"
           >
-          <span class="field-error" *ngIf="f['fullName'].touched && f['fullName'].invalid">
-            This field is required.
-          </span>
+          @if (f['fullName'].touched && f['fullName'].invalid) {
+            <span class="field-error">
+              This field is required.
+            </span>
+          }
         </div>
 
         <div class="col-12 col-md-6 form-group">
@@ -50,15 +54,23 @@
             placeholder="you@company.com"
             [class.is-invalid]="f['emailAddress'].touched && f['emailAddress'].invalid"
           >
-          <div class="field-error" *ngIf="f['emailAddress'].touched && f['emailAddress'].invalid">
-            <span *ngIf="f['emailAddress'].errors?.['required']">Email is required.</span>
-            <span *ngIf="f['emailAddress'].errors?.['email'] || f['emailAddress'].errors?.['minlength'] || f['emailAddress'].errors?.['maxlength']">
-              Email must be 15-100 characters in standard email format.
-            </span>
-            <span *ngIf="f['emailAddress'].errors?.['publicEmailNotAllowed']">
-              Please use a valid corporate email address (public webmail domains are not allowed).
-            </span>
-          </div>
+          @if (f['emailAddress'].touched && f['emailAddress'].invalid) {
+            <div class="field-error">
+              @if (f['emailAddress'].errors?.['required']) {
+                <span>Email is required.</span>
+              }
+              @if (f['emailAddress'].errors?.['email'] || f['emailAddress'].errors?.['minlength'] || f['emailAddress'].errors?.['maxlength']) {
+                <span>
+                  Email must be 15-100 characters in standard email format.
+                </span>
+              }
+              @if (f['emailAddress'].errors?.['publicEmailNotAllowed']) {
+                <span>
+                  Please use a valid corporate email address (public webmail domains are not allowed).
+                </span>
+              }
+            </div>
+          }
         </div>
       </div>
 
@@ -73,9 +85,11 @@
             class="form-input rounded-1"
             [class.is-invalid]="f['companyDept'].touched && f['companyDept'].invalid"
           >
-          <span class="field-error" *ngIf="f['companyDept'].touched && f['companyDept'].invalid">
-            This field is required.
-          </span>
+          @if (f['companyDept'].touched && f['companyDept'].invalid) {
+            <span class="field-error">
+              This field is required.
+            </span>
+          }
         </div>
 
         <div class="col-12 col-md-6 form-group">

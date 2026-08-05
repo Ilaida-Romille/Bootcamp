@@ -14,15 +14,19 @@
   </div>
 
   <!-- Error Alert -->
-  <div *ngIf="dataLoadingError" class="alert alert-danger alert-dismissible fade show" role="alert">
-    {{ dataLoadingError }}
-    <button type="button" class="btn-close" (click)="dataLoadingError = ''"></button>
-  </div>
+  @if (dataLoadingError) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ dataLoadingError }}
+      <button type="button" class="btn-close" (click)="dataLoadingError = ''"></button>
+    </div>
+  }
 
   <!-- Loading State -->
-  <div *ngIf="isLoading" class="alert alert-info">
-    <i class="bi bi-hourglass-split"></i> Loading employees...
-  </div>
+  @if (isLoading) {
+    <div class="alert alert-info">
+      <i class="bi bi-hourglass-split"></i> Loading employees...
+    </div>
+  }
 
   <!-- Single Row Filter Bar -->
   <div class="filter-bar mb-4">
@@ -47,7 +51,9 @@
           class="form-select glass-form-input"
           [(ngModel)]="selectedCompany"
           (ngModelChange)="applyFilters()">
-          <option *ngFor="let option of companyOptions" [value]="option">{{ option }}</option>
+          @for (option of companyOptions; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
         </select>
       </div>
 
@@ -59,7 +65,9 @@
           class="form-select glass-form-input"
           [(ngModel)]="selectedDepartment"
           (ngModelChange)="applyFilters()">
-          <option *ngFor="let option of departmentOptions" [value]="option">{{ option }}</option>
+          @for (option of departmentOptions; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
         </select>
       </div>
 
@@ -101,7 +109,7 @@
     <small class="text-secondary">
       <i class="bi bi-info-circle"></i>
       Showing <strong>{{ filteredEmployees.length }}</strong> employee(s)
-      <span *ngIf="isLookupMode">(from ID lookup)</span>
+      @if (isLookupMode) { <span>(from ID lookup)</span> }
     </small>
   </div>
 
@@ -120,38 +128,44 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let employee of paginatedEmployees">
-          <td>
-            <div class="fw-semibold text-white">{{ employee.firstName }} {{ employee.lastName }}</div>
-            <div class="text-secondary small">{{ employee.id }}</div>
-          </td>
-          <td>{{ employee.email }}</td>
-          <td>{{ employee.company }}</td>
-          <td>{{ employee.department }}</td>
-          <td>{{ employee.jobTitle }}</td>
-          <td>
-            <span class="badge text-bg-secondary me-1" *ngFor="let eventId of employee.registeredEventIds">
-              {{ eventId }}
-            </span>
-          </td>
-          <td class="text-center">
-            <div class="action-buttons">
-              <button
-                type="button"
-                class="btn btn-sm btn-action btn-view"
-                title="View Details"
-                (click)="viewEmployeeDetails(employee)"
-                [disabled]="isLookupLoading">
-                <i class="bi bi-eye"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="!isLoading && filteredEmployees.length === 0">
-          <td colspan="7" class="text-center text-muted py-4">
-            <i class="bi bi-inbox"></i> No employees matched your filters.
-          </td>
-        </tr>
+        @for (employee of paginatedEmployees; track employee.id) {
+          <tr>
+            <td>
+              <div class="fw-semibold text-white">{{ employee.firstName }} {{ employee.lastName }}</div>
+              <div class="text-secondary small">{{ employee.id }}</div>
+            </td>
+            <td>{{ employee.email }}</td>
+            <td>{{ employee.company }}</td>
+            <td>{{ employee.department }}</td>
+            <td>{{ employee.jobTitle }}</td>
+            <td>
+              @for (eventId of employee.registeredEventIds; track eventId) {
+                <span class="badge text-bg-secondary me-1">
+                  {{ eventId }}
+                </span>
+              }
+            </td>
+            <td class="text-center">
+              <div class="action-buttons">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-action btn-view"
+                  title="View Details"
+                  (click)="viewEmployeeDetails(employee)"
+                  [disabled]="isLookupLoading">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+        @if (!isLoading && filteredEmployees.length === 0) {
+          <tr>
+            <td colspan="7" class="text-center text-muted py-4">
+              <i class="bi bi-inbox"></i> No employees matched your filters.
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>
@@ -165,7 +179,8 @@
   </app-pagination>
 
   <!-- Add/Edit Employee Modal -->
-  <div *ngIf="isModalOpen" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeModal()" (keydown.escape)="closeModal()">
+  @if (isModalOpen) {
+  <div class="modal-overlay" role="dialog" aria-modal="true" (click)="closeModal()" (keydown.escape)="closeModal()">
     <div class="modal-dialog" (click)="$event.stopPropagation()">
       <div class="modal-content">
         <div class="modal-header">
@@ -177,10 +192,12 @@
         </div>
 
         <div class="modal-body">
-          <div *ngIf="formError" class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ formError }}
-            <button type="button" class="btn-close btn-close-white" (click)="formError = ''"></button>
-          </div>
+          @if (formError) {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              {{ formError }}
+              <button type="button" class="btn-close btn-close-white" (click)="formError = ''"></button>
+            </div>
+          }
 
           <form>
             <div class="row g-3">
@@ -251,28 +268,33 @@
           </form>
 
           <!-- Registered Events (edit mode only) -->
-          <div *ngIf="isEditMode" class="mt-4">
-            <label class="form-label d-block">
-              <i class="bi bi-calendar-event me-1"></i> Registered Events
-            </label>
-            <div *ngIf="editRegisteredEventIds.length === 0" class="text-secondary fst-italic small">
-              No registered events.
+          @if (isEditMode) {
+            <div class="mt-4">
+              <label class="form-label d-block">
+                <i class="bi bi-calendar-event me-1"></i> Registered Events
+              </label>
+              @if (editRegisteredEventIds.length === 0) {
+                <div class="text-secondary fst-italic small">
+                  No registered events.
+                </div>
+              }
+              <ul class="list-group list-group-flush">
+                @for (eventId of editRegisteredEventIds; track eventId) {
+                  <li
+                    class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 bg-transparent text-white border-secondary">
+                    <span class="small"><i class="bi bi-tag me-2 text-secondary"></i>{{ eventId }}</span>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger"
+                      title="Unregister from event"
+                      (click)="unregisterEvent(eventId)">
+                      <i class="bi bi-x-lg"></i> Unregister
+                    </button>
+                  </li>
+                }
+              </ul>
             </div>
-            <ul class="list-group list-group-flush">
-              <li
-                *ngFor="let eventId of editRegisteredEventIds"
-                class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 bg-transparent text-white border-secondary">
-                <span class="small"><i class="bi bi-tag me-2 text-secondary"></i>{{ eventId }}</span>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-danger"
-                  title="Unregister from event"
-                  (click)="unregisterEvent(eventId)">
-                  <i class="bi bi-x-lg"></i> Unregister
-                </button>
-              </li>
-            </ul>
-          </div>
+          }
         </div>
 
         <div class="modal-footer">
@@ -294,9 +316,11 @@
       </div>
     </div>
   </div>
+  }
 
   <!-- View Employee Details Modal -->
-  <div *ngIf="isViewModalOpen && viewingEmployee" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeViewModal()" (keydown.escape)="closeViewModal()">
+  @if (isViewModalOpen && viewingEmployee) {
+  <div class="modal-overlay" role="dialog" aria-modal="true" (click)="closeViewModal()" (keydown.escape)="closeViewModal()">
     <div class="modal-dialog modal-view" (click)="$event.stopPropagation()">
       <div class="modal-content">
 
@@ -311,18 +335,17 @@
           <!-- Profile Header -->
           <div class="view-profile-header">
             <div class="view-avatar">
-              <img
-                *ngIf="viewingEmployee.avatarUrl; else avatarInitials"
-                [src]="viewingEmployee.avatarUrl"
-                [alt]="viewingEmployee.firstName + ' ' + viewingEmployee.lastName"
-                class="view-avatar-img" />
-
-              <ng-template #avatarInitials>
+              @if (viewingEmployee.avatarUrl) {
+                <img
+                  [src]="viewingEmployee.avatarUrl"
+                  [alt]="viewingEmployee.firstName + ' ' + viewingEmployee.lastName"
+                  class="view-avatar-img" />
+              } @else {
                 <img 
                   src="/assets/images/employees/emp_107.jpg" 
                   alt="Default Avatar" 
                   class="view-avatar-img" />
-              </ng-template>
+              }
             </div>
             <div class="view-profile-info">
               <h4 class="view-name">{{ viewingEmployee.firstName }} {{ viewingEmployee.lastName }}</h4>
@@ -355,14 +378,16 @@
           <div class="view-events-section">
             <span class="view-detail-label"><i class="bi bi-calendar-event"></i> Registered Events</span>
             <div class="view-events-list mt-2">
-              <span
-                *ngFor="let eventId of viewingEmployee.registeredEventIds"
-                class="view-event-badge">
-                {{ eventId }}
-              </span>
-              <span *ngIf="viewingEmployee.registeredEventIds.length === 0" class="text-secondary fst-italic small">
-                No registered events
-              </span>
+              @for (eventId of viewingEmployee.registeredEventIds; track eventId) {
+                <span class="view-event-badge">
+                  {{ eventId }}
+                </span>
+              }
+              @if (viewingEmployee.registeredEventIds.length === 0) {
+                <span class="text-secondary fst-italic small">
+                  No registered events
+                </span>
+              }
             </div>
           </div>
         </div>
@@ -380,9 +405,11 @@
       </div>
     </div>
   </div>
+  }
 
   <!-- Delete Confirmation Modal -->
-  <div *ngIf="showDeleteConfirm" class="modal-overlay" role="dialog" aria-modal="true" (click)="closeDeleteConfirm()" (keydown.escape)="closeDeleteConfirm()">
+  @if (showDeleteConfirm) {
+  <div class="modal-overlay" role="dialog" aria-modal="true" (click)="closeDeleteConfirm()" (keydown.escape)="closeDeleteConfirm()">
     <div class="modal-dialog modal-sm" (click)="$event.stopPropagation()">
       <div class="modal-content">
         <div class="modal-header border-danger">
@@ -417,27 +444,29 @@
       </div>
     </div>
   </div>
+  }
 
   <!-- Toast Notification -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
-    <div
-      *ngIf="showToastNotif"
-      class="toast show"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true">
+    @if (showToastNotif) {
       <div
-        class="toast-header"
-        [ngClass]="toastType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'">
-        <i class="bi me-2" [ngClass]="toastType === 'success' ? 'bi-check-circle-fill' : 'bi-trash-fill'"></i>
-        <strong class="me-auto">{{ toastTitle }}</strong>
-        <button type="button" class="btn-close btn-close-white" (click)="showToastNotif = false"></button>
+        class="toast show"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true">
+        <div
+          class="toast-header"
+          [ngClass]="toastType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'">
+          <i class="bi me-2" [ngClass]="toastType === 'success' ? 'bi-check-circle-fill' : 'bi-trash-fill'"></i>
+          <strong class="me-auto">{{ toastTitle }}</strong>
+          <button type="button" class="btn-close btn-close-white" (click)="showToastNotif = false"></button>
+        </div>
+        <div
+          class="toast-body"
+          [ngClass]="toastType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'">
+          {{ toastMessage }}
+        </div>
       </div>
-      <div
-        class="toast-body"
-        [ngClass]="toastType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'">
-        {{ toastMessage }}
-      </div>
-    </div>
+    }
   </div>
 </section>

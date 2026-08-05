@@ -1,8 +1,10 @@
 <h1 class="h2 fw-bold text-white mb-4">Search Invoices (Historical)</h1>
 
-<div *ngIf="dataLoadingError" class="alert alert-danger" role="alert">
-  {{ dataLoadingError }}
-</div>
+  @if (dataLoadingError) {
+    <div class="alert alert-danger" role="alert">
+      {{ dataLoadingError }}
+    </div>
+  }
 
 <!-- Search and Filter Layer -->
 <form (submit)="$event.preventDefault(); applyFilter()" class="row g-3 align-items-end mb-4">
@@ -63,24 +65,28 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let invoice of paginatedInvoices">
-        <td class="actions-cell">
-          <a href="javascript:void(0)" (click)="openInvoiceModal(invoice)">
-            {{ invoice.invoiceNumber }}
-          </a>
-        </td>
-        <td class="fw-semibold">{{ invoice.organizerName }}</td>
-        <td>{{ invoice.period }}</td>
-        <td>{{ currencySymbol }} {{ invoice.amount | number:'1.2-2' }}</td>
-        <td>
-          <span [ngClass]="getStatusBadgeClass(invoice.status)" class="fw-semibold">
-            {{ invoice.status }}
-          </span>
-        </td>
-      </tr>
-      <tr *ngIf="filteredInvoices.length === 0">
-        <td colspan="5" class="text-center text-muted py-4">No invoices found.</td>
-      </tr>
+      @for (invoice of paginatedInvoices; track invoice.id) {
+        <tr>
+          <td class="actions-cell">
+            <a href="javascript:void(0)" (click)="openInvoiceModal(invoice)">
+              {{ invoice.invoiceNumber }}
+            </a>
+          </td>
+          <td class="fw-semibold">{{ invoice.organizerName }}</td>
+          <td>{{ invoice.period }}</td>
+          <td>{{ currencySymbol }} {{ invoice.amount | number:'1.2-2' }}</td>
+          <td>
+            <span [ngClass]="getStatusBadgeClass(invoice.status)" class="fw-semibold">
+              {{ invoice.status }}
+            </span>
+          </td>
+        </tr>
+      }
+      @if (filteredInvoices.length === 0) {
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">No invoices found.</td>
+        </tr>
+      }
     </tbody>
   </table>  
 </div>
@@ -134,15 +140,19 @@
               <span class="text-truncate me-2">{{ selectedGenOrganizerLabel }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-dark w-100 shadow generation-dropup-menu">
-              <li *ngFor="let option of generationOrganizerOptions">
-                <a class="dropdown-item generation-option" href="javascript:void(0)" (click)="selectedGenInvoiceId = option.id">
-                  <span class="generation-option-name">{{ option.organizerName }}</span>
-                  <span class="generation-option-id">{{ option.invoiceNumber }}</span>
-                </a>
-              </li>
-              <li *ngIf="generationOrganizerOptions.length === 0" class="dropdown-item-text text-secondary small">
-                No organizer matches current filters.
-              </li>
+              @for (option of generationOrganizerOptions; track option.id) {
+                <li>
+                  <a class="dropdown-item generation-option" href="javascript:void(0)" (click)="selectedGenInvoiceId = option.id">
+                    <span class="generation-option-name">{{ option.organizerName }}</span>
+                    <span class="generation-option-id">{{ option.invoiceNumber }}</span>
+                  </a>
+                </li>
+              }
+              @if (generationOrganizerOptions.length === 0) {
+                <li class="dropdown-item-text text-secondary small">
+                  No organizer matches current filters.
+                </li>
+              }
             </ul>
           </div>
         </div>
