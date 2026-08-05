@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FeatureCardComponent, FeatureCardData } from './components/feature-card/feature-card.component';
 
+
 @Component({
   selector: 'app-organizer-dashboard',
   standalone: true,

@@ -5,6 +5,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { Event, EventStatus } from './models/event.model';
 import { OrganizerEventsApiService, EventInput } from './services/organizer-events-api.service';
+import {
+  validateEventSchedule,
+  validateEventCapacity,
+  validateAgendaItems,
+  getFirstScheduleError
+} from '../../../core/validators/event-schedule.validator';
 
 @Component({
   selector: 'app-organizer-events',
@@ -234,15 +240,25 @@ export class OrganizerEventsComponent implements OnInit {
           error = 'Start date/time and end date/time are required.';
         } else if (!this.formData.registrationOpensAt.trim() || !this.formData.registrationClosesAt.trim()) {
           error = 'Registration open and close dates are required.';
+        } else {
+          const scheduleErrors = validateEventSchedule(
+            startDateTime,
+            endDateTime,
+            this.formData.registrationOpensAt,
+            this.formData.registrationClosesAt
+          );
+          error = getFirstScheduleError(scheduleErrors) ?? '';
         }
         break;
       case 4:
-        if (!venue.trim() || capacity.maximum <= 0) {
-          error = 'Venue and a valid max capacity are required.';
+        if (!venue.trim()) {
+          error = 'Venue is required.';
+        } else {
+          error = validateEventCapacity(capacity.maximum) ?? '';
         }
         break;
       case 5:
-        // Agenda is optional; no required fields
+        error = validateAgendaItems(this.formData.agenda) ?? '';
         break;
     }
 
@@ -421,7 +437,8 @@ export class OrganizerEventsComponent implements OnInit {
   }
 
   private isFormValid(): boolean {
-    const { title, description, organizerId, organizerName, startDateTime, endDateTime, venue, capacity } = this.formData;
+    const { title, description, organizerId, organizerName, startDateTime, endDateTime,
+            registrationOpensAt, registrationClosesAt, venue, capacity } = this.formData;
 
     if (
       !title.trim() ||
@@ -431,9 +448,32 @@ export class OrganizerEventsComponent implements OnInit {
       !startDateTime.trim() ||
       !endDateTime.trim() ||
       !venue.trim() ||
-      capacity.maximum <= 0
+      capacity.maximum < 1
     ) {
       this.formError = 'All required fields must be filled with valid values.';
+      this.cdr.detectChanges();
+      return false;
+    }
+
+    const scheduleError = getFirstScheduleError(
+      validateEventSchedule(startDateTime, endDateTime, registrationOpensAt, registrationClosesAt)
+    );
+    if (scheduleError) {
+      this.formError = scheduleError;
+      this.cdr.detectChanges();
+      return false;
+    }
+
+    const capacityError = validateEventCapacity(capacity.maximum);
+    if (capacityError) {
+      this.formError = capacityError;
+      this.cdr.detectChanges();
+      return false;
+    }
+
+    const agendaError = validateAgendaItems(this.formData.agenda);
+    if (agendaError) {
+      this.formError = agendaError;
       this.cdr.detectChanges();
       return false;
     }
