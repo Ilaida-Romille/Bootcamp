@@ -130,12 +130,12 @@
               </span>
             </td>
             <td>
-              <div>{{ event.startDateTime | date:'medium' }}</div>
-              <div class="text-secondary small">to {{ event.endDateTime | date:'shortTime' }}</div>
+              <div>{{ event.startDateTime | date:'MMM d, y' }}</div>
+              <div class="text-secondary small">{{ event.startDateTime | date:'shortTime' }} – {{ event.endDateTime | date:'shortTime' }}</div>
             </td>
             <td>
-              <div>{{ event.registrationOpensAt | date:'mediumDate' }}</div>
-              <div class="text-secondary small">until {{ event.registrationClosesAt | date:'mediumDate' }}</div>
+              <div>{{ event.registrationOpensAt | date:'MMM d, y' }}</div>
+              <div class="text-secondary small">closes {{ event.registrationClosesAt | date:'MMM d, y' }}</div>
             </td>
             <td>{{ event.venue }}</td>
             <td class="text-center">
