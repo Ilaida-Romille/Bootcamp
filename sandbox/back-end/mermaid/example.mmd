@@ -1,0 +1,46 @@
+classDiagram
+    HotelManager --> Hotline
+    Department <|-- FrontDesk
+    Department <|-- Kitchen
+    Department <|-- HouseKeeping
+    FrontDesk --> GuestRepository
+    Kitchen --> OrderRepository
+    Hotline "1" --> "many" Department
+
+    class Hotline {
+        +departments: Map &lt;string, Department ;
+        +callDepartment(name: string)
+    }
+
+    class GuestRepository {
+        +getGuestID(guestName: string, guestID: int, guestOrder: string)
+    }
+
+    class OrderRepository {
+        +getGuestOrder(guestID: int)
+    }
+
+    class HotelManager {
+        +manageHotel();
+    }
+
+    class Department {
+        <<abstract>>
+        +handleGuestRequest(request:)
+    }
+
+    class FrontDesk {
+        +handleGuestRequest(request: string)
+        -wecomeGuest()
+    }
+
+    class HouseKeeping {
+        +handlesGuestRequest(request: string)
+        -cleanRoom()
+    }
+
+    class Kitchen {
+        +handleGuestRequest(request: string)
+        -servrBreakfast()
+        -cookBreakfast()
+    }

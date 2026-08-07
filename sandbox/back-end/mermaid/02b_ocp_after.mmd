@@ -1,0 +1,39 @@
+classDiagram
+    Department <|-- Frontdesk
+    Department <|-- Housekeeping
+    Department <|-- Restaurant
+    Department <|-- Accounting
+    HotelManager "1" --> "1" Hotline
+    Hotline "1" --> "many" Department
+
+    class HotelManager {
+        +manageHotel()
+    }
+    class Hotline {
+        +departments: Map &lt;string, Department&gt;
+        +callDepartment(name: string, request: string)
+    }
+
+    class Department {
+        <<abstract>>
+        +handleGuestRequest(request: string)
+    }
+
+    class Frontdesk {
+        +handleGuestRequest(request: string)
+        -welcomeGuests()
+    }
+    class Housekeeping {
+        +departmentName: string
+        +handleGuestRequest(request: string)
+        -cleanRoom()
+    }
+    class Restaurant {
+        +handleGuestRequest(request: string)
+        -serveBreakfast()
+        -cookBreakfast()
+    }
+    class Accounting {
+        +handleGuestRequest(request: string)
+        -acceptPayment()
+    }

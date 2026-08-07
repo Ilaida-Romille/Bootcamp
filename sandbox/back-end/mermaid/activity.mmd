@@ -1,0 +1,66 @@
+classDiagram
+    class EventRepository {
+        +getEvent(eventId: string)
+    }
+    class User {
+        -attendeeId
+        +name: string
+        +email: string
+        -viewEvent(eventId: string)
+    }
+    class Organizer {
+        -organizerId
+        +name: string
+        +email: string
+        -createEvent(event: Event)
+        -viewEvent(eventId: string)
+        -editEvent(eventId: string)
+        -deleteEvent(eventId: string)
+    }
+    class Event {
+        -eventId
+        +title: string
+        +description: string
+        +organizerId: string
+        +organizerName: string
+        +status: string
+        +startDateTime: Date
+        +endDateTime: Date
+        +registrationOpensAt: Date
+        +registrationClosesAt: Date
+        +venue: string
+        +bannerImageUrl: string
+        +capacity: string
+        +agenda: string
+    }
+    class Agenda {
+        +description
+    }
+    class Session {
+        <<abstract>> 
+        -agendaItemId
+        +startDateTime: Date
+        +endDateTime: Date
+        +title: string
+        +description: string
+        +location?: string
+    }
+
+    class PresentationSession {
+        -agendaItemId: string
+        +speaker: string
+    }
+
+    class BreakSession {
+        -agendaItemId: string
+        +breakType: string
+    }
+         
+
+    User --> EventRepository : views event
+    Organizer --> EventRepository: creates and edits event
+    EventRepository --> Event
+    Event --> Agenda: contains
+    Agenda --> Session: is made up of
+    Session <|-- BreakSession
+    Session <|-- PresentationSession
