@@ -1,0 +1,58 @@
+--- a/src/test/java/com/hotel/koans/_02_FunctionalInterfacesTest.java
++++ b/src/test/java/com/hotel/koans/_02_FunctionalInterfacesTest.java
+@@ -45,7 +45,7 @@
+     @Test
+     void custom_functional_interface_with_lambda() {
+         // TODO: koan — a RateAdjuster that raises a rate by 10.00
+-        RateAdjuster raiseByTen = null;
++        RateAdjuster raiseByTen = rate -> rate.add(new BigDecimal("10.00"));
+ 
+         assertThat(HotelFixtures.isLambda(raiseByTen)).isTrue();
+         assertThat(raiseByTen.adjust(new BigDecimal("120.00"))).isEqualByComparingTo("130.00");
+@@ -58,7 +58,7 @@
+     @Test
+     void lambda_passed_to_a_method() {
+         // TODO: koan — pass a RateAdjuster lambda that doubles the rate
+-        BigDecimal doubled = adjustedRate(rooms.get(0), null);
++        BigDecimal doubled = adjustedRate(rooms.get(0), rate -> rate.multiply(BigDecimal.valueOf(2)));
+ 
+         assertThat(doubled).isEqualByComparingTo("240.00");
+     }
+@@ -71,7 +71,7 @@
+     void default_method_composition() {
+         RateAdjuster raiseByTen = rate -> rate.add(new BigDecimal("10.00"));
+         // TODO: koan — compose raiseByTen with a -5.00 adjustment via the default method
+-        RateAdjuster net = null;
++        RateAdjuster net = raiseByTen.andThen(rate -> rate.subtract(new BigDecimal("5.00")));
+ 
+         assertThat(HotelFixtures.isLambda(net)).isTrue();
+         assertThat(net.adjust(new BigDecimal("120.00"))).isEqualByComparingTo("125.00");
+@@ -84,7 +84,9 @@
+     @Test
+     void bifunction_scaling_a_room_rate() {
+         // TODO: koan — a BiFunction that returns a new Room whose rate is the original times the factor
+-        BiFunction<Room, BigDecimal, Room> scaleRate = null;
++        BiFunction<Room, BigDecimal, Room> scaleRate = (room, factor) ->
++                new Room(room.getSpaceId(), room.getFloor(), room.getRoomType(),
++                        room.getTags(), room.getNightlyRate().multiply(factor));
+ 
+         Room scaled = scaleRate.apply(rooms.get(0), new BigDecimal("1.50"));
+         assertThat(scaled.getSpaceId()).isEqualTo("101");
+@@ -99,7 +101,7 @@
+     @Test
+     void unary_operator_normalizing_a_name() {
+         // TODO: koan — a UnaryOperator that uppercases a guest name
+-        UnaryOperator<String> normalize = null;
++        UnaryOperator<String> normalize = String::toUpperCase;
+ 
+         assertThat(HotelFixtures.isLambda(normalize)).isTrue();
+         assertThat(normalize.apply("Alice Nguyen")).isEqualTo("ALICE NGUYEN");
+@@ -113,7 +115,7 @@
+     @Test
+     void method_reference_as_custom_functional_interface() {
+         // TODO: koan — implement RateAdjuster with a BigDecimal::negate method reference
+-        RateAdjuster negate = null;
++        RateAdjuster negate = BigDecimal::negate;
+ 
+         assertThat(HotelFixtures.isLambda(negate)).isTrue();
+         assertThat(negate.adjust(new BigDecimal("120.00"))).isEqualByComparingTo("-120.00");

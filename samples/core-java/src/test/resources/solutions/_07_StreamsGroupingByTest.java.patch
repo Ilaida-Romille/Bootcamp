@@ -1,0 +1,73 @@
+--- a/src/test/java/com/hotel/koans/_07_StreamsGroupingByTest.java
++++ b/src/test/java/com/hotel/koans/_07_StreamsGroupingByTest.java
+@@ -8,6 +8,7 @@
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ 
++import java.math.BigDecimal;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.stream.Collectors;
+@@ -36,7 +37,8 @@
+     @Test
+     void grouping_rooms_by_housekeeping_status() {
+         // TODO: koan — group rooms by their housekeeping status
+-        Map<Room.HousekeepingStatus, List<Room>> byStatus = null;
++        Map<Room.HousekeepingStatus, List<Room>> byStatus = rooms.stream()
++                .collect(Collectors.groupingBy(Room::getHousekeepingStatus));
+ 
+         assertThat(byStatus).hasSize(4);
+         assertThat(byStatus.get(Room.HousekeepingStatus.VACANT_CLEAN)).hasSize(4);
+@@ -52,7 +54,8 @@
+     @Test
+     void grouping_rooms_by_status_with_counts() {
+         // TODO: koan — group rooms by status with a counting() downstream collector
+-        Map<Room.HousekeepingStatus, Long> counts = null;
++        Map<Room.HousekeepingStatus, Long> counts = rooms.stream()
++                .collect(Collectors.groupingBy(Room::getHousekeepingStatus, Collectors.counting()));
+ 
+         assertThat(counts.get(Room.HousekeepingStatus.VACANT_CLEAN)).isEqualTo(4L);
+         assertThat(counts.get(Room.HousekeepingStatus.VACANT_DIRTY)).isEqualTo(2L);
+@@ -67,7 +70,9 @@
+     @Test
+     void grouping_staff_by_department_with_mapped_names() {
+         // TODO: koan — group staff by department, mapping each member to their name
+-        Map<Department, List<String>> membersByDepartment = null;
++        Map<Department, List<String>> membersByDepartment = staff.stream()
++                .collect(Collectors.groupingBy(Staff::getDepartment,
++                        Collectors.mapping(Staff::getName, Collectors.toList())));
+ 
+         assertThat(membersByDepartment.get(staff.get(0).getDepartment()))
+                 .containsExactly("Maria Santos", "Jonas Weber");
+@@ -82,7 +87,9 @@
+     @Test
+     void partitioning_rooms_by_rate_threshold() {
+         // TODO: koan — partition rooms: rate strictly above 200.00 vs the rest
+-        Map<Boolean, List<Room>> partitioned = null;
++        Map<Boolean, List<Room>> partitioned = rooms.stream()
++                .collect(Collectors.partitioningBy(
++                        room -> room.getNightlyRate().compareTo(new BigDecimal("200.00")) > 0));
+ 
+         assertThat(partitioned.get(true)).extracting(Room::getSpaceId)
+                 .containsExactly("203", "301", "302");
+@@ -97,7 +104,9 @@
+     @Test
+     void grouping_staff_by_department_then_certification() {
+         // TODO: koan — group staff by department, then by whether they hold FIRST_AID
+-        Map<Department, Map<Boolean, List<Staff>>> nested = null;
++        Map<Department, Map<Boolean, List<Staff>>> nested = staff.stream()
++                .collect(Collectors.groupingBy(Staff::getDepartment,
++                        Collectors.groupingBy(member -> member.isCertifiedFor(Certification.FIRST_AID))));
+ 
+         assertThat(nested.get(staff.get(0).getDepartment()).get(true))
+                 .extracting(Staff::getName).containsExactly("Maria Santos", "Jonas Weber");
+@@ -113,7 +122,8 @@
+     @Test
+     void grouping_staff_per_department_with_counts() {
+         // TODO: koan — group staff by department with counting()
+-        Map<Department, Long> headcounts = null;
++        Map<Department, Long> headcounts = staff.stream()
++                .collect(Collectors.groupingBy(Staff::getDepartment, Collectors.counting()));
+ 
+         assertThat(headcounts.get(staff.get(0).getDepartment())).isEqualTo(2L);
+         assertThat(headcounts.get(staff.get(2).getDepartment())).isEqualTo(3L);

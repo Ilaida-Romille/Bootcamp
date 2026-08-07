@@ -1,0 +1,75 @@
+--- a/src/test/java/com/hotel/koans/_04_StreamsFilterMapTest.java
++++ b/src/test/java/com/hotel/koans/_04_StreamsFilterMapTest.java
+@@ -33,7 +33,9 @@
+     @Test
+     void filter_rooms_by_housekeeping_status() {
+         // TODO: koan — filter rooms with housekeeping status VACANT_CLEAN
+-        List<Room> vacantClean = null;
++        List<Room> vacantClean = rooms.stream()
++                .filter(room -> room.getHousekeepingStatus() == Room.HousekeepingStatus.VACANT_CLEAN)
++                .toList();
+ 
+         assertThat(vacantClean).extracting(Room::getSpaceId)
+                 .containsExactly("101", "103", "202", "301");
+@@ -47,7 +49,9 @@
+     void filter_and_count_open_requests() {
+         List<MaintenanceRequest> requests = HotelFixtures.sampleMaintenanceRequests();
+         // TODO: koan — count requests whose status is REPORTED
+-        long reported = -1L;
++        long reported = requests.stream()
++                .filter(request -> request.getStatus() == MaintenanceRequest.Status.REPORTED)
++                .count();
+ 
+         assertThat(reported).isEqualTo(1L);
+     }
+@@ -59,7 +63,7 @@
+     @Test
+     void map_rooms_to_room_numbers() {
+         // TODO: koan — map each room to its space id (room number)
+-        List<String> roomNumbers = null;
++        List<String> roomNumbers = rooms.stream().map(Room::getSpaceId).toList();
+ 
+         assertThat(roomNumbers).containsExactly(
+                 "101", "102", "103", "201", "202", "203", "301", "302");
+@@ -72,7 +76,10 @@
+     @Test
+     void map_staff_to_department_names_distinct() {
+         // TODO: koan — map staff to their department names and deduplicate
+-        List<String> departments = null;
++        List<String> departments = staff.stream()
++                .map(member -> member.getDepartment().getName())
++                .distinct()
++                .toList();
+ 
+         assertThat(departments).containsExactly("Housekeeping", "Engineering");
+     }
+@@ -84,7 +91,8 @@
+     @Test
+     void any_room_tagged_accessible() {
+         // TODO: koan — anyMatch over rooms' tags for "ACCESSIBLE"
+-        boolean anyAccessible = false;
++        boolean anyAccessible = rooms.stream()
++                .anyMatch(room -> room.getTags().contains("ACCESSIBLE"));
+ 
+         assertThat(anyAccessible).isTrue();
+     }
+@@ -96,7 +104,8 @@
+     @Test
+     void every_room_tagged_sea_view() {
+         // TODO: koan — allMatch over rooms' tags for "SEA_VIEW"
+-        boolean allSeaView = true;
++        boolean allSeaView = rooms.stream()
++                .allMatch(room -> room.getTags().contains("SEA_VIEW"));
+ 
+         assertThat(allSeaView).isFalse();
+     }
+@@ -107,7 +116,8 @@
+     @Test
+     void no_room_tagged_penthouse() {
+         // TODO: koan — noneMatch over rooms' tags for "PENTHOUSE"
+-        boolean nonePenthouse = false;
++        boolean nonePenthouse = rooms.stream()
++                .noneMatch(room -> room.getTags().contains("PENTHOUSE"));
+ 
+         assertThat(nonePenthouse).isTrue();
+     }
