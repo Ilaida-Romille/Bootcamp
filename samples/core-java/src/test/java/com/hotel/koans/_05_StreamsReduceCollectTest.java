@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +43,7 @@ class _05_StreamsReduceCollectTest {
     @Test
     void reduce_sum_of_rates_with_identity() {
         // TODO: koan — reduce the rates stream: identity ZERO, then BigDecimal::add
-        BigDecimal total = null;
+        BigDecimal total = rooms.stream().map(room -> room.getNightlyRate()).reduce(BigDecimal.ZERO, (subtotal, rate) -> subtotal.add(rate));
 
         assertThat(total).isEqualByComparingTo("1700.00");
     }
@@ -54,7 +55,7 @@ class _05_StreamsReduceCollectTest {
     @Test
     void reduce_sum_of_rates_without_identity() {
         // TODO: koan — reduce the rates stream with just BigDecimal::add
-        Optional<BigDecimal> total = null;
+        Optional<BigDecimal> total = rooms.stream().map(room -> room.getNightlyRate()).reduce(BigDecimal::add);
 
         assertThat(total).isPresent();
         assertThat(total.orElseThrow()).isEqualByComparingTo("1700.00");
@@ -69,7 +70,8 @@ class _05_StreamsReduceCollectTest {
     void reduce_to_busiest_staff_member() {
         Function<Staff, Integer> taskCount = s -> s.getAssignedTasks().size();
         // TODO: koan — reduce staff to the member with the highest taskCount
-        Optional<Staff> busiest = null;
+        Optional<Staff> busiest = staff.stream()
+                                        .reduce((s1, s2) -> taskCount.apply(s1) >= taskCount.apply(s2) ? s1 : s2);
 
         assertThat(busiest).isPresent();
         assertThat(busiest.orElseThrow().getName()).isEqualTo("Jonas Weber");
@@ -82,8 +84,8 @@ class _05_StreamsReduceCollectTest {
     @Test
     void collect_to_list_vs_stream_to_list() {
         // TODO: koan — collect vacant-clean rooms with .toList(), and the same again with collect(Collectors.toList())
-        List<Room> viaStreamToList = null;
-        List<Room> viaCollect = null;
+        List<Room> viaStreamToList = rooms.stream().filter(room -> room.getHousekeepingStatus() == room.getHousekeepingStatus().VACANT_CLEAN).toList();
+        List<Room> viaCollect = rooms.stream().filter(room -> room.getHousekeepingStatus() == room.getHousekeepingStatus().VACANT_CLEAN).collect(Collectors.toList());
 
         assertThat(viaStreamToList).extracting(Room::getSpaceId)
                 .containsExactly("101", "103", "202", "301");
@@ -97,7 +99,7 @@ class _05_StreamsReduceCollectTest {
     @Test
     void collect_joining_guest_names() {
         // TODO: koan — collect guest names with joining(", ", "[", "]")
-        String csv = null;
+        String csv = guests.stream().map(guest -> guest.getName()).collect(Collectors.joining(", ", "[", "]"));
 
         assertThat(csv).isEqualTo("[Alice Nguyen, Bob Okafor, Carol Diaz, Dave Kim]");
     }
@@ -110,7 +112,7 @@ class _05_StreamsReduceCollectTest {
     void collect_summing_facility_capacities() {
         List<Facility> facilities = HotelFixtures.sampleHotel().getFacilities();
         // TODO: koan — summingInt over facility capacities
-        int totalCapacity = -1;
+        int totalCapacity = facilities.stream().collect(Collectors.summingInt(facility -> facility.getCapacity()));
 
         assertThat(totalCapacity).isEqualTo(145);
     }
@@ -122,7 +124,7 @@ class _05_StreamsReduceCollectTest {
     @Test
     void collect_averaging_room_rates() {
         // TODO: koan — averagingDouble over room nightly rates
-        double averageRate = -1.0;
+        double averageRate = rooms.stream().collect(Collectors.averagingDouble(room -> room.getNightlyRate().doubleValue()));
 
         assertThat(averageRate).isEqualTo(212.5);
     }
@@ -134,7 +136,8 @@ class _05_StreamsReduceCollectTest {
     @Test
     void collect_to_map_of_room_rates() {
         // TODO: koan — toMap: key = space id, value = nightly rate
-        Map<String, BigDecimal> ratesByRoom = null;
+        Map<String, BigDecimal> ratesByRoom = rooms.stream()
+                                                    .collect(Collectors.toMap(room -> room.getSpaceId(), room -> room.getNightlyRate()));
 
         assertThat(ratesByRoom).hasSize(8);
         assertThat(ratesByRoom.get("302")).isEqualByComparingTo("380.00");
