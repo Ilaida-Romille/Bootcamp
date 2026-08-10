@@ -18,12 +18,10 @@ class Event {
     private int capacity;
     private Agenda agenda;
 
-    public Event(String eventId, String title, String description, String organizerId, String organizerName, String status, LocalDateTime startDateTime, LocalDateTime endDateTime, String venue, int capacity) {
+    public Event(String eventId, String title, String description, String status, LocalDateTime startDateTime, LocalDateTime endDateTime, String venue, int capacity) {
         this.eventId = eventId;
         this.title = title;
         this.description = description;
-        this.organizerId = organizerId;
-        this.organizerName = organizerName;
         this.status = status;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;

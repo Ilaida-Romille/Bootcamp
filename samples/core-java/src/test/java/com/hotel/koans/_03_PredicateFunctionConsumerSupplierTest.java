@@ -73,8 +73,8 @@ class _03_PredicateFunctionConsumerSupplierTest {
     void predicate_combined_with_or_and_negate() {
         Predicate<Room> isVacant = room -> room.getHousekeepingStatus() == Room.HousekeepingStatus.VACANT_CLEAN;
         // TODO: koan — `.or(...)` with OUT_OF_ORDER, then `.negate()` the original predicate
-        Predicate<Room> vacantOrOutOfOrder = null;
-        Predicate<Room> notVacant = null;
+        Predicate<Room> vacantOrOutOfOrder = isVacant.or(room -> room.getHousekeepingStatus() == Room.HousekeepingStatus.OUT_OF_ORDER);
+        Predicate<Room> notVacant = isVacant.negate();
 
         assertThat(vacantOrOutOfOrder.test(rooms.get(7))).isTrue();
         assertThat(vacantOrOutOfOrder.test(rooms.get(3))).isFalse();
