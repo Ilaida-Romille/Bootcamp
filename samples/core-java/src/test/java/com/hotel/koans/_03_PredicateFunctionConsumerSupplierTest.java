@@ -9,6 +9,7 @@ import com.hotel.koans.fixtures.HotelFixtures;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -44,7 +45,7 @@ class _03_PredicateFunctionConsumerSupplierTest {
     @Test
     void predicate_testing_vacancy() {
         // TODO: koan — a Predicate that is true when the room's housekeeping status is VACANT_CLEAN
-        Predicate<Room> isVacant = null;
+        Predicate<Room> isVacant = room -> room.getHousekeepingStatus() == Room.HousekeepingStatus.VACANT_CLEAN;
 
         assertThat(HotelFixtures.isLambda(isVacant)).isTrue();
         assertThat(isVacant.test(rooms.get(0))).isTrue();
@@ -59,8 +60,7 @@ class _03_PredicateFunctionConsumerSupplierTest {
     void predicate_combined_with_and() {
         Predicate<Room> isVacant = room -> room.getHousekeepingStatus() == Room.HousekeepingStatus.VACANT_CLEAN;
         // TODO: koan — second predicate: rate is below 150.00, then combine with .and(isVacant)
-        Predicate<Room> vacantAndCheap = null;
-
+        Predicate<Room> vacantAndCheap = isVacant.and(room -> room.getNightlyRate().compareTo(new BigDecimal("150")) < 0);
         assertThat(vacantAndCheap.test(rooms.get(0))).isTrue();
         assertThat(vacantAndCheap.test(rooms.get(4))).isFalse();
     }

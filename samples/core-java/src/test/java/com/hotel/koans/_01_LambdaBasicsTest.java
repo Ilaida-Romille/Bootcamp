@@ -39,7 +39,7 @@ class _01_LambdaBasicsTest {
     @Test
     void greeting_from_a_supplier() {
         // TODO: koan — supply a greeting containing the hotel name "Grand Meridian"
-        Supplier<String> greeting = null;
+        Supplier<String> greeting = () -> "Grand Meridian";
 
         assertThat(HotelFixtures.isLambda(greeting)).isTrue();
         assertThat(greeting.get()).contains("Grand Meridian");
@@ -53,7 +53,7 @@ class _01_LambdaBasicsTest {
     void sort_with_expression_body() {
         List<Room> sorted = new ArrayList<>(rooms);
         // TODO: koan — expression-body lambda for the comparator (compare by nightlyRate)
-        Comparator<Room> byRate = null;
+        Comparator<Room> byRate = (r1, r2) -> r1.getNightlyRate().compareTo(r2.getNightlyRate());
         sorted.sort(byRate);
 
         assertThat(byRate).isNotNull();
@@ -70,7 +70,9 @@ class _01_LambdaBasicsTest {
     void sort_with_block_body() {
         List<Room> sorted = new ArrayList<>(rooms);
         // TODO: koan — block-body lambda for the comparator (compare by nightlyRate)
-        Comparator<Room> byRate = null;
+        Comparator<Room> byRate = (r1, r2) -> {
+            return r1.getNightlyRate().compareTo(r2.getNightlyRate());
+        };
         sorted.sort(byRate);
 
         assertThat(byRate).isNotNull();
@@ -88,7 +90,7 @@ class _01_LambdaBasicsTest {
         BigDecimal threshold = new BigDecimal("200.00");
 
         // TODO: koan — a Predicate<Room> that captures `threshold` (rate > threshold)
-        Predicate<Room> expensive = null;
+        Predicate<Room> expensive = room -> room.getNightlyRate().compareTo(threshold) > 0;
 
         List<Room> matches = rooms.stream().filter(expensive).toList();
         assertThat(HotelFixtures.isLambda(expensive)).isTrue();
@@ -101,7 +103,7 @@ class _01_LambdaBasicsTest {
      */
     @Test
     void static_method_reference() {
-        Function<String, Integer> parseRoomNumber = null;
+        Function<String, Integer> parseRoomNumber = Integer::parseInt;
 
         assertThat(HotelFixtures.isLambda(parseRoomNumber)).isTrue();
         assertThat(parseRoomNumber.apply("302")).isEqualTo(302);
@@ -113,7 +115,7 @@ class _01_LambdaBasicsTest {
      */
     @Test
     void unbound_instance_method_reference() {
-        Function<Room, BigDecimal> rateOf = null;
+        Function<Room, BigDecimal> rateOf = Room::getNightlyRate;
 
         assertThat(HotelFixtures.isLambda(rateOf)).isTrue();
         assertThat(rateOf.apply(rooms.get(0))).isEqualByComparingTo("120.00");
@@ -126,7 +128,7 @@ class _01_LambdaBasicsTest {
     @Test
     void bound_instance_method_reference() {
         Hotel hotel = HotelFixtures.sampleHotel();
-        Supplier<String> hotelName = null;
+        Supplier<String> hotelName = hotel::getName;
 
         assertThat(HotelFixtures.isLambda(hotelName)).isTrue();
         assertThat(hotelName.get()).isEqualTo("Grand Meridian");
@@ -142,7 +144,7 @@ class _01_LambdaBasicsTest {
         Room room101 = rooms.get(0);
 
         // TODO: koan — use a constructor reference for GuestStay::new
-        StayFactory factory = null;
+        StayFactory factory = GuestStay::new;
 
         assertThat(HotelFixtures.isLambda(factory)).isTrue();
         GuestStay stay = factory.create("S-TMP", alice, room101, 1, LocalDate.of(2026, 8, 7));
