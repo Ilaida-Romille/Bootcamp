@@ -38,7 +38,11 @@ class _12_MiscModernJavaTest {
         //              ROOM 101 READY
         //                rate: 120.00
         //                status: VACANT_CLEAN
-        String notice = "";
+        String notice = """
+                ROOM 101 READY
+                  rate: 120.00
+                  status: VACANT_CLEAN
+                """;
 
         assertThat(notice).isEqualTo("ROOM 101 READY\n  rate: 120.00\n  status: VACANT_CLEAN\n");
     }
@@ -55,7 +59,10 @@ class _12_MiscModernJavaTest {
         // TODO: koan — a text block producing exactly "STATUS:\n  OK\n":
         //              closing """ aligned with the first line's column,
         //              second line with 2 extra leading spaces
-        String status = "WRONG";
+        String status = """
+                STATUS:
+                  OK
+                """;
 
         assertThat(status).isEqualTo("STATUS:\n  OK\n");
     }
@@ -69,7 +76,9 @@ class _12_MiscModernJavaTest {
     void text_block_line_continuation_suppresses_newline() {
         // TODO: koan — a text block across two source lines joined by a
         //              trailing "\" whose value is the single line "Room 101 is vacant"
-        String sentence = "WRONG";
+        String sentence = """
+                Room 101 \
+                is vacant""";
 
         assertThat(sentence).isEqualTo("Room 101 is vacant");
         assertThat(sentence).doesNotContain("\n");
@@ -83,7 +92,7 @@ class _12_MiscModernJavaTest {
     void formatted_string_placeholders() {
         Room room = rooms.get(0);
         // TODO: koan — "%s at $%s" formatted with the room's space id and nightly rate
-        String line = "";
+        String line = "%s at $%s".formatted(room.getSpaceId(), room.getNightlyRate());
 
         assertThat(line).isEqualTo("101 at $120.00");
     }
@@ -95,7 +104,7 @@ class _12_MiscModernJavaTest {
     @Test
     void list_copy_of_is_unmodifiable() {
         // TODO: koan — List.copyOf(rooms); then note that adding throws
-        List<Room> fixed = null;
+        List<Room> fixed = List.copyOf(rooms);
 
         assertThat(fixed).hasSize(8);
         assertThatThrownBy(() -> fixed.add(rooms.get(0)))
@@ -109,8 +118,8 @@ class _12_MiscModernJavaTest {
     @Test
     void stream_to_list_vs_collectors_to_list() {
         // TODO: koan — immutable = rooms.stream().toList(); mutable = rooms.stream().collect(Collectors.toList())
-        List<Room> immutable = null;
-        List<Room> mutable = null;
+        List<Room> immutable = rooms.stream().toList();
+        List<Room> mutable = rooms.stream().collect(Collectors.toList());
 
         assertThatThrownBy(() -> immutable.clear())
                 .isInstanceOf(UnsupportedOperationException.class);
@@ -128,7 +137,20 @@ class _12_MiscModernJavaTest {
         //              block rules ending in yield: FIRST_AID -> "lifesaving",
         //              POOL_LIFEGUARD -> "pool", FOOD_HANDLER -> "food",
         //              HVAC_LICENSED -> "machinery"
-        String requirement = null;
+        String requirement = switch (Certification.HVAC_LICENSED) {
+            case FIRST_AID -> {
+                yield "lifesaving";
+            }
+            case POOL_LIFEGUARD -> {
+                yield "pool";
+            }
+            case FOOD_HANDLER -> {
+                yield "food";
+            }
+            case HVAC_LICENSED -> {
+                yield "machinery";
+            }
+        };
 
         assertThat(requirement).isEqualTo("machinery");
     }
@@ -141,9 +163,9 @@ class _12_MiscModernJavaTest {
     void record_pattern_in_instanceof_on_contact() {
         ContactInfo contact = new ContactInfo("alice@example.com", "+1-555-0101");
         String summary = "";
-        if (contact instanceof ContactInfo) {
-            summary = "no pattern";
-        }
+        if (contact instanceof ContactInfo(var email, var phone)) {
+            summary = email + "/" + phone;
+         }
         // TODO: koan — replace the if above with an instanceof record pattern
         //              binding (var email, var phone) and summary = email + "/" + phone
 

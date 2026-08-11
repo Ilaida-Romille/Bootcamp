@@ -9,6 +9,7 @@ import com.hotel.koans.fixtures.HotelFixtures;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +35,7 @@ class _06_StreamsFlatMapSortedTest {
     @Test
     void flat_map_floors_to_rooms() {
         // TODO: koan — flatten hotel floors into their rooms (floors -> rooms stream)
-        List<Room> allRooms = null;
+        List<Room> allRooms = hotel.getFloors().stream().flatMap(floor -> floor.getRooms().stream()).toList();
 
         assertThat(allRooms).extracting(Room::getSpaceId)
                 .containsExactly("101", "102", "103", "201", "202", "203", "301", "302");
@@ -47,7 +48,7 @@ class _06_StreamsFlatMapSortedTest {
     @Test
     void flat_map_staff_to_tasks_hotel_wide() {
         // TODO: koan — flatten all staff's assignedTasks (one stream per staff member)
-        List<CleaningTask> allTasks = null;
+        List<CleaningTask> allTasks = hotel.getDepartments().stream().flatMap(department -> department.getMembers().stream()).flatMap(task -> task.getAssignedTasks().stream()).toList();
 
         assertThat(allTasks).hasSize(5);
         assertThat(allTasks).extracting(CleaningTask::getTaskId)
@@ -61,7 +62,7 @@ class _06_StreamsFlatMapSortedTest {
     @Test
     void flat_map_engineering_department_tasks() {
         // TODO: koan — flatten the Engineering department members' assignedTasks
-        List<CleaningTask> engineeringTasks = null;
+        List<CleaningTask> engineeringTasks = hotel.getDepartments().stream().filter(t -> t.getName() == "Engineering").flatMap(department -> department.getMembers().stream()).flatMap(members -> members.getAssignedTasks().stream()).toList();
 
         assertThat(engineeringTasks).isEmpty();
     }
@@ -73,7 +74,7 @@ class _06_StreamsFlatMapSortedTest {
     @Test
     void sorted_by_nightly_rate() {
         // TODO: koan — sort rooms by nightlyRate using Comparator.comparing
-        List<Room> byRate = null;
+        List<Room> byRate = rooms.stream().sorted(Comparator.comparing(Room::getNightlyRate)).toList();
 
         assertThat(byRate).extracting(Room::getSpaceId)
                 .containsExactly("101", "201", "102", "202", "103", "301", "203", "302");
@@ -87,7 +88,7 @@ class _06_StreamsFlatMapSortedTest {
     @Test
     void sorted_by_department_then_name() {
         // TODO: koan — sort staff by department name, then by staff name
-        List<Staff> ordered = null;
+        List<Staff> ordered = HotelFixtures.sampleStaff().stream().sorted(Comparator.comparing((Staff member) -> member.getDepartment().getName()).thenComparing(Staff::getName)).toList();
 
         assertThat(ordered).extracting(Staff::getName)
                 .containsExactly("Lena Fischer", "Raj Patel", "Tom Alvarez", "Jonas Weber", "Maria Santos");
@@ -100,7 +101,7 @@ class _06_StreamsFlatMapSortedTest {
     @Test
     void distinct_certifications_hotel_wide() {
         // TODO: koan — flatten staff certifications, deduplicate
-        List<Certification> certifications = null;
+        List<Certification> certifications = HotelFixtures.sampleStaff().stream().flatMap(member -> member.getCertifications().stream()).distinct().toList();
 
         assertThat(certifications).containsExactlyInAnyOrder(
                 Certification.FIRST_AID, Certification.FOOD_HANDLER, Certification.HVAC_LICENSED);

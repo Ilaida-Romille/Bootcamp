@@ -35,7 +35,7 @@ class _09_RecordsTest {
     @Test
     void record_accessors() {
         // TODO: koan — construct the ContactInfo with Alice's email and phone
-        ContactInfo contact = null;
+        ContactInfo contact = new ContactInfo("alice@example.com", "+1-555-0101");
 
         assertThat(contact.email()).isEqualTo("alice@example.com");
         assertThat(contact.phone()).isEqualTo("+1-555-0101");
@@ -50,7 +50,7 @@ class _09_RecordsTest {
         ContactInfo a = new ContactInfo("alice@example.com", "+1-555-0101");
         ContactInfo b = new ContactInfo("alice@example.com", "+1-555-0101");
         // TODO: koan — what does the auto-generated toString look like? (ContactInfo[email=..., phone=...])
-        String replace_this_with_your_answer = "guess";
+        String replace_this_with_your_answer = "ContactInfo[email=alice@example.com, phone=+1-555-0101]";
 
         assertThat(a).isEqualTo(b);
         assertThat(a).hasSameHashCodeAs(b);
@@ -64,7 +64,7 @@ class _09_RecordsTest {
     @Test
     void record_compact_constructor_validation() {
         // TODO: koan — make this negative so StayDuration rejects it
-        long replace_this_with_your_answer = 5L;
+        long replace_this_with_your_answer = -1L;
 
         assertThatThrownBy(() -> new StayDuration(replace_this_with_your_answer))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -78,7 +78,10 @@ class _09_RecordsTest {
     @Test
     void record_as_stream_map_target() {
         // TODO: koan — map each room to a RoomOccupancySnapshot(spaceId, housekeepingStatus, floor)
-        List<RoomOccupancySnapshot> snapshots = null;
+        List<RoomOccupancySnapshot> snapshots = rooms.stream()
+                .map(room -> new RoomOccupancySnapshot(room.getSpaceId(),
+                        room.getHousekeepingStatus(), room.getFloor()))
+                .toList();
 
         assertThat(snapshots).hasSize(8);
         assertThat(snapshots.get(0)).isEqualTo(new RoomOccupancySnapshot("101",
@@ -94,9 +97,9 @@ class _09_RecordsTest {
         RoomOccupancySnapshot snapshot = new RoomOccupancySnapshot("302",
                 Room.HousekeepingStatus.OUT_OF_ORDER, 3);
         String summary = "none";
-        if (snapshot instanceof RoomOccupancySnapshot) {
-            summary = "matched but not deconstructed";
-        }
+        if (snapshot instanceof RoomOccupancySnapshot(var number, var status, var floor)) {
+            summary = number + "/" + status + "/" + floor;
+         }
         // TODO: koan — replace the if above with an instanceof record pattern
         //              binding (var number, var status, var floor) and a body that
         //              sets summary = number + "/" + status + "/" + floor
@@ -125,7 +128,7 @@ class _09_RecordsTest {
         @Override
         public BigDecimal price() {
             // TODO: koan — return the room's nightly rate
-            return null;
+            return room.getNightlyRate();
         }
     }
 }

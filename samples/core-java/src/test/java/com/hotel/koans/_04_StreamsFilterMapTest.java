@@ -3,11 +3,15 @@ package com.hotel.koans;
 import com.hotel.domain.MaintenanceRequest;
 import com.hotel.domain.Room;
 import com.hotel.domain.Staff;
+import com.hotel.domain.MaintenanceRequest.Status;
+import com.hotel.domain.Room.HousekeepingStatus;
 import com.hotel.koans.fixtures.HotelFixtures;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +37,7 @@ class _04_StreamsFilterMapTest {
     @Test
     void filter_rooms_by_housekeeping_status() {
         // TODO: koan — filter rooms with housekeeping status VACANT_CLEAN
-        List<Room> vacantClean = null;
+        List<Room> vacantClean = rooms.stream().filter(room -> room.getHousekeepingStatus() == Room.HousekeepingStatus.VACANT_CLEAN).toList();
 
         assertThat(vacantClean).extracting(Room::getSpaceId)
                 .containsExactly("101", "103", "202", "301");
@@ -47,7 +51,7 @@ class _04_StreamsFilterMapTest {
     void filter_and_count_open_requests() {
         List<MaintenanceRequest> requests = HotelFixtures.sampleMaintenanceRequests();
         // TODO: koan — count requests whose status is REPORTED
-        long reported = -1L;
+        long reported = requests.stream().filter(request -> request.getStatus() == Status.REPORTED).collect(Collectors.counting());
 
         assertThat(reported).isEqualTo(1L);
     }
@@ -59,7 +63,7 @@ class _04_StreamsFilterMapTest {
     @Test
     void map_rooms_to_room_numbers() {
         // TODO: koan — map each room to its space id (room number)
-        List<String> roomNumbers = null;
+        List<String> roomNumbers = rooms.stream().map(room -> room.getSpaceId()).toList();
 
         assertThat(roomNumbers).containsExactly(
                 "101", "102", "103", "201", "202", "203", "301", "302");
@@ -72,7 +76,7 @@ class _04_StreamsFilterMapTest {
     @Test
     void map_staff_to_department_names_distinct() {
         // TODO: koan — map staff to their department names and deduplicate
-        List<String> departments = null;
+        List<String> departments = staff.stream().map(staffs -> staffs.getDepartment().getName()).distinct().toList();
 
         assertThat(departments).containsExactly("Housekeeping", "Engineering");
     }
@@ -84,7 +88,7 @@ class _04_StreamsFilterMapTest {
     @Test
     void any_room_tagged_accessible() {
         // TODO: koan — anyMatch over rooms' tags for "ACCESSIBLE"
-        boolean anyAccessible = false;
+        boolean anyAccessible = rooms.stream().map(room -> room.getTags()).anyMatch(t -> t.contains("ACCESSIBLE"));
 
         assertThat(anyAccessible).isTrue();
     }
@@ -96,7 +100,7 @@ class _04_StreamsFilterMapTest {
     @Test
     void every_room_tagged_sea_view() {
         // TODO: koan — allMatch over rooms' tags for "SEA_VIEW"
-        boolean allSeaView = true;
+        boolean allSeaView = rooms.stream().map(room -> room.getTags()).distinct().allMatch(t -> t.contains("SEA_VIEW"));
 
         assertThat(allSeaView).isFalse();
     }
@@ -107,7 +111,7 @@ class _04_StreamsFilterMapTest {
     @Test
     void no_room_tagged_penthouse() {
         // TODO: koan — noneMatch over rooms' tags for "PENTHOUSE"
-        boolean nonePenthouse = false;
+        boolean nonePenthouse = rooms.stream().map(Room::getTags).noneMatch(t -> t.contains("PENTHOUSE"));
 
         assertThat(nonePenthouse).isTrue();
     }

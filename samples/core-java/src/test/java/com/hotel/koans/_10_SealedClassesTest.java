@@ -38,10 +38,10 @@ class _10_SealedClassesTest {
         // TODO: koan — one per permitted subtype:
         //              HvacIssue("pool_dehumidifier", 24), ElectricalIssue("wall_outlet", true),
         //              PlumbingIssue("shower_head", false), StructuralIssue("kitchen_floor", "minor")
-        MaintenanceIssue dehumidifier = null;
-        MaintenanceIssue wallOutlet = null;
-        MaintenanceIssue showerHead = null;
-        MaintenanceIssue floor = null;
+        MaintenanceIssue dehumidifier = new HvacIssue("pool_dehumidifier", 24);
+        MaintenanceIssue wallOutlet = new ElectricalIssue("wall_outlet", true);
+        MaintenanceIssue showerHead = new PlumbingIssue("shower_head", false);
+        MaintenanceIssue floor = new StructuralIssue("kitchen_floor", "minor");
 
         assertThat(dehumidifier).isInstanceOf(HvacIssue.class);
         assertThat(wallOutlet).isInstanceOf(ElectricalIssue.class);
@@ -60,7 +60,12 @@ class _10_SealedClassesTest {
         // TODO: koan — write a switch expression over issue with all four type
         //              patterns (PlumbingIssue/ElectricalIssue/HvacIssue/StructuralIssue)
         //              returning the SHORT name, and NO default
-        String category = null;
+        String category = switch (issue) {
+            case PlumbingIssue plumbing -> "PLUMBING";
+            case ElectricalIssue electrical -> "ELECTRICAL";
+            case HvacIssue hvac -> "HVAC";
+            case StructuralIssue structural -> "STRUCTURAL";
+        };
 
         assertThat(category).isEqualTo("HVAC");
     }
@@ -76,7 +81,16 @@ class _10_SealedClassesTest {
         // TODO: koan — if/else instanceof chain binding the record and reading its
         //              detail field: HvacIssue.unit(), ElectricalIssue.component(),
         //              PlumbingIssue.fixture(), StructuralIssue.area()
-        String detail = null;
+        String detail;
+        if (issue instanceof HvacIssue hvac) {
+            detail = hvac.unit();
+        } else if (issue instanceof ElectricalIssue electrical) {
+            detail = electrical.component();
+        } else if (issue instanceof PlumbingIssue plumbing) {
+            detail = plumbing.fixture();
+        } else {
+            detail = ((StructuralIssue) issue).area();
+        }
 
         assertThat(detail).isEqualTo("pool_dehumidifier");
     }
@@ -88,7 +102,14 @@ class _10_SealedClassesTest {
     @Test
     void classify_all_requests_with_sealed_patterns() {
         // TODO: koan — stream over requests, switch on getIssue(), collect SHORT names
-        List<String> categories = null;
+        List<String> categories = requests.stream()
+                .map(request -> switch (request.getIssue()) {
+                    case PlumbingIssue plumbing -> "PLUMBING";
+                    case ElectricalIssue electrical -> "ELECTRICAL";
+                    case HvacIssue hvac -> "HVAC";
+                    case StructuralIssue structural -> "STRUCTURAL";
+                })
+                .toList();
 
         assertThat(categories).containsExactly("HVAC", "ELECTRICAL", "PLUMBING", "STRUCTURAL");
     }
@@ -103,7 +124,12 @@ class _10_SealedClassesTest {
         MaintenanceIssue issue = requests.get(0).getIssue();
         // TODO: koan — switch expression over issue; the HvacIssue case binds
         //              (var unit, var targetTempC) and returns unit + " at " + targetTempC + "C"
-        String summary = null;
+        String summary = switch (issue) {
+            case HvacIssue(var unit, var targetTempC) -> unit + " at " + targetTempC + "C";
+            case ElectricalIssue(var component, boolean sparking) -> component;
+            case PlumbingIssue(var fixture, boolean activeLeak) -> fixture;
+            case StructuralIssue(var area, String severity) -> area;
+        };
 
         assertThat(summary).isEqualTo("pool_dehumidifier at 24C");
     }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.filter;
 
 /**
  * Local-variable type inference ({@code var}, JEP 286): the compiler infers
@@ -34,7 +35,7 @@ class _13_VarTest {
     @Test
     void var_with_diamond_operator_collection() {
         // TODO: koan — replace with: var seaViewNumbers = new ArrayList<String>();
-        var seaViewNumbers = new ArrayList<>(List.of("000"));
+        var seaViewNumbers = new ArrayList<String>();
         for (Room room : rooms) {
             if (room.getTags().contains("SEA_VIEW")) {
                 seaViewNumbers.add(room.getSpaceId());
@@ -53,7 +54,7 @@ class _13_VarTest {
     void var_in_enhanced_for_loop() {
         List<String> balconyNumbers = new ArrayList<>();
         // TODO: koan — use var for the loop variable: for (var room : rooms)
-        for (Room room : List.<Room>of()) {
+        for (var room : rooms) {
             if (room.getTags().contains("BALCONY")) {
                 balconyNumbers.add(room.getSpaceId());
             }
@@ -71,7 +72,10 @@ class _13_VarTest {
     void var_with_stream_pipeline_result() {
         // TODO: koan — replace with: var standardRoomNumbers = rooms.stream()
         //              filter roomType "STANDARD", map to space id, toList()
-        var standardRoomNumbers = List.<String>of();
+        var standardRoomNumbers = rooms.stream()
+                .filter(room -> room.getRoomType().equals("STANDARD"))
+                .map(Room::getSpaceId)
+                .toList();
 
         assertThat(standardRoomNumbers).containsExactly("101", "102", "201");
     }
@@ -85,8 +89,9 @@ class _13_VarTest {
     void var_in_try_with_resources() {
         StringBuilder log = new StringBuilder();
         // TODO: koan — replace with: try (var session = new LoggingSession(log)) { log.append("work;"); }
-        try (var session = new LoggingSession(new StringBuilder())) {
-        }
+        try (var session = new LoggingSession(log)) {
+            log.append("work;");
+         }
 
         assertThat(log.toString()).isEqualTo("open;work;closed;");
     }
@@ -104,7 +109,7 @@ class _13_VarTest {
     void var_readability_guideline() {
         Room room = rooms.get(0);
         // TODO: koan — pick the clearer declaration, "A" or "B" (see Javadoc)
-        String betterChoice = "A";
+        String betterChoice = "B";
 
         assertThat(betterChoice).isEqualTo("B");
     }

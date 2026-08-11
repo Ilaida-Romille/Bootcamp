@@ -89,7 +89,7 @@ class _03_PredicateFunctionConsumerSupplierTest {
     @Test
     void function_extracting_department_name() {
         // TODO: koan — a Function<Staff, String> returning the department name
-        Function<Staff, String> departmentName = null;
+        Function<Staff, String> departmentName = staff -> staff.getDepartment().getName();
 
         assertThat(HotelFixtures.isLambda(departmentName)).isTrue();
         assertThat(departmentName.apply(staff.get(0))).isEqualTo("Housekeeping");
@@ -104,7 +104,7 @@ class _03_PredicateFunctionConsumerSupplierTest {
     void function_chained_with_and_then() {
         Function<Staff, String> departmentName = staffMember -> staffMember.getDepartment().getName();
         // TODO: koan — chain .andThen(String::toUpperCase) onto departmentName
-        Function<Staff, String> uppercaseDepartment = null;
+        Function<Staff, String> uppercaseDepartment = departmentName.andThen(String::toUpperCase);
 
         assertThat(uppercaseDepartment.apply(staff.get(2))).isEqualTo("ENGINEERING");
     }
@@ -117,7 +117,7 @@ class _03_PredicateFunctionConsumerSupplierTest {
     void consumer_completing_a_task() {
         CleaningTask task = tasks.get(4);
         // TODO: koan — a Consumer<CleaningTask> that marks the task complete (method reference)
-        Consumer<CleaningTask> complete = null;
+        Consumer<CleaningTask> complete = CleaningTask::complete;
 
         assertThat(HotelFixtures.isLambda(complete)).isTrue();
         complete.accept(task);
@@ -132,7 +132,7 @@ class _03_PredicateFunctionConsumerSupplierTest {
     void consumer_chained_with_and_then() {
         Consumer<CleaningTask> complete = CleaningTask::complete;
         // TODO: koan — chain a logging consumer (prints the task id) after `complete`
-        Consumer<CleaningTask> completeAndLog = null;
+        Consumer<CleaningTask> completeAndLog = complete.andThen(System.out::print);
 
         completeAndLog.accept(tasks.get(5));
         assertThat(tasks.get(5).getStatus()).isEqualTo(CleaningTask.Status.COMPLETED);
@@ -147,7 +147,7 @@ class _03_PredicateFunctionConsumerSupplierTest {
         Room room301 = rooms.get(6);
         Staff maria = staff.get(0);
         // TODO: koan — a Supplier<Inspection> for a new "HEALTH_AND_SAFETY" inspection of room 301 by Maria
-        Supplier<Inspection> inspectionSupplier = null;
+        Supplier<Inspection> inspectionSupplier = () ->  new Inspection("IN-9999", room301, "HEALTH_AND_SAFETY", maria);
 
         assertThat(HotelFixtures.isLambda(inspectionSupplier)).isTrue();
         Inspection inspection = inspectionSupplier.get();
@@ -163,7 +163,7 @@ class _03_PredicateFunctionConsumerSupplierTest {
     @Test
     void bipredicate_checking_certification() {
         // TODO: koan — a BiPredicate<Staff, Certification> delegating to isCertifiedFor
-        BiPredicate<Staff, Certification> isCertifiedFor = null;
+        BiPredicate<Staff, Certification> isCertifiedFor = Staff::isCertifiedFor;
 
         assertThat(HotelFixtures.isLambda(isCertifiedFor)).isTrue();
         assertThat(isCertifiedFor.test(staff.get(0), Certification.FIRST_AID)).isTrue();
