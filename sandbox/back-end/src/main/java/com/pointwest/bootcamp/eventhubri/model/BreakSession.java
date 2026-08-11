@@ -1,15 +1,15 @@
-import java.time.LocalDateTime;
+package com.pointwest.bootcamp.eventhubri.model;
+
+import java.util.Date;
 
 public class BreakSession extends Session {
-    private String breakType; // e.g., "Lunch", "Coffee Break"
+    private String breakType;
 
     public BreakSession() {
-        super();
     }
 
-    public BreakSession(String sessionId, String title, String description, 
-                        LocalDateTime startDateTime, LocalDateTime endDateTime, 
-                        String location, String breakType) {
+    public BreakSession(String sessionId, String title, String description, Date startDateTime, Date endDateTime,
+            String location, String breakType) {
         super(sessionId, title, description, startDateTime, endDateTime, location);
         this.breakType = breakType;
     }

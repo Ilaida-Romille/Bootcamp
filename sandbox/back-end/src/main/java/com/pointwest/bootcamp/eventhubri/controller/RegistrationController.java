@@ -1,4 +1,9 @@
-import org.springframework.stereotype.Component;
+package com.pointwest.bootcamp.eventhubri.controller;
+
+import com.pointwest.bootcamp.eventhubri.dto.RegistrationDto;
+import com.pointwest.bootcamp.eventhubri.model.Registration;
+import com.pointwest.bootcamp.eventhubri.service.RegistrationService;
+import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
@@ -11,27 +16,19 @@ public class RegistrationController {
         this.registrationService = registrationService;
     }
 
-    public RegistrationResponseDto registerAttendee(RegisterAttendeeRequestDto requestDto) {
-        return registrationService.registerAttendee(requestDto);
-    }
-
-    public RegistrationResponseDto updateRegistration(String registrationId, UpdateRegistrationRequestDto requestDto) {
-        return registrationService.updateRegistration(registrationId, requestDto);
+    public RegistrationDto registerAttendee(String attendeeId, String eventId, String dietaryInfo) {
+        System.out.println("Registering Attendee: " + attendeeId + " for Event: " + eventId);
+        Registration registration = registrationService.registerAttendee(attendeeId, eventId, dietaryInfo);
+        return new RegistrationDto(registration);
     }
 
     public void cancelRegistration(String registrationId) {
+        System.out.println("Cancelling Registration: " + registrationId);
         registrationService.cancelRegistration(registrationId);
     }
 
-    public RegistrationResponseDto getRegistrationById(String registrationId) {
-        return registrationService.getRegistrationById(registrationId);
-    }
-
-    public List<RegistrationResponseDto> getRegistrationsByEventId(String eventId) {
-        return registrationService.getRegistrationsByEventId(eventId);
-    }
-
-    public List<RegistrationResponseDto> getRegistrationsByAttendeeId(String attendeeId) {
-        return registrationService.getRegistrationsByAttendeeId(attendeeId);
+    public void selectSessions(String registrationId, List<String> sessionIds) {
+        System.out.println("Selecting Sessions for Registration: " + registrationId);
+        registrationService.selectSessions(registrationId, sessionIds);
     }
 }

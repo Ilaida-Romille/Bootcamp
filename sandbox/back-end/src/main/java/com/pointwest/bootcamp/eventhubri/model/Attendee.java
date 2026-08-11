@@ -1,8 +1,9 @@
+package com.pointwest.bootcamp.eventhubri.model;
+
 public class Attendee extends User {
     private String attendeeId;
 
     public Attendee() {
-        super();
     }
 
     public Attendee(String userId, String name, String email, String attendeeId) {

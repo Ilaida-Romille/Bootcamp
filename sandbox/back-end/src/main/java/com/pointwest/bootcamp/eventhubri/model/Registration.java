@@ -1,30 +1,27 @@
-import java.time.LocalDateTime;
+package com.pointwest.bootcamp.eventhubri.model;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Registration {
     private String registrationId;
-    private Attendee attendee;
-    private Event event;
-    private LocalDateTime registeredAt;
+    private String attendeeId;
+    private String eventId;
+    private Date registeredAt;
     private RegistrationStatus status;
     private String dietaryRestrictions;
-    private List<SessionSelection> sessionSelections;
+    private List<SessionSelection> sessionSelections = new ArrayList<>();
 
     public Registration() {
-        this.registeredAt = LocalDateTime.now();
-        this.status = RegistrationStatus.PENDING;
-        this.sessionSelections = new ArrayList<>();
     }
 
-    public Registration(String registrationId, Attendee attendee, Event event, String dietaryRestrictions) {
-        this.registrationId = registrationId;
-        this.attendee = attendee;
-        this.event = event;
-        this.dietaryRestrictions = dietaryRestrictions;
-        this.registeredAt = LocalDateTime.now();
-        this.status = RegistrationStatus.CONFIRMED;
-        this.sessionSelections = new ArrayList<>();
+    public void cancel() {
+        this.status = RegistrationStatus.CANCELLED;
+    }
+
+    public void updateDietaryInfo(String info) {
+        this.dietaryRestrictions = info;
     }
 
     public String getRegistrationId() {
@@ -35,27 +32,27 @@ public class Registration {
         this.registrationId = registrationId;
     }
 
-    public Attendee getAttendee() {
-        return attendee;
+    public String getAttendeeId() {
+        return attendeeId;
     }
 
-    public void setAttendee(Attendee attendee) {
-        this.attendee = attendee;
+    public void setAttendeeId(String attendeeId) {
+        this.attendeeId = attendeeId;
     }
 
-    public Event getEvent() {
-        return event;
+    public String getEventId() {
+        return eventId;
     }
 
-    public void setEvent(Event event) {
-        this.event = event;
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
-    public LocalDateTime getRegisteredAt() {
+    public Date getRegisteredAt() {
         return registeredAt;
     }
 
-    public void setRegisteredAt(LocalDateTime registeredAt) {
+    public void setRegisteredAt(Date registeredAt) {
         this.registeredAt = registeredAt;
     }
 
@@ -81,9 +78,5 @@ public class Registration {
 
     public void setSessionSelections(List<SessionSelection> sessionSelections) {
         this.sessionSelections = sessionSelections;
-    }
-
-    public void addSessionSelection(SessionSelection selection) {
-        this.sessionSelections.add(selection);
     }
 }
