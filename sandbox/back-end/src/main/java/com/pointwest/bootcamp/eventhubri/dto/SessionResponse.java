@@ -1,4 +1,5 @@
 package com.pointwest.bootcamp.eventhubri.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,19 +9,17 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventResponse {
+public class SessionResponse {
 
-    private String eventId;
+    private String agendaItemId;
+    private String sessionType; // "PRESENTATION" or "BREAK"
     private String title;
     private String description;
-    private String organizerId;
-    private String organizerName;
-    private String status;
+    private String location;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
-    private LocalDateTime registrationOpensAt;
-    private LocalDateTime registrationClosesAt;
-    private AgendaResponse agenda;
-    private String venue;
-    private String capacity;
+    
+    // Subtype-specific fields
+    private String speaker;   // Present only if PRESENTATION
+    private String breakType; // Present only if BREAK
 }
