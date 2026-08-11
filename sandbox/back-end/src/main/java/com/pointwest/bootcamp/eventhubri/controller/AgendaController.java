@@ -1,5 +1,5 @@
 import org.springframework.stereotype.Component;
-import com.pointwest.bootcamp.hotelservices.agendaService;
+import com.pointwest.bootcamp.eventhubri.service.agendaService;
 
 @Controller
 public class AgendaController {
