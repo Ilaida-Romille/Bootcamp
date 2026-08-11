@@ -4,7 +4,16 @@ import com.pointwest.bootcamp.eventhubri.dto.CreateEventRequest;
 import com.pointwest.bootcamp.eventhubri.dto.EventResponse;
 import com.pointwest.bootcamp.eventhubri.model.Event;
 import com.pointwest.bootcamp.eventhubri.repository.EventRepository;
+import com.pointwest.bootcamp.eventhubri.service.EventService;
+
 import lombok.RequiredArgsConstructor;
+import com.pointwest.bootcamp.eventhubri.dto.AgendaResponse;
+import com.pointwest.bootcamp.eventhubri.dto.SessionResponse;
+import com.pointwest.bootcamp.eventhubri.model.Agenda;
+import com.pointwest.bootcamp.eventhubri.model.BreakSession;
+import com.pointwest.bootcamp.eventhubri.model.PresentationSession;
+import com.pointwest.bootcamp.eventhubri.model.Session;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -103,6 +112,46 @@ public class EventServiceImpl implements EventService {
         response.setRegistrationClosesAt(event.getRegistrationClosesAt());
         response.setVenue(event.getVenue());
         response.setCapacity(event.getCapacity());
+
+        if (event.getAgenda() != null) {
+            response.setAgenda(mapToAgendaResponse(event.getAgenda()));
+        }
+
+        return response;
+    }
+
+    private AgendaResponse mapToAgendaResponse(Agenda agenda) {
+        AgendaResponse response = new AgendaResponse();
+        response.setDescription(agenda.getDescription());
+
+        if (agenda.getSessions() != null) {
+            List<SessionResponse> sessionResponses = agenda.getSessions().stream()
+                    .map(this::mapToSessionResponse)
+                    .toList();
+            response.setSessions(sessionResponses);
+        }
+
+        return response;
+    }
+
+    private SessionResponse mapToSessionResponse(Session session) {
+        SessionResponse response = new SessionResponse();
+        response.setAgendaItemId(session.getAgendaItemId());
+        response.setTitle(session.getTitle());
+        response.setDescription(session.getDescription());
+        response.setLocation(session.getLocation());
+        response.setStartDateTime(session.getStartDateTime());
+        response.setEndDateTime(session.getEndDateTime());
+
+        // Polymorphic handling based on session subtype
+        if (session instanceof PresentationSession presentation) {
+            response.setSessionType("PRESENTATION");
+            response.setSpeaker(presentation.getSpeaker());
+        } else if (session instanceof BreakSession breakSession) {
+            response.setSessionType("BREAK");
+            response.setBreakType(breakSession.getBreakType());
+        }
+
         return response;
     }
 }
