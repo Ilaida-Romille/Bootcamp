@@ -36,6 +36,16 @@ public class Room extends Space {
                 && housekeepingStatus == HousekeepingStatus.VACANT_CLEAN;
     }
 
+    /**
+     * Throws if this room isn't currently available for assignment.
+     */
+    public void requireAvailable() {
+        if (!isAvailable()) {
+            throw new RoomUnavailableException(
+                    "Room " + getSpaceId() + " is not available (status: " + getHousekeepingStatus() + ")");
+        }
+    }
+
     public void setHousekeepingStatus(HousekeepingStatus newStatus) {
         System.out.println("[Room] " + name + " housekeeping: " + housekeepingStatus + " -> " + newStatus);
         this.housekeepingStatus = newStatus;

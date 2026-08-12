@@ -11,11 +11,11 @@ import com.pointwest.bootcamp.hotelservices.model.Facility;
 import com.pointwest.bootcamp.hotelservices.model.Space;
 
 @Repository
-public class FacilityRepository {
+public class FacilityRepositoryImpl {
 
 	private final List<Facility> facilitys = new ArrayList<>();
 
-	public FacilityRepository() {
+	public FacilityRepositoryImpl() {
 		// Hard-coded data
 		Facility facility8 = new Facility("302", "FitnessBros", "Gym", 10, Space.Status.OPERATIONAL);
 		facility8.setSpaceId(8L);

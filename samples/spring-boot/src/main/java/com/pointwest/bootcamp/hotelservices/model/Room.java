@@ -1,5 +1,9 @@
 package com.pointwest.bootcamp.hotelservices.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+
+@Entity
 public class Room extends Space {
 
 	public enum HousekeepingStatus {
@@ -10,6 +14,8 @@ public class Room extends Space {
 	private int floor;
 	private String roomType;
 	private int maxOccupancy;
+	
+	@Enumerated
 	private HousekeepingStatus housekeepingStatus;
 
 	protected Room() {

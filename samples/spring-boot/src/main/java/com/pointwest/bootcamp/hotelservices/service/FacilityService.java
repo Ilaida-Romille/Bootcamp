@@ -6,14 +6,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.pointwest.bootcamp.hotelservices.dto.FacilityDto;
-import com.pointwest.bootcamp.hotelservices.repository.FacilityRepository;
+import com.pointwest.bootcamp.hotelservices.repository.FacilityRepositoryImpl;
 
 @Service
 public class FacilityService {
 
-	private final FacilityRepository facilityRepository;
+	private final FacilityRepositoryImpl facilityRepository;
 
-	public FacilityService(FacilityRepository facilityRepository) {
+	public FacilityService(FacilityRepositoryImpl facilityRepository) {
 		this.facilityRepository = facilityRepository;
 	}
 
