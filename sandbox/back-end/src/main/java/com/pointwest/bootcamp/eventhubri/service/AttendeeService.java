@@ -6,10 +6,12 @@ import com.pointwest.bootcamp.eventhubri.model.Registration;
 import com.pointwest.bootcamp.eventhubri.model.Session;
 import com.pointwest.bootcamp.eventhubri.repository.EventRepository;
 import com.pointwest.bootcamp.eventhubri.repository.RegistrationRepository;
-
 import java.util.Collections;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class AttendeeService {
 
     private final EventRepository eventRepository;

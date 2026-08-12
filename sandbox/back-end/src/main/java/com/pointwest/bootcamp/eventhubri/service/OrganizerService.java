@@ -3,11 +3,12 @@ package com.pointwest.bootcamp.eventhubri.service;
 import com.pointwest.bootcamp.eventhubri.model.*;
 import com.pointwest.bootcamp.eventhubri.repository.EventRepository;
 import com.pointwest.bootcamp.eventhubri.repository.RegistrationRepository;
-
+import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class OrganizerService {
 
     private final EventRepository eventRepository;
