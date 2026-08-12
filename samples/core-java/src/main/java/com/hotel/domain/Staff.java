@@ -39,6 +39,27 @@ public class Staff {
         return certifications.contains(certification);
     }
 
+    /**
+     * Throws if this staff member isn't certified for the given certification.
+     */
+    public void requireCertifiedFor(Certification certification) {
+        if (!isCertifiedFor(certification)) {
+            throw new StaffNotCertifiedException(
+                    getName() + " is not certified for " + certification);
+        }
+    }
+
+    /**
+     * Verifies this staff member's certification records are complete (i.e.
+     * they hold at least one certification on file). Declares a checked
+     * exception for the same reason as {@link Inspection#generateReport()}.
+     */
+    public void verifyCertificationRecords() throws CertificationVerificationException {
+        if (getCertifications().isEmpty()) {
+            throw new CertificationVerificationException(getName() + " has no certification records on file");
+        }
+    }
+
     void assignTask(CleaningTask task) { assignedTasks.add(task); }
     void assignRequest(MaintenanceRequest request) { assignedRequests.add(request); }
 

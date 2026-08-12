@@ -1,5 +1,11 @@
 package com.hotel.koans.fixtures;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
 import com.hotel.domain.AmenityUsage;
 import com.hotel.domain.Certification;
 import com.hotel.domain.CleaningTask;
@@ -20,12 +26,6 @@ import com.hotel.domain.PlumbingIssue;
 import com.hotel.domain.Room;
 import com.hotel.domain.Staff;
 import com.hotel.domain.StructuralIssue;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Shared test data factory for the koan exercises.
@@ -224,6 +224,13 @@ public final class HotelFixtures {
         Facility breakfastHall = new Facility("F-BREAKFAST", "Breakfast Hall", "FOOD_AND_BEVERAGE", 80);
         List<Staff> staff = buildStaff(new Department("Housekeeping"), new Department("Engineering"));
         return buildInspections(rooms, pool, breakfastHall, staff.get(0), staff.get(2));
+    }
+
+    public static void sendStaffToFixRoomAircon(String roomId, String staffId) {
+            sampleRooms().stream().filter(rm -> rm.getSpaceId().equals(roomId))
+                         .findFirst().get().requireAvailable();
+            sampleStaff().stream().filter(stf -> stf.getStaffId().equals(staffId))
+                         .findFirst().get().requireCertifiedFor(Certification.HVAC_LICENSED);
     }
 
     private static List<Room> buildRooms() {
