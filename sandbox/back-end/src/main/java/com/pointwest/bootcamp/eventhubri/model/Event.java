@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Event {
     private String eventId;
+    private String organizerId;
     private String title;
     private String description;
     private EventStatus status;
@@ -25,6 +26,14 @@ public class Event {
 
     public void setEventId(String eventId) {
         this.eventId = eventId;
+    }
+
+    public String getOrganizerId(){
+        return organizerId;
+    }
+
+    public void setOrganizerId(String organizerId){
+        this.organizerId = organizerId;
     }
 
     public String getTitle() {
