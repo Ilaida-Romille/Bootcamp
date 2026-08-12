@@ -3,7 +3,7 @@ package com.pointwest.bootcamp.eventhubri.repository;
 import com.pointwest.bootcamp.eventhubri.model.Event;
 import com.pointwest.bootcamp.eventhubri.model.EventStatus;
 
-import main.java.com.pointwest.bootcamp.eventhubri.repository.EventRepository;
+import com.pointwest.bootcamp.eventhubri.repository.EventRepository;
 
 import org.springframework.stereotype.Repository;
 
