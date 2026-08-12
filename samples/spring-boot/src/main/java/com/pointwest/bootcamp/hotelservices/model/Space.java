@@ -1,13 +1,26 @@
 package com.pointwest.bootcamp.hotelservices.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+
+@Entity
+@Inheritance
 public abstract class Space {
 
 	public enum Status {
 		OPERATIONAL, UNDER_MAINTENANCE, CLOSED
 	}
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
 	private Long spaceId;
 	private String name;
+	
+	@Enumerated
 	private Status status;
 
 	protected Space() {

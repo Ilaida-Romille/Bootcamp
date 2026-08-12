@@ -1,0 +1,80 @@
+package com.pointwest.bootcamp.hotelservices.repository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Repository;
+
+import com.pointwest.bootcamp.hotelservices.model.Room;
+import com.pointwest.bootcamp.hotelservices.model.Room.HousekeepingStatus;
+
+@Repository
+public class RoomRepositoryImpl {
+
+	private final List<Room> rooms = new ArrayList<>();
+
+	public RoomRepositoryImpl() {
+		// Hard-coded data
+		Room room1 = new Room("101", 1, "Standard", 2, HousekeepingStatus.VACANT_CLEAN);
+		room1.setSpaceId(1L);
+		rooms.add(room1);
+
+		Room room2 = new Room("102", 1, "Standard", 2, HousekeepingStatus.VACANT_DIRTY);
+		room2.setSpaceId(2L);
+		rooms.add(room2);
+
+		Room room3 = new Room("103", 1, "Deluxe", 4, HousekeepingStatus.OCCUPIED_CLEAN);
+		room3.setSpaceId(3L);
+		rooms.add(room3);
+
+		Room room4 = new Room("201", 2, "Standard", 2, HousekeepingStatus.VACANT_CLEAN);
+		room4.setSpaceId(4L);
+		rooms.add(room4);
+
+		Room room5 = new Room("202", 2, "Suite", 6, HousekeepingStatus.OUT_OF_ORDER);
+		room5.setSpaceId(5L);
+		rooms.add(room5);
+
+		Room room6 = new Room("203", 2, "Deluxe", 4, HousekeepingStatus.OCCUPIED_DIRTY);
+		room6.setSpaceId(6L);
+		rooms.add(room6);
+
+		Room room7 = new Room("301", 3, "Standard", 2, HousekeepingStatus.VACANT_CLEAN);
+		room7.setSpaceId(7L);
+		rooms.add(room7);
+
+		Room room8 = new Room("302", 3, "Penthouse", 8, HousekeepingStatus.VACANT_CLEAN);
+		room8.setSpaceId(8L);
+		rooms.add(room8);
+	}
+
+	public List<Room> findAll() {
+		return new ArrayList<>(rooms);
+	}
+
+	public Optional<Room> findById(Long id) {
+		if (id == null || id < 1 || id > rooms.size()) {
+			return Optional.empty();
+		}
+		return Optional.of(rooms.get(id.intValue() - 1));
+	}
+
+	public List<Room> findByHousekeepingStatus(HousekeepingStatus status) {
+		return rooms.stream()
+				.filter(room -> room.getHousekeepingStatus() == status)
+				.collect(Collectors.toList());
+	}
+
+	public List<Room> findByFloor(int floor) {
+		return rooms.stream()
+				.filter(room -> room.getFloor() == floor)
+				.collect(Collectors.toList());
+	}
+
+	public Room save(Room room) {
+		// For simplicity, just return the room (in a real implementation, this would update the list)
+		return room;
+	}
+}

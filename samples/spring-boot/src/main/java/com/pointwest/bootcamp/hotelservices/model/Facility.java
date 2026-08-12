@@ -1,5 +1,8 @@
 package com.pointwest.bootcamp.hotelservices.model;
 
+import jakarta.persistence.Entity;
+
+@Entity
 public class Facility extends Space {
 
     private final String category; // Pool, Gym, Spa, Breakfast Hall, ...
