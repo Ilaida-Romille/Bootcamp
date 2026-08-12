@@ -4,11 +4,13 @@ import com.pointwest.bootcamp.eventhubri.model.*;
 import com.pointwest.bootcamp.eventhubri.repository.EventRepository;
 import com.pointwest.bootcamp.eventhubri.repository.RegistrationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class OrganizerService {
 
     private final EventRepository eventRepository;
