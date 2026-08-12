@@ -1,17 +1,21 @@
-package com.pointwest.bootcamp.eventhubri.model;
+package com.pointwest.bootcamp.eventhubri.dto;
 
-public class User {
+import com.pointwest.bootcamp.eventhubri.model.User;
+
+public class UserDto {
     private String userId;
     private String name;
     private String email;
 
-    public User() {
+    public UserDto() {
     }
 
-    public User(String userId, String name, String email) {
-        this.userId = userId;
-        this.name = name;
-        this.email = email;
+    public UserDto(User user) {
+        if (user != null) {
+            this.userId = user.getUserId();
+            this.name = user.getName();
+            this.email = user.getEmail();
+        }
     }
 
     public String getUserId() {

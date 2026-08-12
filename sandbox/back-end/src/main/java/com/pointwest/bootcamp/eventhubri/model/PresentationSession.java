@@ -1,13 +1,24 @@
 package com.pointwest.bootcamp.eventhubri.model;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import lombok.*;
+import java.util.Date;
 
-@Entity
-@DiscriminatorValue("PRESENTATION")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class PresentationSession extends Session {
-
     private String speaker;
+
+    public PresentationSession() {
+    }
+
+    public PresentationSession(String sessionId, String title, String description, Date startDateTime, Date endDateTime,
+            String location, String speaker) {
+        super(sessionId, title, description, startDateTime, endDateTime, location);
+        this.speaker = speaker;
+    }
+
+    public String getSpeaker() {
+        return speaker;
+    }
+
+    public void setSpeaker(String speaker) {
+        this.speaker = speaker;
+    }
 }

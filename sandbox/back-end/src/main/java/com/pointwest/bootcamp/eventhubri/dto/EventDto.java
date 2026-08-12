@@ -1,22 +1,32 @@
-package com.pointwest.bootcamp.eventhubri.model;
+package com.pointwest.bootcamp.eventhubri.dto;
 
+import com.pointwest.bootcamp.eventhubri.model.Event;
 import java.util.Date;
 
-public class Event {
+public class EventDto {
     private String eventId;
     private String title;
     private String description;
-    private EventStatus status;
+    private String status;
     private Date startDateTime;
     private Date endDateTime;
-    private Date registrationOpensAt;
-    private Date registrationClosesAt;
     private String venue;
     private Integer capacity;
-    private Boolean isFoodProvided;
-    private Agenda agenda;
 
-    public Event() {
+    public EventDto() {
+    }
+
+    public EventDto(Event event) {
+        if (event != null) {
+            this.eventId = event.getEventId();
+            this.title = event.getTitle();
+            this.description = event.getDescription();
+            this.status = event.getStatus() != null ? event.getStatus().name() : null;
+            this.startDateTime = event.getStartDateTime();
+            this.endDateTime = event.getEndDateTime();
+            this.venue = event.getVenue();
+            this.capacity = event.getCapacity();
+        }
     }
 
     public String getEventId() {
@@ -43,11 +53,11 @@ public class Event {
         this.description = description;
     }
 
-    public EventStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(EventStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -67,22 +77,6 @@ public class Event {
         this.endDateTime = endDateTime;
     }
 
-    public Date getRegistrationOpensAt() {
-        return registrationOpensAt;
-    }
-
-    public void setRegistrationOpensAt(Date registrationOpensAt) {
-        this.registrationOpensAt = registrationOpensAt;
-    }
-
-    public Date getRegistrationClosesAt() {
-        return registrationClosesAt;
-    }
-
-    public void setRegistrationClosesAt(Date registrationClosesAt) {
-        this.registrationClosesAt = registrationClosesAt;
-    }
-
     public String getVenue() {
         return venue;
     }
@@ -97,21 +91,5 @@ public class Event {
 
     public void setCapacity(Integer capacity) {
         this.capacity = capacity;
-    }
-
-    public Boolean getIsFoodProvided() {
-        return isFoodProvided;
-    }
-
-    public void setIsFoodProvided(Boolean isFoodProvided) {
-        this.isFoodProvided = isFoodProvided;
-    }
-
-    public Agenda getAgenda() {
-        return agenda;
-    }
-
-    public void setAgenda(Agenda agenda) {
-        this.agenda = agenda;
     }
 }
