@@ -19,7 +19,7 @@ public class EventRepositoryImpl implements EventRepository {
     public EventRepositoryImpl() {
         // Seed mock data
         Event sampleEvent = new Event();
-        sampleEvent.setEventId("EVT-101");
+        sampleEvent.setEventId(101L);
         sampleEvent.setTitle("Tech Summit 2026");
         sampleEvent.setDescription("Annual developer conference");
         sampleEvent.setStatus(EventStatus.PUBLISHED);
@@ -32,7 +32,7 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
-    public Optional<Event> findById(String eventId) {
+    public Optional<Event> findById(Long eventId) {
         if (eventId == null)
             return Optional.empty();
         return events.stream()
@@ -61,7 +61,7 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
-    public void deleteById(String eventId) {
+    public void deleteById(Long eventId) {
         events.removeIf(e -> e.getEventId().equals(eventId));
     }
 }

@@ -29,19 +29,19 @@ public class AttendeeController {
                 .toList();
     }
 
-    public EventDto viewEventDetails(String eventId) {
+    public EventDto viewEventDetails(Long eventId) {
         System.out.println("Viewing details for Event: " + eventId);
         Event event = attendeeService.getEventDetails(eventId);
         return new EventDto(event);
     }
 
-    public AgendaDto viewEventAgenda(String eventId) {
+    public AgendaDto viewEventAgenda(Long eventId) {
         System.out.println("Viewing agenda for Event: " + eventId);
         Agenda agenda = attendeeService.getEventAgenda(eventId);
         return agenda != null ? new AgendaDto(agenda) : null;
     }
 
-    public List<SessionDto> viewEventSessions(String eventId) {
+    public List<SessionDto> viewEventSessions(Long eventId) {
         System.out.println("Viewing sessions for Event: " + eventId);
         List<Session> sessions = attendeeService.getEventSessions(eventId);
         return sessions.stream()

@@ -14,13 +14,13 @@ public class RegistrationService {
 
     private final EventRepository eventRepository;
     private final RegistrationRepository registrationRepository;
-
+    //add repo for session speicfically
     public RegistrationService(EventRepository eventRepository, RegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
         this.registrationRepository = registrationRepository;
     }
 
-    public Registration registerAttendee(String attendeeId, String eventId, String dietaryInfo) {
+    public Registration registerAttendee(String attendeeId, Long eventId, String dietaryInfo) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found with ID: " + eventId));
 

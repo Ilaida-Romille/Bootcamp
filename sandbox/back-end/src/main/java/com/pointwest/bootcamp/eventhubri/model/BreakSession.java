@@ -1,7 +1,11 @@
 package com.pointwest.bootcamp.eventhubri.model;
 
 import java.util.Date;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "break_sessions")
 public class BreakSession extends Session {
     private String breakType;
 

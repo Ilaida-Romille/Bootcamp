@@ -24,7 +24,7 @@ public class RegistrationRepositoryImplTest {
         Registration reg = new Registration();
         reg.setRegistrationId("REG-001");
         reg.setAttendeeId("ATT-100");
-        reg.setEventId("EVT-100");
+        reg.setEventId(100L);
 
         registrationRepository.save(reg);
 
@@ -56,16 +56,16 @@ public class RegistrationRepositoryImplTest {
     public void testFindByEventId() {
         Registration reg1 = new Registration();
         reg1.setRegistrationId("REG-001");
-        reg1.setEventId("EVT-A");
+        reg1.setEventId(102L);
 
         Registration reg2 = new Registration();
         reg2.setRegistrationId("REG-002");
-        reg2.setEventId("EVT-A");
+        reg2.setEventId(102L);
 
         registrationRepository.save(reg1);
         registrationRepository.save(reg2);
 
-        List<Registration> results = registrationRepository.findByEventId("EVT-A");
+        List<Registration> results = registrationRepository.findByEventId(102L);
         assertEquals(2, results.size());
     }
 

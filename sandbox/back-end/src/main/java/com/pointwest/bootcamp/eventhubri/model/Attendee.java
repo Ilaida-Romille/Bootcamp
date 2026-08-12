@@ -1,6 +1,12 @@
 package com.pointwest.bootcamp.eventhubri.model;
 
+import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
+
+@Entity
+@Table(name = "attendees")
 public class Attendee extends User {
+
     private String attendeeId;
 
     public Attendee() {

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class RegistrationDto {
     private String registrationId;
     private String attendeeId;
-    private String eventId;
+    private Long eventId;
     private Date registeredAt;
     private RegistrationStatusDto status;
     private String dietaryRestrictions;
@@ -55,11 +55,11 @@ public class RegistrationDto {
         this.attendeeId = attendeeId;
     }
 
-    public String getEventId() {
+    public Long getEventId() {
         return eventId;
     }
 
-    public void setEventId(String eventId) {
+    public void setEventId(Long eventId) {
         this.eventId = eventId;
     }
 

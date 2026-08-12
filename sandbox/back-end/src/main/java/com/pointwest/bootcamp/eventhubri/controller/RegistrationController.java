@@ -16,7 +16,7 @@ public class RegistrationController {
         this.registrationService = registrationService;
     }
 
-    public RegistrationDto registerAttendee(String attendeeId, String eventId, String dietaryInfo) {
+    public RegistrationDto registerAttendee(String attendeeId, Long eventId, String dietaryInfo) {
         System.out.println("Registering Attendee: " + attendeeId + " for Event: " + eventId);
         Registration registration = registrationService.registerAttendee(attendeeId, eventId, dietaryInfo);
         return new RegistrationDto(registration);

@@ -4,7 +4,7 @@ import com.pointwest.bootcamp.eventhubri.model.Event;
 import java.util.Date;
 
 public class EventDto {
-    private String eventId;
+    private Long eventId;
     private String title;
     private String description;
     private String status;
@@ -29,11 +29,11 @@ public class EventDto {
         }
     }
 
-    public String getEventId() {
+    public Long getEventId() {
         return eventId;
     }
 
-    public void setEventId(String eventId) {
+    public void setEventId(Long eventId) {
         this.eventId = eventId;
     }
 

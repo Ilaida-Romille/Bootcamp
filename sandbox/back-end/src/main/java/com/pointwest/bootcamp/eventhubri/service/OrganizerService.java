@@ -22,13 +22,13 @@ public class OrganizerService {
     // --- Event CRUD Operations ---
 
     public Event createEvent(Event event) {
-        if (event.getEventId() == null || event.getEventId().isBlank()) {
-            event.setEventId("EVT-" + UUID.randomUUID().toString().substring(0, 8));
-        }
+        // if (event.getEventId() == null || event.getEventId().isBlank()) {
+        //     event.setEventId("EVT-" + UUID.randomUUID().toString().substring(0, 8));
+        // }
         return eventRepository.save(event);
     }
 
-    public Event updateEvent(String eventId, Event updatedEventDetails) {
+    public Event updateEvent(Long eventId, Event updatedEventDetails) {
         Event existingEvent = getEventById(eventId);
 
         existingEvent.setTitle(updatedEventDetails.getTitle());
@@ -45,12 +45,12 @@ public class OrganizerService {
         return eventRepository.save(existingEvent);
     }
 
-    public void deleteEvent(String eventId) {
+    public void deleteEvent(Long eventId) {
         getEventById(eventId); // Throws exception if not found
         eventRepository.deleteById(eventId);
     }
 
-    public Event getEventById(String eventId) {
+    public Event getEventById(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found with ID: " + eventId));
     }
@@ -61,7 +61,7 @@ public class OrganizerService {
 
     // --- Agenda & Session Management ---
 
-    public Agenda attachAgendaToEvent(String eventId, Agenda agenda) {
+    public Agenda attachAgendaToEvent(Long eventId, Agenda agenda) {
         Event event = getEventById(eventId);
         if (agenda.getAgendaId() == null) {
             agenda.setAgendaId("AGN-" + UUID.randomUUID().toString().substring(0, 8));
@@ -71,7 +71,7 @@ public class OrganizerService {
         return agenda;
     }
 
-    public void addSessionToEventAgenda(String eventId, Session session) {
+    public void addSessionToEventAgenda(Long eventId, Session session) {
         Event event = getEventById(eventId);
         if (event.getAgenda() == null) {
             Agenda newAgenda = new Agenda();
@@ -90,7 +90,7 @@ public class OrganizerService {
 
     // --- Organizer Insights ---
 
-    public List<Registration> getEventRegistrations(String eventId) {
+    public List<Registration> getEventRegistrations(Long eventId) {
         getEventById(eventId); // Verify event existence
         return registrationRepository.findByEventId(eventId);
     }

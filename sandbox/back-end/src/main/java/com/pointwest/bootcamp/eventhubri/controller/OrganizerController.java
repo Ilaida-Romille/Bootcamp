@@ -27,18 +27,18 @@ public class OrganizerController {
         return new EventDto(createdEvent);
     }
 
-    public EventDto updateEvent(String eventId, Event updatedEventDetails) {
+    public EventDto updateEvent(Long eventId, Event updatedEventDetails) {
         System.out.println("Updating Event: " + eventId);
         Event updatedEvent = organizerService.updateEvent(eventId, updatedEventDetails);
         return new EventDto(updatedEvent);
     }
 
-    public void deleteEvent(String eventId) {
+    public void deleteEvent(Long eventId) {
         System.out.println("Deleting Event: " + eventId);
         organizerService.deleteEvent(eventId);
     }
 
-    public EventDto getEvent(String eventId) {
+    public EventDto getEvent(Long eventId) {
         System.out.println("Fetching Event details: " + eventId);
         Event event = organizerService.getEventById(eventId);
         return new EventDto(event);
@@ -51,18 +51,18 @@ public class OrganizerController {
                 .toList();
     }
 
-    public AgendaDto attachAgenda(String eventId, Agenda agenda) {
+    public AgendaDto attachAgenda(Long eventId, Agenda agenda) {
         System.out.println("Attaching Agenda to Event: " + eventId);
         Agenda savedAgenda = organizerService.attachAgendaToEvent(eventId, agenda);
         return new AgendaDto(savedAgenda);
     }
 
-    public void addSessionToAgenda(String eventId, Session session) {
+    public void addSessionToAgenda(Long eventId, Session session) {
         System.out.println("Adding Session to Event Agenda: " + eventId);
         organizerService.addSessionToEventAgenda(eventId, session);
     }
 
-    public List<RegistrationDto> getEventRegistrations(String eventId) {
+    public List<RegistrationDto> getEventRegistrations(Long eventId) {
         System.out.println("Fetching Registrations for Event: " + eventId);
         List<Registration> registrations = organizerService.getEventRegistrations(eventId);
         return registrations.stream()

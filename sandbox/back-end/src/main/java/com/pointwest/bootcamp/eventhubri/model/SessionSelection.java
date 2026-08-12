@@ -1,10 +1,20 @@
 package com.pointwest.bootcamp.eventhubri.model;
 
 import java.util.Date;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "session_selections")
 public class SessionSelection {
+
+    @Id
     private String selectionId;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date selectedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "session_id")
     private Session session;
 
     public SessionSelection() {

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RegistrationRepository {
-    List<Registration> findByEventId(String eventId);
+    List<Registration> findByEventId(Long eventId);
 
     List<Registration> findByAttendeeId(String attendeeId);
 

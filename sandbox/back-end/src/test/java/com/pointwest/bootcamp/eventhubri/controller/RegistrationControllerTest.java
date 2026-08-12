@@ -19,18 +19,18 @@ public class RegistrationControllerTest {
 
     @Test
     public void testRegisterAttendee() {
-        RegistrationDto registration = registrationController.registerAttendee("ATT-001", "EVT-101", "Vegan");
+        RegistrationDto registration = registrationController.registerAttendee("ATT-001", 101L, "Vegan");
 
         assertNotNull(registration);
         assertNotNull(registration.getRegistrationId());
         assertEquals("ATT-001", registration.getAttendeeId());
-        assertEquals("EVT-101", registration.getEventId());
+        assertEquals(101L, registration.getEventId());
         assertEquals(RegistrationStatusDto.CONFIRMED, registration.getStatus());
     }
 
     @Test
     public void testCancelRegistration() {
-        RegistrationDto registration = registrationController.registerAttendee("ATT-002", "EVT-101", "None");
+        RegistrationDto registration = registrationController.registerAttendee("ATT-002", 101L, "None");
         assertNotNull(registration);
 
         registrationController.cancelRegistration(registration.getRegistrationId());
@@ -38,7 +38,7 @@ public class RegistrationControllerTest {
 
     @Test
     public void testSelectSessions() {
-        RegistrationDto registration = registrationController.registerAttendee("ATT-003", "EVT-101", "Nut Allergy");
+        RegistrationDto registration = registrationController.registerAttendee("ATT-003", 101L, "Nut Allergy");
         assertNotNull(registration);
 
         registrationController.selectSessions(registration.getRegistrationId(), Arrays.asList("SES-001", "SES-002"));

@@ -1,7 +1,11 @@
 package com.pointwest.bootcamp.eventhubri.model;
 
 import java.util.Date;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "presentation_sessions")
 public class PresentationSession extends Session {
     private String speaker;
 

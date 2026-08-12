@@ -1,12 +1,21 @@
 package com.pointwest.bootcamp.eventhubri.model;
 
 import java.util.Date;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "sessions")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Session {
+
+    @Id
     private String sessionId;
     private String title;
     private String description;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startDateTime;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endDateTime;
     private String location;
 

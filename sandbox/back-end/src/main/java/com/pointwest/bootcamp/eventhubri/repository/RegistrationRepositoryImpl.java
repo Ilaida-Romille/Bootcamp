@@ -13,7 +13,7 @@ public class RegistrationRepositoryImpl implements RegistrationRepository {
     private final List<Registration> registrations = new ArrayList<>();
 
     @Override
-    public List<Registration> findByEventId(String eventId) {
+    public List<Registration> findByEventId(Long eventId) {
         if (eventId == null)
             return new ArrayList<>();
         return registrations.stream()

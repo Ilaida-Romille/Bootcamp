@@ -3,14 +3,26 @@ package com.pointwest.bootcamp.eventhubri.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "registrations")
 public class Registration {
+
+    @Id
     private String registrationId;
     private String attendeeId;
-    private String eventId;
+    private Long eventId;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date registeredAt;
+
+    @Enumerated(EnumType.STRING)
     private RegistrationStatus status;
     private String dietaryRestrictions;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "registration_id")
     private List<SessionSelection> sessionSelections = new ArrayList<>();
 
     public Registration() {
@@ -40,11 +52,11 @@ public class Registration {
         this.attendeeId = attendeeId;
     }
 
-    public String getEventId() {
+    public Long getEventId() {
         return eventId;
     }
 
-    public void setEventId(String eventId) {
+    public void setEventId(Long eventId) {
         this.eventId = eventId;
     }
 

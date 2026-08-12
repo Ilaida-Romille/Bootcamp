@@ -1,30 +1,44 @@
 package com.pointwest.bootcamp.eventhubri.model;
 
+import jakarta.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "events")
 public class Event {
-    private String eventId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long eventId;
     private String organizerId;
     private String title;
     private String description;
+
+    @Enumerated(EnumType.STRING)
     private EventStatus status;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startDateTime;
     private Date endDateTime;
     private Date registrationOpensAt;
     private Date registrationClosesAt;
+
     private String venue;
     private Integer capacity;
     private Boolean isFoodProvided;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "agenda_id")
     private Agenda agenda;
 
     public Event() {
     }
 
-    public String getEventId() {
+    public Long getEventId() {
         return eventId;
     }
 
-    public void setEventId(String eventId) {
+    public void setEventId(Long eventId) {
         this.eventId = eventId;
     }
 

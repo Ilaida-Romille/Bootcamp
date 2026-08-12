@@ -28,19 +28,19 @@ public class AttendeeService {
         return eventRepository.findAll();
     }
 
-    public Event getEventDetails(String eventId) {
+    public Event getEventDetails(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found with ID: " + eventId));
     }
 
     // --- Agenda & Session Views ---
 
-    public Agenda getEventAgenda(String eventId) {
+    public Agenda getEventAgenda(Long eventId) {
         Event event = getEventDetails(eventId);
         return event.getAgenda();
     }
 
-    public List<Session> getEventSessions(String eventId) {
+    public List<Session> getEventSessions(Long eventId) {
         Event event = getEventDetails(eventId);
         if (event.getAgenda() == null || event.getAgenda().getSessions() == null) {
             return Collections.emptyList();

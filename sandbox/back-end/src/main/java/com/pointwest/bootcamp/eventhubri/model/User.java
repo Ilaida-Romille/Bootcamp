@@ -1,6 +1,12 @@
 package com.pointwest.bootcamp.eventhubri.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
+    @Id
     private String userId;
     private String name;
     private String email;

@@ -51,7 +51,7 @@ public class AttendeeServiceTest {
     @Test
     public void testGetEventDetails_NotFound_ThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            attendeeService.getEventDetails("NON_EXISTENT_ID");
+            attendeeService.getEventDetails(999L);
         });
     }
 }
