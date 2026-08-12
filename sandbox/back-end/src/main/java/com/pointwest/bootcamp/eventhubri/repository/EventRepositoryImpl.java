@@ -2,6 +2,9 @@ package com.pointwest.bootcamp.eventhubri.repository;
 
 import com.pointwest.bootcamp.eventhubri.model.Event;
 import com.pointwest.bootcamp.eventhubri.model.EventStatus;
+
+import main.java.com.pointwest.bootcamp.eventhubri.repository.EventRepository;
+
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -42,5 +45,23 @@ public class EventRepositoryImpl implements EventRepository {
         events.removeIf(e -> e.getEventId().equals(event.getEventId()));
         events.add(event);
         return event;
+    }
+
+    @Override
+    public List<Event> findAll() {
+        return new ArrayList<>(events);
+    }
+
+    @Override
+    public List<Event> findByOrganizerId(String organizerId) {
+        if (organizerId == null) return new ArrayList<>();
+        return events.stream()
+                .filter(e -> organizerId.equals(e.getOrganizerId()))
+                .toList();
+    }
+
+    @Override
+    public void deleteById(String eventId) {
+        events.removeIf(e -> e.getEventId().equals(eventId));
     }
 }

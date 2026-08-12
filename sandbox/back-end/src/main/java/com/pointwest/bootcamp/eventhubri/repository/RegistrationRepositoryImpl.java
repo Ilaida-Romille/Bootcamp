@@ -18,7 +18,7 @@ public class RegistrationRepositoryImpl implements RegistrationRepository {
             return new ArrayList<>();
         return registrations.stream()
                 .filter(r -> eventId.equals(r.getEventId()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -27,7 +27,7 @@ public class RegistrationRepositoryImpl implements RegistrationRepository {
             return new ArrayList<>();
         return registrations.stream()
                 .filter(r -> attendeeId.equals(r.getAttendeeId()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
