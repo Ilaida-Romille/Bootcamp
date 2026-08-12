@@ -1,8 +1,9 @@
-package com.pointwest.bootcamp.eventhubri.model;
+package com.pointwest.bootcamp.eventhubri.dto;
 
+import com.pointwest.bootcamp.eventhubri.model.Session;
 import java.util.Date;
 
-public abstract class Session {
+public class SessionDto {
     private String sessionId;
     private String title;
     private String description;
@@ -10,17 +11,18 @@ public abstract class Session {
     private Date endDateTime;
     private String location;
 
-    public Session() {
+    public SessionDto() {
     }
 
-    public Session(String sessionId, String title, String description, Date startDateTime, Date endDateTime,
-            String location) {
-        this.sessionId = sessionId;
-        this.title = title;
-        this.description = description;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.location = location;
+    public SessionDto(Session session) {
+        if (session != null) {
+            this.sessionId = session.getSessionId();
+            this.title = session.getTitle();
+            this.description = session.getDescription();
+            this.startDateTime = session.getStartDateTime();
+            this.endDateTime = session.getEndDateTime();
+            this.location = session.getLocation();
+        }
     }
 
     public String getSessionId() {
