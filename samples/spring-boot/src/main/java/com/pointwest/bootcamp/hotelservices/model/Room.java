@@ -1,5 +1,7 @@
 package com.pointwest.bootcamp.hotelservices.model;
 
+import com.pointwest.bootcamp.hotelservices.exception.RoomUnavailableException;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 
@@ -54,4 +56,15 @@ public class Room extends Space {
 	public void setHousekeepingStatus(HousekeepingStatus housekeepingStatus) {
 		this.housekeepingStatus = housekeepingStatus;
 	}
+
+	    /**
+     * Throws if this room isn't currently available for assignment.
+     */
+    public void requireAvailable() {
+        if (!(getStatus() == Status.OPERATIONAL
+                && housekeepingStatus == HousekeepingStatus.VACANT_CLEAN)) {
+            throw new RoomUnavailableException(
+                    "Room " + getSpaceId() + " is not available (status: " + getHousekeepingStatus() + ")");
+        }
+    }
 }
