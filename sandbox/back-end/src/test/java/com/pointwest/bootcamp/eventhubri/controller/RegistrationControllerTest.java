@@ -16,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -93,5 +94,36 @@ public class RegistrationControllerTest {
         assertEquals(3, summary.getMax());       // Maximum selections count = 3
 
         assertEquals(4, summary.getSessionDetails().size());
+    }
+
+    @Test
+    public void testSearchSessionsByTitle_Success() {
+        // "Keynote" matches SES-101 ('Keynote: Java 21') and SES-201 ('AI Keynote')
+        List<Session> results = registrationController.searchSessionsByTitle("Keynote");
+
+        assertNotNull(results);
+        assertEquals(2, results.size());
+        assertTrue(results.stream().anyMatch(s -> s.getTitle().equals("Keynote: Java 21")));
+        assertTrue(results.stream().anyMatch(s -> s.getTitle().equals("AI Keynote")));
+    }
+
+    @Test
+    public void testSearchSessionsByTitle_CaseInsensitive() {
+        // "spring" in lowercase should match SES-103 ('Spring Boot 3 Deep Dive')
+        List<Session> results = registrationController.searchSessionsByTitle("spring");
+
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals("SES-103", results.get(0).getSessionId());
+        assertEquals("Spring Boot 3 Deep Dive", results.get(0).getTitle());
+    }
+
+    @Test
+    public void testSearchSessionsByTitle_NoMatch() {
+        // Searching for a non-existing title should return an empty list
+        List<Session> results = registrationController.searchSessionsByTitle("NonExistentSessionTitle");
+
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
     }
 }
