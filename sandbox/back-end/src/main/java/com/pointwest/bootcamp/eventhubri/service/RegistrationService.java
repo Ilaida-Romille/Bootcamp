@@ -99,4 +99,11 @@ public class RegistrationService {
                 max
         );
     }
+
+    public List<Session> searchSessionsByTitle(String title) {
+        if (title == null || title.trim().isEmpty()) {
+            return List.of();
+        }
+        return eventRepository.findSessionsByTitle(title.trim());
+    }
 }

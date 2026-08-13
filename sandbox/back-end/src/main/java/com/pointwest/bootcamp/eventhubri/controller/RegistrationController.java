@@ -3,6 +3,7 @@ package com.pointwest.bootcamp.eventhubri.controller;
 import com.pointwest.bootcamp.eventhubri.dto.RegistrationDto;
 import com.pointwest.bootcamp.eventhubri.dto.SessionPopularitySummaryDto;
 import com.pointwest.bootcamp.eventhubri.model.Registration;
+import com.pointwest.bootcamp.eventhubri.model.Session;
 import com.pointwest.bootcamp.eventhubri.service.RegistrationService;
 import org.springframework.stereotype.Controller;
 
@@ -36,5 +37,10 @@ public class RegistrationController {
     public SessionPopularitySummaryDto getSessionPopularitySummary(Long eventId){
         System.out.println("Fetching Session Popularity Summary for event " + eventId);
         return registrationService.getSessionPopularitySummary(eventId);
+    }
+
+    public List<Session> searchSessionsByTitle(String title) {
+        System.out.println("Searching Sessions by title: " + title);
+        return registrationService.searchSessionsByTitle(title);
     }
 }
