@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
 import com.pointwest.bootcamp.hotelservices.controller.FacilityController;
@@ -31,6 +32,9 @@ class HotelservicesApplicationTests {
 	@Autowired 
 	private RoomRepository roomRepository;
 
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	@BeforeEach
 	void setupBeforeEachTest() {
 		// Room room1 = new Room("1", 1, "studio", 2, Room.HousekeepingStatus.VACANT_CLEAN);
@@ -39,7 +43,10 @@ class HotelservicesApplicationTests {
 
 	@AfterEach
 	void cleanupAfterEachTest() {
-		// roomRepository.deleteAll();
+		// Delete child rows first to satisfy the guest_stay.room_id foreign key.
+		jdbcTemplate.update("DELETE FROM guest_stay");
+
+		jdbcTemplate.update("DELETE FROM space");
 	}
 
 	@Test
