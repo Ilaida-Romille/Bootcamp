@@ -11,11 +11,11 @@ import com.pointwest.bootcamp.hotelservices.model.Room;
 import com.pointwest.bootcamp.hotelservices.model.Room.HousekeepingStatus;
 
 @Repository
-public class RoomRepositoryImpl {
+public class MockRoomRepositoryImpl /*implements RoomRepository*/ {
 
 	private final List<Room> rooms = new ArrayList<>();
 
-	public RoomRepositoryImpl() {
+	public MockRoomRepositoryImpl() {
 		// Hard-coded data
 		Room room1 = new Room("101", 1, "Standard", 2, HousekeepingStatus.VACANT_CLEAN);
 		room1.setSpaceId(1L);
@@ -50,10 +50,12 @@ public class RoomRepositoryImpl {
 		rooms.add(room8);
 	}
 
+	//@Override
 	public List<Room> findAll() {
 		return new ArrayList<>(rooms);
 	}
 
+	//@Override
 	public Optional<Room> findById(Long id) {
 		if (id == null || id < 1 || id > rooms.size()) {
 			return Optional.empty();
@@ -73,8 +75,54 @@ public class RoomRepositoryImpl {
 				.collect(Collectors.toList());
 	}
 
+	//@Override
 	public Room save(Room room) {
 		// For simplicity, just return the room (in a real implementation, this would update the list)
 		return room;
 	}
+
+    //@Override
+    public <S extends Room> Iterable<S> saveAll(Iterable<S> entities) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    //@Override
+    public boolean existsById(Long id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    //@Override
+    public Iterable<Room> findAllById(Iterable<Long> ids) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    //@Override
+    public long count() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    //@Override
+    public void deleteById(Long id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    //@Override
+    public void delete(Room entity) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    //@Override
+    public void deleteAllById(Iterable<? extends Long> ids) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    //@Override
+    public void deleteAll(Iterable<? extends Room> entities) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    //@Override
+    public void deleteAll() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

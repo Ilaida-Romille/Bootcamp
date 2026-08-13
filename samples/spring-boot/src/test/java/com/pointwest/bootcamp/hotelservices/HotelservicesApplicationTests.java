@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import com.pointwest.bootcamp.hotelservices.controller.FacilityController;
 import com.pointwest.bootcamp.hotelservices.controller.RoomController;
@@ -15,7 +16,9 @@ import com.pointwest.bootcamp.hotelservices.dto.FacilityDto;
 import com.pointwest.bootcamp.hotelservices.dto.RoomDto;
 import com.pointwest.bootcamp.hotelservices.model.Room;
 import com.pointwest.bootcamp.hotelservices.repository.RoomRepository;
+import com.pointwest.bootcamp.hotelservices.repository.summary.RoomStaySummary;
 
+@Sql("/testdata.sql")
 @SpringBootTest
 class HotelservicesApplicationTests {
 
@@ -25,18 +28,28 @@ class HotelservicesApplicationTests {
 	@Autowired
 	private FacilityController facilityController;
 
-	@Autowired
+	@Autowired 
 	private RoomRepository roomRepository;
 
 	@BeforeEach
 	void setupBeforeEachTest() {
-		Room room1 = new Room("1", 1, "studio", 2, Room.HousekeepingStatus.VACANT_CLEAN);
-		roomRepository.save(room1);
+		// Room room1 = new Room("1", 1, "studio", 2, Room.HousekeepingStatus.VACANT_CLEAN);
+		// roomRepository.save(room1);
 	}
 
 	@AfterEach
 	void cleanupAfterEachTest() {
-		roomRepository.deleteAll();
+		// roomRepository.deleteAll();
+	}
+
+	@Test
+	void roomGuestStaySummary() {
+		List<RoomStaySummary> roomStays = roomRepository.findRoomStaySummary();
+
+		roomStays.forEach(rs -> {
+			String roomStayStr = String.format("Room: %s, Stays: %d", rs.getRoomNumber(), rs.getStayCount());
+			System.out.println(roomStayStr);
+	    });
 	}
 
 	@Test

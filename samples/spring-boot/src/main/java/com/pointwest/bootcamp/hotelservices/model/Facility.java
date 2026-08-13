@@ -5,8 +5,12 @@ import jakarta.persistence.Entity;
 @Entity
 public class Facility extends Space {
 
-    private final String category; // Pool, Gym, Spa, Breakfast Hall, ...
-    private final int capacity;
+    private String category; // Pool, Gym, Spa, Breakfast Hall, ...
+    private int capacity;
+
+    public Facility() {
+        
+    }
 
     public Facility(String category, int capacity) {
         this.category = category;
