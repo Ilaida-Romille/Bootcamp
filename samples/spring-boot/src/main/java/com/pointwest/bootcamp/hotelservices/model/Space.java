@@ -5,10 +5,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance
+@Table(
+    name = "space",
+    indexes = @Index(
+        name = "idx_space_room_type",
+        columnList = "room_type"
+    )
+)
 public abstract class Space {
 
 	public enum Status {

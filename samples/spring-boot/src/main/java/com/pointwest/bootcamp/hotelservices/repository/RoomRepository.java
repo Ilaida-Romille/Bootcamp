@@ -20,4 +20,6 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
         ORDER BY COUNT(stay) DESC, r.roomNumber ASC
         """)
     List<RoomStaySummary> findRoomStaySummary();
+
+    List<Room> findByNameContainingIgnoreCaseOrRoomTypeContainingIgnoreCaseOrderByRoomNumberAsc(String name, String roomType);
 }

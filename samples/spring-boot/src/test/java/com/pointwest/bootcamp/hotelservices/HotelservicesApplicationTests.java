@@ -60,6 +60,14 @@ class HotelservicesApplicationTests {
 	}
 
 	@Test
+	void searchRoomByName() {
+		List<Room> foundRooms = roomRepository.findByNameContainingIgnoreCaseOrRoomTypeContainingIgnoreCaseOrderByRoomNumberAsc("Standard", "Standard");
+
+		System.out.println("Found: " + foundRooms.size());
+		foundRooms.stream().forEach(room -> System.out.println(room.getName()));
+	}
+
+	@Test
 	void roomListByHousekeepingStatus() {
 		List<RoomDto> rooms = roomController.listRooms();
 		assertNotNull(rooms);
