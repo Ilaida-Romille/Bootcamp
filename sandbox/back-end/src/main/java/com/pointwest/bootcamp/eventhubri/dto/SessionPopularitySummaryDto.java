@@ -6,7 +6,7 @@ public class SessionPopularitySummaryDto {
     private Long eventId;
     private List<SessionAttendeeCountDto> sessionDetails;
     
-    // Aggregates required for Group 2
+    // Aggregates required
     private long count;     // Total number of sessions evaluated
     private long sum;       // Total session registrations across all sessions
     private double average; // Average attendees per session
