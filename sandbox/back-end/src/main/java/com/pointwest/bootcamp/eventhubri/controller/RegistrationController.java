@@ -1,6 +1,7 @@
 package com.pointwest.bootcamp.eventhubri.controller;
 
 import com.pointwest.bootcamp.eventhubri.dto.RegistrationDto;
+import com.pointwest.bootcamp.eventhubri.dto.SessionPopularitySummaryDto;
 import com.pointwest.bootcamp.eventhubri.model.Registration;
 import com.pointwest.bootcamp.eventhubri.service.RegistrationService;
 import org.springframework.stereotype.Controller;
@@ -30,5 +31,10 @@ public class RegistrationController {
     public void selectSessions(String registrationId, List<String> sessionIds) {
         System.out.println("Selecting Sessions for Registration: " + registrationId);
         registrationService.selectSessions(registrationId, sessionIds);
+    }
+
+    public SessionPopularitySummaryDto getSessionPopularitySummary(Long eventId){
+        System.out.println("Fetching Session Popularity Summary for event " + eventId);
+        return registrationService.getSessionPopularitySummary(eventId);
     }
 }
