@@ -19,10 +19,7 @@ public class MealAttendance {
         this.stay = stay;
         this.headcount = headcount;
         this.timestamp = timestamp;
-        stay.addMealAttendance(this);
         session.addAttendance(this);
-        System.out.println("[MealAttendance] " + stay.getGuest().getName() + " (party " + headcount
-                + ") attended " + session.getSessionId() + " at " + session.getVenue().getName());
     }
 
     public MealSession getSession() { return session; }

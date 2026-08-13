@@ -1,9 +1,13 @@
 package com.pointwest.bootcamp.hotelservices.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.pointwest.bootcamp.hotelservices.exception.RoomUnavailableException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Room extends Space {
@@ -20,12 +24,17 @@ public class Room extends Space {
 	@Enumerated
 	private HousekeepingStatus housekeepingStatus;
 
+	@OneToMany(mappedBy = "room")
+    private List<GuestStay> stays;
+
 	protected Room() {
+        this.stays = new ArrayList<>();
 	}
 
 	public Room(String roomNumber, int floor, String roomType, int maxOccupancy,
 			HousekeepingStatus housekeepingStatus) {
 		super("Room " + roomNumber, Status.OPERATIONAL);
+        this.stays = new ArrayList<>();
 		this.roomNumber = roomNumber;
 		this.floor = floor;
 		this.roomType = roomType;
@@ -48,6 +57,14 @@ public class Room extends Space {
 	public int getMaxOccupancy() {
 		return maxOccupancy;
 	}
+
+    public List<GuestStay> getStays() {
+        return stays;
+    }
+
+    public void setStays(List<GuestStay> stays) {
+        this.stays = stays;
+    }
 
 	public HousekeepingStatus getHousekeepingStatus() {
 		return housekeepingStatus;

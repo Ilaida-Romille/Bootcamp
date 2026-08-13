@@ -9,10 +9,10 @@ import com.pointwest.bootcamp.hotelservices.repository.RoomRepository;
 @Configuration
 public class RepositoryConfig {
     
-    @Bean
-    public RoomRepository mockRoomRepository() {
-        return new MockRoomRepositoryImpl();
-    }
+    // @Bean
+    // public RoomRepository mockRoomRepository() {
+    //     return new MockRoomRepositoryImpl();
+    // }
 
     // @Bean
     // public RoomRepository jpaRoomRepository() {

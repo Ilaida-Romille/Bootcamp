@@ -16,8 +16,6 @@ public class AmenityUsage {
         this.facility = facility;
         this.stay = stay;
         this.entryTime = entryTime;
-        stay.addAmenityUsage(this);
-        System.out.println("[AmenityUsage] " + stay.getGuest().getName() + " entered " + facility.getName());
     }
 
     public void exit() {
@@ -26,7 +24,6 @@ public class AmenityUsage {
 
     public void exit(LocalDateTime time) {
         this.exitTime = time;
-        System.out.println("[AmenityUsage] " + stay.getGuest().getName() + " exited " + facility.getName());
     }
 
     /** Minutes spent inside; 0 while the guest is still inside. */

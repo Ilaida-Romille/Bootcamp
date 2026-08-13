@@ -82,7 +82,7 @@ public class GuestStayRegistrationManager {
         room.requireAvailable();
 
         String stayId = "STAY-%04d".formatted(nextStayNumber++);
-        GuestStay stay = new GuestStay(stayId, guest, room, partySize, checkInDate);
+        GuestStay stay = new GuestStay(stayId, room, partySize, checkInDate);
         stays.put(stayId, stay);
 
         String subject = "Check-in confirmed: Room " + room.getSpaceId();
