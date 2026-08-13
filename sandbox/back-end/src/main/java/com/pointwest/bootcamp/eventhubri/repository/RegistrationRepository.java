@@ -2,6 +2,8 @@ package com.pointwest.bootcamp.eventhubri.repository;
 
 import com.pointwest.bootcamp.eventhubri.dto.SessionAttendeeCountDto;
 import com.pointwest.bootcamp.eventhubri.model.Registration;
+import com.pointwest.bootcamp.eventhubri.model.Session;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
