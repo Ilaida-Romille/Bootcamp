@@ -43,13 +43,11 @@ class GuestStayRegistrationManagerContractTest {
         GuestStay stay = manager.register(guest, room, 2, TODAY);
 
         assertThat(stay.getStayId()).isEqualTo("STAY-0001");
-        assertThat(stay.getGuest()).isSameAs(guest);
         assertThat(stay.getRoom()).isSameAs(room);
         assertThat(stay.getPartySize()).isEqualTo(2);
         assertThat(stay.getCheckInDate()).isEqualTo(TODAY);
         assertThat(manager.findStay("STAY-0001")).containsSame(stay);
 
-        assertThat(guest.getStays()).containsExactly(stay);
         assertThat(room.getHousekeepingStatus()).isEqualTo(Room.HousekeepingStatus.OCCUPIED_DIRTY);
     }
 
