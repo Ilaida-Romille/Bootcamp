@@ -5,6 +5,9 @@ import com.pointwest.bootcamp.eventhubri.dto.SessionPopularitySummaryDto;
 import com.pointwest.bootcamp.eventhubri.model.*;
 import com.pointwest.bootcamp.eventhubri.repository.EventRepository;
 import com.pointwest.bootcamp.eventhubri.repository.RegistrationRepository;
+
+import com.pointwest.bootcamp.eventhubri.dto.SessionPopularityStatsProjectionDto;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,22 +76,19 @@ public class RegistrationService {
     }
 
     public SessionPopularitySummaryDto getSessionPopularitySummary(Long eventId) {
-        // 1. Fetch counts from repository
+        
         List<SessionAttendeeCountDto> sessionCounts = 
                 registrationRepository.countAttendeesPerSessionByEventId(eventId);
 
-        // 2. Compute statistics using Java Streams
-        LongSummaryStatistics stats = sessionCounts.stream()
-                .mapToLong(SessionAttendeeCountDto::getAttendeeCount)
-                .summaryStatistics();
+        SessionPopularityStatsProjectionDto stats = 
+                registrationRepository.getSessionPopularityStatsByEventId(eventId);
 
-        long count = stats.getCount();
-        long sum = stats.getSum();
-        double average = stats.getAverage();
-        long min = (count == 0) ? 0 : stats.getMin();
-        long max = (count == 0) ? 0 : stats.getMax();
+        long count = (stats != null && stats.getCount() != null) ? stats.getCount() : 0L;
+        long sum = (stats != null && stats.getSum() != null) ? stats.getSum() : 0L;
+        double average = (stats != null && stats.getAverage() != null) ? stats.getAverage() : 0.0;
+        long min = (stats != null && stats.getMin() != null) ? stats.getMin() : 0L;
+        long max = (stats != null && stats.getMax() != null) ? stats.getMax() : 0L;
 
-        // 3. Return summary DTO
         return new SessionPopularitySummaryDto(
                 eventId,
                 sessionCounts,
