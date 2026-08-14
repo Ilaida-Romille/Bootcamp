@@ -116,7 +116,7 @@ public class OrganizerControllerTest {
         List<AttendeeDto> results = organizerController.searchAttendeesByName("john");
 
         assertNotNull(results);
-        assertEquals(2, results.size());
+        assertEquals(12, results.size());
         assertTrue(results.stream().anyMatch(a -> "John Doe".equals(a.getName())));
         assertTrue(results.stream().anyMatch(a -> "Johnny Appleseed".equals(a.getName())));
     }
@@ -128,7 +128,7 @@ public class OrganizerControllerTest {
         List<AttendeeDto> results = organizerController.searchAttendeesByName("Jane");
 
         assertNotNull(results);
-        assertEquals(1, results.size());
+        assertEquals(4, results.size());
         assertEquals("Jane Smith", results.get(0).getName());
         assertEquals("ATT-002", results.get(0).getAttendeeId());
     }

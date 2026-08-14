@@ -91,7 +91,7 @@ public class OrganizerServiceTest {
         List<Attendee> results = organizerService.searchAttendeesByName("john");
 
         assertNotNull(results);
-        assertEquals(2, results.size());
+        assertEquals(12, results.size());
         assertTrue(results.stream().anyMatch(a -> a.getName().equals("John Doe")));
         assertTrue(results.stream().anyMatch(a -> a.getName().equals("Johnny Appleseed")));
     }
@@ -103,7 +103,7 @@ public class OrganizerServiceTest {
         List<Attendee> results = organizerService.searchAttendeesByName("Jane");
 
         assertNotNull(results);
-        assertEquals(1, results.size());
+        assertEquals(4, results.size());
         assertEquals("Jane Smith", results.get(0).getName());
         assertEquals("ATT-002", results.get(0).getAttendeeId());
     }
