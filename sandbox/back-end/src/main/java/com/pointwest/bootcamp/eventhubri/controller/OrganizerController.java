@@ -3,10 +3,12 @@ package com.pointwest.bootcamp.eventhubri.controller;
 import com.pointwest.bootcamp.eventhubri.dto.AgendaDto;
 import com.pointwest.bootcamp.eventhubri.dto.EventDto;
 import com.pointwest.bootcamp.eventhubri.dto.RegistrationDto;
+import com.pointwest.bootcamp.eventhubri.dto.AttendeeDto;
 import com.pointwest.bootcamp.eventhubri.model.Agenda;
 import com.pointwest.bootcamp.eventhubri.model.Event;
 import com.pointwest.bootcamp.eventhubri.model.Registration;
 import com.pointwest.bootcamp.eventhubri.model.Session;
+import com.pointwest.bootcamp.eventhubri.model.Attendee;
 import com.pointwest.bootcamp.eventhubri.service.OrganizerService;
 import org.springframework.stereotype.Controller;
 
@@ -68,5 +70,11 @@ public class OrganizerController {
         return registrations.stream()
                 .map(RegistrationDto::new)
                 .toList();
+    }
+
+    public List<AttendeeDto> searchAttendeesByName(String name){
+        System.out.println("Fetching Attendee by Name: " + name);
+        List<Attendee> attendee = organizerService.searchAttendeesByName(name);
+        return attendee.stream().map(AttendeeDto::new).toList();   
     }
 }

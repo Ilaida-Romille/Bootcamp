@@ -1,6 +1,7 @@
 package com.pointwest.bootcamp.eventhubri.service;
 
 import com.pointwest.bootcamp.eventhubri.model.*;
+import com.pointwest.bootcamp.eventhubri.repository.AttendeeRepository;
 import com.pointwest.bootcamp.eventhubri.repository.EventRepository;
 import com.pointwest.bootcamp.eventhubri.repository.RegistrationRepository;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,12 @@ public class OrganizerService {
 
     private final EventRepository eventRepository;
     private final RegistrationRepository registrationRepository;
+    private final AttendeeRepository attendeeRepository;
 
-    public OrganizerService(EventRepository eventRepository, RegistrationRepository registrationRepository) {
+    public OrganizerService(EventRepository eventRepository, RegistrationRepository registrationRepository, AttendeeRepository attendeeRepository) {
         this.eventRepository = eventRepository;
         this.registrationRepository = registrationRepository;
+        this.attendeeRepository = attendeeRepository;
     }
 
     // --- Event CRUD Operations ---
@@ -95,5 +98,12 @@ public class OrganizerService {
     public List<Registration> getEventRegistrations(Long eventId) {
         getEventById(eventId); // Verify event existence
         return registrationRepository.findByEventId(eventId);
+    }
+
+    public List<Attendee> searchAttendeesByName(String name) {
+        if (name == null || name.isBlank()) {
+            return List.of();
+        }
+        return attendeeRepository.findByNameContainingIgnoreCase(name);
     }
 }
