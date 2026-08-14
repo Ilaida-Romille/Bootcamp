@@ -87,18 +87,19 @@ public class RegistrationControllerTest {
 
         assertNotNull(summary);
         assertEquals(TEST_EVENT_ID_1, summary.getEventId());
-        assertEquals(4, summary.getCount());     // 4 sessions have attendee selections
-        assertEquals(7, summary.getSum());       // 7 total selections across all sessions
-        assertEquals(1.75, summary.getAverage()); // Average 1.75 selections per session
-        assertEquals(1, summary.getMin());       // Minimum selections count = 1
-        assertEquals(3, summary.getMax());       // Maximum selections count = 3
+        
+        // Summary calculations for 100 selections across 5 sessions:
+        assertEquals(5, summary.getCount());     // All 5 sessions have selections
+        assertEquals(100, summary.getSum());     // 100 total selections
+        assertEquals(20.0, summary.getAverage()); // Average 100 / 5 = 20.0 per session
+        assertEquals(5, summary.getMin());       // Minimum count = 5 (SES-105)
+        assertEquals(40, summary.getMax());      // Maximum count = 40 (SES-101)
 
-        assertEquals(4, summary.getSessionDetails().size());
+        assertEquals(5, summary.getSessionDetails().size());
     }
 
     @Test
     public void testSearchSessionsByTitle_Success() {
-        // "Keynote" matches SES-101 ('Keynote: Java 21') and SES-201 ('AI Keynote')
         List<Session> results = registrationController.searchSessionsByTitle("Keynote");
 
         assertNotNull(results);
@@ -109,7 +110,6 @@ public class RegistrationControllerTest {
 
     @Test
     public void testSearchSessionsByTitle_CaseInsensitive() {
-        // "spring" in lowercase should match SES-103 ('Spring Boot 3 Deep Dive')
         List<Session> results = registrationController.searchSessionsByTitle("spring");
 
         assertNotNull(results);
@@ -120,7 +120,6 @@ public class RegistrationControllerTest {
 
     @Test
     public void testSearchSessionsByTitle_NoMatch() {
-        // Searching for a non-existing title should return an empty list
         List<Session> results = registrationController.searchSessionsByTitle("NonExistentSessionTitle");
 
         assertNotNull(results);
