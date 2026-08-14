@@ -3,11 +3,16 @@ package com.pointwest.bootcamp.eventhubri.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", 
+        indexes = {
+        @Index(name = "idx_user_name", columnList = "name") 
+    })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id
     private String userId;
+
+    @Column(nullable = false, length = 100)
     private String name;
     private String email;
 
