@@ -1,0 +1,6 @@
+Title,Description,Status,Start Date Time,End Date Time,Registration Opens At,Registration Closes At,Venue,Capacity,Food Provided
+Tech Innovation Summit 2026,A conference showcasing emerging technologies and software development trends.,PUBLISHED,2026-09-15T09:00:00,2026-09-15T17:00:00,2026-08-20T09:00:00,2026-09-10T23:59:00,Manila Convention Center,500,true
+Angular Developer Workshop,A hands-on workshop covering modern Angular application development.,PUBLISHED,2026-09-22T13:00:00,2026-09-22T17:00:00,2026-08-25T09:00:00,2026-09-20T23:59:00,Pointwest Training Room,100,true
+Java Spring Boot Bootcamp,An intensive session on building REST APIs using Spring Boot.,DRAFT,2026-10-05T09:00:00,2026-10-05T16:00:00,2026-09-01T09:00:00,2026-10-01T23:59:00,IT Training Hall,150,false
+Community Tech Meetup,A casual meetup for developers and technology enthusiasts to share ideas.,PUBLISHED,2026-10-17T14:00:00,2026-10-17T18:00:00,2026-09-15T09:00:00,2026-10-15T23:59:00,Davao Tech Hub,80,true
+Full Stack Development Forum,A forum discussing frontend backend database and cloud development practices.,DRAFT,2026-11-07T09:00:00,2026-11-07T15:00:00,2026-10-01T09:00:00,2026-11-05T23:59:00,Quezon City Events Hall,250,true
