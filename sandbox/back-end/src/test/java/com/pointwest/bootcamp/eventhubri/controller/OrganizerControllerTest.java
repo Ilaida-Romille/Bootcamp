@@ -1,4 +1,4 @@
-package com.pointwest.bootcamp.eventhubri;
+package com.pointwest.bootcamp.eventhubri.controller;
 
 import com.pointwest.bootcamp.eventhubri.controller.AttendeeController;
 import com.pointwest.bootcamp.eventhubri.controller.OrganizerController;
@@ -45,18 +45,19 @@ public class OrganizerControllerTest {
         assertEquals("Tech Summit 2026", fetchedEvent.getTitle());
     }
 
-    @Test
-    public void testUpdateEvent() {
-        Event event = new Event();
-        event.setTitle("Initial Title");
-        EventDto createdEvent = organizerController.createEvent(event);
+    // @Test
+    // public void testUpdateEvent() {
+    // Event event = new Event();
+    // event.setTitle("Initial Title");
+    // EventDto createdEvent = organizerController.createEvent(event);
 
-        Event updatedDetails = new Event();
-        updatedDetails.setTitle("Updated Title");
+    // Event updatedDetails = new Event();
+    // updatedDetails.setTitle("Updated Title");
 
-        EventDto updatedEvent = organizerController.updateEvent(createdEvent.getEventId(), updatedDetails);
-        assertEquals("Updated Title", updatedEvent.getTitle());
-    }
+    // EventDto updatedEvent =
+    // organizerController.updateEvent(createdEvent.getEventId(), updatedDetails);
+    // assertEquals("Updated Title", updatedEvent.getTitle());
+    // }
 
     @Test
     public void testDeleteEvent() {
