@@ -1,4 +1,4 @@
-package com.pointwest.bootcamp.eventhubri;
+package com.pointwest.bootcamp.eventhubri.controller;
 
 import com.pointwest.bootcamp.eventhubri.controller.AttendeeController;
 import com.pointwest.bootcamp.eventhubri.dto.AgendaDto;
