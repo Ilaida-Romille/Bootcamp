@@ -1,72 +1,57 @@
-package com.pointwest.bootcamp.eventhubri;
+package com.pointwest.bootcamp.eventhubri.controller;
 
 import com.pointwest.bootcamp.eventhubri.controller.AttendeeController;
-import com.pointwest.bootcamp.eventhubri.controller.OrganizerController;
-import com.pointwest.bootcamp.eventhubri.controller.RegistrationController;
 import com.pointwest.bootcamp.eventhubri.dto.AgendaDto;
 import com.pointwest.bootcamp.eventhubri.dto.EventDto;
 import com.pointwest.bootcamp.eventhubri.dto.RegistrationDto;
-import com.pointwest.bootcamp.eventhubri.model.Agenda;
-import com.pointwest.bootcamp.eventhubri.model.Event;
+import com.pointwest.bootcamp.eventhubri.dto.SessionDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Sql("/test-summary-data.sql")
 public class AttendeeControllerTest {
 
     @Autowired
     private AttendeeController attendeeController;
 
-    @Autowired
-    private OrganizerController organizerController;
-
-    @Autowired
-    private RegistrationController registrationController;
-
     @Test
     public void testBrowseAllEvents() {
-        Event event = new Event();
-        event.setTitle("Public Webinar");
-        organizerController.createEvent(event);
-
         List<EventDto> availableEvents = attendeeController.browseAllEvents();
         assertNotNull(availableEvents);
-        assertFalse(availableEvents.isEmpty());
+        assertEquals(2, availableEvents.size());
     }
 
     @Test
-    public void testViewEventDetailsAndAgenda() {
-        Event event = new Event();
-        event.setTitle("AI Horizons");
-        EventDto createdEvent = organizerController.createEvent(event);
+    public void testViewEventDetailsAgendaAndSessions() {
+        // Event details
+        EventDto eventDetails = attendeeController.viewEventDetails(1000L);
+        assertNotNull(eventDetails);
+        assertEquals("Tech Summit 2026", eventDetails.getTitle());
 
-        EventDto eventDetails = attendeeController.viewEventDetails(createdEvent.getEventId());
-        assertEquals("AI Horizons", eventDetails.getTitle());
-
-        Agenda agenda = new Agenda();
-        agenda.setDescription("AI Track");
-        organizerController.attachAgenda(createdEvent.getEventId(), agenda);
-
-        AgendaDto viewedAgenda = attendeeController.viewEventAgenda(createdEvent.getEventId());
+        // Event agenda
+        AgendaDto viewedAgenda = attendeeController.viewEventAgenda(1000L);
         assertNotNull(viewedAgenda);
+        assertEquals("Tech Summit Main Agenda", viewedAgenda.getDescription());
+
+        // Event sessions
+        List<SessionDto> sessions = attendeeController.viewEventSessions(1000L);
+        assertNotNull(sessions);
+        assertEquals(5, sessions.size());
     }
 
     @Test
     public void testViewMyRegistrations() {
-        Event event = new Event();
-        event.setTitle("Community Meetup");
-        EventDto createdEvent = organizerController.createEvent(event);
-
-        registrationController.registerAttendee("ATT-200", createdEvent.getEventId(), "Halal");
-
-        List<RegistrationDto> myRegistrations = attendeeController.viewMyRegistrations("ATT-200");
+        List<RegistrationDto> myRegistrations = attendeeController.viewMyRegistrations("ATT-001");
         assertNotNull(myRegistrations);
         assertFalse(myRegistrations.isEmpty());
-        assertEquals("ATT-200", myRegistrations.get(0).getAttendeeId());
+        assertEquals("ATT-001", myRegistrations.get(0).getAttendeeId());
     }
 }

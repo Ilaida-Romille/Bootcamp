@@ -1,11 +1,13 @@
 package com.pointwest.bootcamp.eventhubri.service;
 
 import com.pointwest.bootcamp.eventhubri.model.Agenda;
+import com.pointwest.bootcamp.eventhubri.model.Attendee;
 import com.pointwest.bootcamp.eventhubri.model.Event;
 import com.pointwest.bootcamp.eventhubri.model.PresentationSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -80,5 +82,52 @@ public class OrganizerServiceTest {
         Event updatedEvent = organizerService.getEventById(createdEvent.getEventId());
         assertNotNull(updatedEvent.getAgenda());
         assertFalse(updatedEvent.getAgenda().getSessions().isEmpty());
+    }
+
+    @Test
+    @Sql("/test-attendees-data.sql")
+    public void testSearchAttendeesByName_PartialAndCaseInsensitive() {
+        // Search "john" (should match "John Doe" and "Johnny Appleseed")
+        List<Attendee> results = organizerService.searchAttendeesByName("john");
+
+        assertNotNull(results);
+        assertEquals(12, results.size());
+        assertTrue(results.stream().anyMatch(a -> a.getName().equals("John Doe")));
+        assertTrue(results.stream().anyMatch(a -> a.getName().equals("Johnny Appleseed")));
+    }
+
+    @Test
+    @Sql("/test-attendees-data.sql")
+    public void testSearchAttendeesByName_SingleResult() {
+        // Search "Jane" (should match "Jane Smith")
+        List<Attendee> results = organizerService.searchAttendeesByName("Jane");
+
+        assertNotNull(results);
+        assertEquals(4, results.size());
+        assertEquals("Jane Smith", results.get(0).getName());
+        assertEquals("ATT-002", results.get(0).getAttendeeId());
+    }
+
+    @Test
+    @Sql("/test-attendees-data.sql")
+    public void testSearchAttendeesByName_NoMatch() {
+        // Search for a non-existing attendee
+        List<Attendee> results = organizerService.searchAttendeesByName("NonExistent");
+
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    public void testSearchAttendeesByName_NullOrBlankInput() {
+        // Null query
+        List<Attendee> nullResults = organizerService.searchAttendeesByName(null);
+        assertNotNull(nullResults);
+        assertTrue(nullResults.isEmpty());
+
+        // Blank query
+        List<Attendee> emptyResults = organizerService.searchAttendeesByName("   ");
+        assertNotNull(emptyResults);
+        assertTrue(emptyResults.isEmpty());
     }
 }
