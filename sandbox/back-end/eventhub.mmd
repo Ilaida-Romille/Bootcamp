@@ -1,0 +1,454 @@
+erDiagram
+    %% ============================================================
+    %% EVENTHUB — ENTERPRISE ER DIAGRAM (REFINED)
+    %% Spring Boot 3.x (Controller -> Service -> Repository -> Entity/DTO)
+    %% MySQL 8.0 | Multi-Tenant Corporate Events Management SaaS
+    %% ============================================================
+
+    %% ---------- IDENTITY & ACCESS CONTROL ----------
+    users {
+        BIGINT id PK
+        VARCHAR_255 email UK "Unique login email"
+        VARCHAR_255 password_hash "BCrypt hashed password"
+        VARCHAR_100 first_name
+        VARCHAR_100 last_name
+        VARCHAR_30 phone_number
+        BOOLEAN is_active
+        DATETIME last_login_at
+        BIGINT created_by FK "Nullable, self-ref user id"
+        BIGINT updated_by FK "Nullable, self-ref user id"
+        DATETIME created_at
+        DATETIME updated_at
+    }
+
+    roles {
+        BIGINT id PK
+        VARCHAR_50 role_name UK "PLATFORM_OWNER, ORGANIZER_ADMIN, ORGANIZER_MEMBER, ATTENDEE, CHECKIN_STAFF, PLATFORM_SUPPORT"
+        VARCHAR_255 description
+    }
+
+    user_roles {
+        BIGINT id PK
+        BIGINT user_id FK
+        BIGINT role_id FK
+        BIGINT organizer_id FK "Nullable, scopes org-level roles"
+        DATETIME assigned_at
+    }
+
+    refresh_tokens {
+        BIGINT id PK
+        BIGINT user_id FK
+        VARCHAR_255 token_hash UK
+        BIGINT replaced_by_token_id FK "Nullable, rotation chain self-ref"
+        BOOLEAN revoked
+        DATETIME expires_at
+        DATETIME created_at
+    }
+
+    %% ---------- ORGANIZER MANAGEMENT ----------
+    organizers {
+        BIGINT id PK
+        VARCHAR_255 company_name
+        VARCHAR_255 legal_entity_name
+        VARCHAR_255 billing_email
+        VARCHAR_255 address_line1
+        VARCHAR_255 address_line2
+        VARCHAR_100 city
+        VARCHAR_100 state_province
+        VARCHAR_20 postal_code
+        VARCHAR_100 country
+        VARCHAR_50 account_status "PENDING, APPROVED, SUSPENDED"
+        BIGINT approved_by FK "Nullable, platform owner user id"
+        DATETIME approved_at
+        DATETIME created_at
+        DATETIME updated_at
+    }
+
+    organizer_members {
+        BIGINT id PK
+        BIGINT organizer_id FK
+        BIGINT user_id FK
+        VARCHAR_50 member_role "OWNER, TEAM_MEMBER"
+        VARCHAR_50 status "INVITED, ACTIVE, REMOVED"
+        BIGINT invited_by FK "Nullable"
+        DATETIME invited_at
+        DATETIME joined_at
+    }
+
+    %% ---------- EVENT MANAGEMENT ----------
+    events {
+        BIGINT id PK
+        BIGINT organizer_id FK
+        VARCHAR_255 title
+        TEXT description
+        VARCHAR_50 event_type "PHYSICAL, VIRTUAL, HYBRID"
+        VARCHAR_50 visibility "PUBLIC, SEMI_PUBLIC, PRIVATE"
+        DATETIME start_date
+        DATETIME end_date
+        VARCHAR_50 timezone
+        VARCHAR_255 venue_name
+        VARCHAR_255 venue_address
+        VARCHAR_255 virtual_meeting_url
+        BOOLEAN catering_enabled
+        BOOLEAN networking_enabled
+        INT expected_capacity
+        INT max_capacity
+        VARCHAR_50 status "DRAFT, PUBLISHED, CANCELLED, COMPLETED"
+        BIGINT cloned_from_event_id FK "Nullable, template source event"
+        BIGINT created_by FK
+        BIGINT updated_by FK
+        DATETIME created_at
+        DATETIME updated_at
+    }
+
+    event_custom_fields {
+        BIGINT id PK
+        BIGINT event_id FK
+        VARCHAR_255 field_label
+        VARCHAR_50 field_type "TEXT, SINGLE_CHOICE, MULTI_CHOICE, BOOLEAN, DATE"
+        TEXT field_options "JSON array of choice options"
+        BOOLEAN is_required
+        INT display_order
+        DATETIME created_at
+    }
+
+    registration_field_answers {
+        BIGINT id PK
+        BIGINT registration_id FK
+        BIGINT event_custom_field_id FK
+        TEXT answer_value
+        DATETIME created_at
+    }
+
+    %% ---------- AGENDA & SPEAKERS ----------
+    tracks {
+        BIGINT id PK
+        BIGINT event_id FK
+        VARCHAR_255 track_name
+        VARCHAR_20 track_color
+        VARCHAR_255 description
+    }
+
+    sessions {
+        BIGINT id PK
+        BIGINT event_id FK
+        BIGINT track_id FK "Nullable"
+        VARCHAR_255 title
+        TEXT description
+        VARCHAR_100 room_name
+        DATETIME start_time
+        DATETIME end_time
+        VARCHAR_50 session_type "KEYNOTE, WORKSHOP, PANEL, BREAK"
+        INT max_seats
+        DATETIME created_at
+    }
+
+    speakers {
+        BIGINT id PK
+        BIGINT organizer_id FK
+        VARCHAR_255 full_name
+        VARCHAR_255 title
+        VARCHAR_255 company
+        TEXT bio
+        VARCHAR_255 photo_url
+        VARCHAR_255 email
+        DATETIME created_at
+    }
+
+    session_speakers {
+        BIGINT id PK
+        BIGINT session_id FK "UK(session_id, speaker_id)"
+        BIGINT speaker_id FK "UK(session_id, speaker_id)"
+        VARCHAR_50 speaker_role "MODERATOR, PANELIST, PRESENTER"
+    }
+
+    %% ---------- ATTENDEE REGISTRATION & TICKETS ----------
+    registrations {
+        BIGINT id PK
+        BIGINT event_id FK
+        BIGINT user_id FK
+        VARCHAR_50 registration_status "CONFIRMED, CANCELLED, WAITLISTED"
+        DATETIME registered_at
+        DATETIME cancelled_at
+        DATETIME created_at
+        DATETIME updated_at
+    }
+
+    registration_session_preferences {
+        BIGINT id PK
+        BIGINT registration_id FK "UK(registration_id, session_id)"
+        BIGINT session_id FK "UK(registration_id, session_id)"
+        DATETIME selected_at
+    }
+
+    dietary_preferences {
+        BIGINT id PK
+        BIGINT registration_id FK, UK
+        VARCHAR_50 dietary_restriction "VEGAN, VEGETARIAN, HALAL, KOSHER, GLUTEN_FREE, NONE"
+        TEXT allergy_notes
+        DATETIME created_at
+    }
+
+    e_tickets {
+        BIGINT id PK
+        BIGINT registration_id FK, UK
+        VARCHAR_255 qr_code_hash UK
+        VARCHAR_50 ticket_status "ACTIVE, REVOKED, USED"
+        DATETIME issued_at
+    }
+
+    %% ---------- ON-SITE CHECK-IN ----------
+    check_ins {
+        BIGINT id PK
+        BIGINT registration_id FK
+        BIGINT e_ticket_id FK
+        BIGINT checked_in_by FK "Check-in staff user id"
+        VARCHAR_100 entry_point
+        VARCHAR_50 qr_validation_result "VALID, INVALID, DUPLICATE"
+        DATETIME checked_in_at
+    }
+
+    %% ---------- NETWORKING & CONNECTIONS ----------
+    digital_business_cards {
+        BIGINT id PK
+        BIGINT user_id FK, UK
+        VARCHAR_255 display_name
+        VARCHAR_255 job_title
+        VARCHAR_255 company
+        VARCHAR_30 phone_number
+        VARCHAR_255 email
+        VARCHAR_255 linkedin_url
+        BOOLEAN is_directory_opt_in
+        DATETIME created_at
+    }
+
+    attendee_connections {
+        BIGINT id PK
+        BIGINT event_id FK "UK(event_id, requester, recipient)"
+        BIGINT requester_user_id FK "UK(event_id, requester, recipient)"
+        BIGINT recipient_user_id FK "UK(event_id, requester, recipient)"
+        VARCHAR_50 connection_status "PENDING, ACCEPTED, DECLINED"
+        DATETIME requested_at
+        DATETIME responded_at
+    }
+
+    direct_messages {
+        BIGINT id PK
+        BIGINT event_id FK
+        BIGINT sender_user_id FK
+        BIGINT recipient_user_id FK
+        TEXT message_body
+        DATETIME sent_at
+        DATETIME read_at
+    }
+
+    %% ---------- COMMUNICATIONS & ASYNC INFRASTRUCTURE ----------
+    broadcast_messages {
+        BIGINT id PK
+        BIGINT event_id FK
+        BIGINT sender_user_id FK
+        VARCHAR_255 subject
+        TEXT body
+        VARCHAR_50 target_segment "ALL, CONFIRMED_ONLY, WAITLISTED, TRACK_SPECIFIC"
+        DATETIME scheduled_at
+        DATETIME created_at
+    }
+
+    message_recipients {
+        BIGINT id PK
+        BIGINT broadcast_message_id FK
+        BIGINT registration_id FK
+        VARCHAR_50 delivery_status "PENDING, SENT, FAILED"
+        DATETIME delivered_at
+    }
+
+    email_outbox {
+        BIGINT id PK
+        VARCHAR_50 related_entity_type "REGISTRATION, BROADCAST, REMINDER"
+        BIGINT related_entity_id "Polymorphic pointer, no strict FK by design"
+        VARCHAR_255 recipient_email
+        VARCHAR_255 subject
+        TEXT body
+        VARCHAR_50 status "PENDING, SENT, FAILED, RETRY"
+        INT retry_count
+        DATETIME scheduled_for
+        DATETIME sent_at
+        DATETIME created_at
+    }
+
+    %% ---------- SURVEYS & LIVE IN-SESSION POLLS ----------
+    surveys {
+        BIGINT id PK
+        BIGINT event_id FK
+        VARCHAR_255 title
+        BOOLEAN is_active
+        DATETIME opens_at
+        DATETIME closes_at
+        DATETIME created_at
+    }
+
+    survey_questions {
+        BIGINT id PK
+        BIGINT survey_id FK
+        TEXT question_text
+        VARCHAR_50 question_type "RATING, TEXT, MULTIPLE_CHOICE"
+        INT display_order
+    }
+
+    survey_responses {
+        BIGINT id PK
+        BIGINT survey_question_id FK
+        BIGINT registration_id FK
+        TEXT response_value
+        DATETIME submitted_at
+    }
+
+    live_polls {
+        BIGINT id PK
+        BIGINT session_id FK
+        VARCHAR_255 question_text
+        BOOLEAN is_open
+        DATETIME opened_at
+        DATETIME closed_at
+    }
+
+    poll_options {
+        BIGINT id PK
+        BIGINT live_poll_id FK
+        VARCHAR_255 option_text
+        INT display_order
+    }
+
+    poll_responses {
+        BIGINT id PK
+        BIGINT live_poll_id FK "UK(live_poll_id, registration_id)"
+        BIGINT poll_option_id FK
+        BIGINT registration_id FK "UK(live_poll_id, registration_id)"
+        DATETIME responded_at
+    }
+
+    %% ---------- BILLING & MONETIZATION ----------
+    billing_rates {
+        BIGINT id PK
+        BIGINT organizer_id FK "Nullable, NULL = global default rate"
+        DECIMAL_10_2 rate_per_attendee
+        VARCHAR_10 currency
+        DATETIME effective_from
+        DATETIME effective_to
+        DATETIME created_at
+    }
+
+    invoices {
+        BIGINT id PK
+        BIGINT organizer_id FK
+        DATE billing_period_start
+        DATE billing_period_end
+        DECIMAL_10_2 total_amount
+        VARCHAR_50 invoice_status "ISSUED, PAID, OVERDUE"
+        VARCHAR_255 payment_method_note "Offline payment reference"
+        DATETIME issued_at
+        DATETIME paid_at
+    }
+
+    invoice_items {
+        BIGINT id PK
+        BIGINT invoice_id FK
+        BIGINT event_id FK
+        VARCHAR_255 event_title_snapshot "Preserves historical event title for billing audit"
+        INT attendee_count
+        DECIMAL_10_2 rate_applied
+        DECIMAL_10_2 line_total
+    }
+
+    %% ---------- AUDIT LOGGING ----------
+    platform_audit_logs {
+        BIGINT id PK
+        BIGINT actor_user_id FK "Nullable, system-triggered actions"
+        VARCHAR_100 action_type "LOGIN, APPROVE_ORGANIZER, SUSPEND_ORGANIZER, CHECK_IN, EVENT_PUBLISHED"
+        VARCHAR_100 entity_type
+        BIGINT entity_id
+        TEXT details
+        VARCHAR_50 ip_address
+        DATETIME created_at
+    }
+
+    %% ============================================================
+    %% RELATIONSHIPS
+    %% ============================================================
+
+    %% Identity & Access Control
+    users ||--o{ user_roles : "has_role"
+    roles ||--o{ user_roles : "assigned_to"
+    users ||--o{ refresh_tokens : "owns"
+    refresh_tokens |o--o| refresh_tokens : "replaced_by"
+    users |o--o{ users : "created_by"
+    users |o--o{ users : "updated_by"
+
+    %% Organizer Management
+    organizers ||--o{ organizer_members : "employs"
+    users ||--o{ organizer_members : "is_member"
+    users |o--o{ organizers : "approves"
+
+    %% Event Management
+    organizers ||--o{ events : "hosts"
+    users ||--o{ events : "creates"
+    events |o--o{ events : "cloned_from"
+    events ||--o{ event_custom_fields : "defines"
+    registrations ||--o{ registration_field_answers : "provides"
+    event_custom_fields ||--o{ registration_field_answers : "collects"
+
+    %% Agenda & Speakers
+    events ||--o{ tracks : "organizes"
+    events ||--o{ sessions : "schedules"
+    tracks |o--o{ sessions : "groups"
+    organizers ||--o{ speakers : "maintains_roster"
+    sessions ||--o{ session_speakers : "features"
+    speakers ||--o{ session_speakers : "assigned_to"
+
+    %% Attendee Registration & Tickets
+    events ||--o{ registrations : "receives"
+    users ||--o{ registrations : "submits"
+    registrations ||--o{ registration_session_preferences : "selects"
+    sessions ||--o{ registration_session_preferences : "chosen_in"
+    registrations ||--o| dietary_preferences : "specifies"
+    registrations ||--o| e_tickets : "generates"
+
+    %% On-Site Check-In
+    registrations ||--o{ check_ins : "recorded_for"
+    e_tickets ||--o{ check_ins : "validated_via"
+    users ||--o{ check_ins : "staff_scans"
+
+    %% Networking & Connections
+    users ||--o| digital_business_cards : "owns"
+    events ||--o{ attendee_connections : "scopes"
+    users ||--o{ attendee_connections : "requests"
+    users ||--o{ attendee_connections : "receives_request"
+    events ||--o{ direct_messages : "scopes"
+    users ||--o{ direct_messages : "sends"
+    users ||--o{ direct_messages : "receives"
+
+    %% Communications & Async Infrastructure
+    events ||--o{ broadcast_messages : "broadcasts"
+    users ||--o{ broadcast_messages : "authors"
+    broadcast_messages ||--o{ message_recipients : "targets"
+    registrations ||--o{ message_recipients : "receives_broadcast"
+
+    %% Surveys & Live In-Session Polls
+    events ||--o{ surveys : "conducts"
+    surveys ||--o{ survey_questions : "contains"
+    survey_questions ||--o{ survey_responses : "collects"
+    registrations ||--o{ survey_responses : "submits_response"
+    sessions ||--o{ live_polls : "runs"
+    live_polls ||--o{ poll_options : "offers"
+    live_polls ||--o{ poll_responses : "records"
+    poll_options ||--o{ poll_responses : "selected_as"
+    registrations ||--o{ poll_responses : "casts"
+
+    %% Billing & Monetization
+    organizers |o--o{ billing_rates : "has_custom_rate"
+    organizers ||--o{ invoices : "billed_to"
+    invoices ||--o{ invoice_items : "itemizes"
+    events ||--o{ invoice_items : "charged_for"
+
+    %% Audit Logging
+    users |o--o{ platform_audit_logs : "performs"
