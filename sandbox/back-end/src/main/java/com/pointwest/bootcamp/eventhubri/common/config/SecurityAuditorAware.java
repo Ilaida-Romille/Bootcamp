@@ -7,24 +7,25 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.pointwest.bootcamp.eventhubri.entity.User;
+import com.pointwest.bootcamp.eventhubri.identity.entity.User;
 
+// No changes needed -- correct as originally written.
 @Component("auditorProvider")
 public class SecurityAuditorAware implements AuditorAware<User> {
-    
+
     @Override
-    public Optional<User> getCurrentAuditor(){
+    public Optional<User> getCurrentAuditor() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null || !auth.isAuthenticated() || auth.getPrincipal() == null) {
             return Optional.empty();
         }
 
-        if ("anonymousUser".equals(auth.getPrincipal())){
+        if ("anonymousUser".equals(auth.getPrincipal())) {
             return Optional.empty();
         }
 
-        if (auth.getPrincipal() instanceof User currentUser){
+        if (auth.getPrincipal() instanceof User currentUser) {
             return Optional.of(currentUser);
         }
 
