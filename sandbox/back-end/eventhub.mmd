@@ -1,0 +1,196 @@
+erDiagram
+
+    ORGANIZATIONS ||--o{ USERS : "has_members"
+    ORGANIZATIONS ||--o{ EVENTS : "hosts"
+    ORGANIZATIONS ||--o{ INVOICES : "billed_to"
+
+    USERS ||--o| DIGITAL_BUSINESS_CARDS : "maintains"
+    USERS ||--o{ EVENTS : "creates"
+    USERS ||--o{ EVENT_REGISTRATIONS : "registers_for"
+    USERS ||--o{ CHECK_IN_RECORDS : "scanned_by"
+    USERS ||--o{ NOTIFICATION_LOGS : "sends"
+    USERS ||--o{ NOTIFICATION_LOGS : "receives"
+
+    EVENTS ||--o{ AGENDAS : "defines_schedule"
+    EVENTS ||--o{ EVENT_REGISTRATIONS : "receives_registrations"
+    EVENTS ||--o{ NOTIFICATION_LOGS : "triggers"
+    EVENTS ||--o{ INVOICE_ITEMS : "itemized_in"
+
+    AGENDAS ||--o{ TRACKS : "contains_tracks"
+    TRACKS ||--o{ SESSIONS : "runs_sessions"
+
+    SESSIONS ||--o{ SESSION_SPEAKERS : "has"
+    SPEAKERS ||--o{ SESSION_SPEAKERS : "assigned_to"
+
+    EVENT_REGISTRATIONS ||--o{ ATTENDEE_SESSIONS : "selects"
+    SESSIONS ||--o{ ATTENDEE_SESSIONS : "selected_in"
+    EVENT_REGISTRATIONS ||--o{ CHECK_IN_RECORDS : "has_checkins"
+
+    INVOICES ||--o{ INVOICE_ITEMS : "contains_line_items"
+    PLATFORM_RATES ||--o{ INVOICES : "applies_to"
+
+    ORGANIZATIONS {
+        bigint id PK
+        varchar company_name
+        varchar primary_contact_email UK "INDEX: Email lookup"
+        varchar primary_contact_phone
+        varchar status "ACTIVE, SUSPENDED, PENDING"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    USERS {
+        bigint id PK
+        bigint organization_id FK "INDEX: Org members lookup"
+        varchar email UK "INDEX: Login authentication lookup"
+        varchar password_hash
+        varchar first_name
+        varchar last_name
+        varchar role "ORGANIZER_ADMIN, ORGANIZER_STAFF, ATTENDEE, PLATFORM_ADMIN"
+        varchar status "ACTIVE, INACTIVE"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    DIGITAL_BUSINESS_CARDS {
+        bigint id PK
+        bigint user_id FK "UK - INDEX: User card lookup"
+        varchar user_profile_picture_url
+        varchar headline
+        text bio
+        varchar linkedin_profile_url
+        varchar phone_number
+        varchar company_name
+        varchar job_title
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    EVENTS {
+        bigint id PK
+        bigint organization_id FK "INDEX: Organization events query"
+        bigint created_by_user_id FK "INDEX: Event creator lookup"
+        varchar title
+        text description
+        varchar banner_image_url "Event banner image storage path/URL"
+        varchar event_type "PHYSICAL, VIRTUAL, HYBRID"
+        varchar location_address
+        varchar virtual_meeting_url
+        timestamp start_time "INDEX: Date range filtering"
+        timestamp end_time
+        boolean is_private
+        boolean catering_provided
+        int max_capacity
+        varchar status "DRAFT, PUBLISHED, COMPLETED, CANCELLED"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    AGENDAS {
+        bigint id PK
+        bigint event_id FK "INDEX: Event schedule join"
+        date agenda_date "INDEX: Date sorting"
+        varchar title
+        varchar description
+        timestamp created_at
+    }
+
+    TRACKS {
+        bigint id PK
+        bigint agenda_id FK "INDEX: Agenda tracks lookup"
+        varchar name
+        varchar description
+        int display_order
+    }
+
+    SESSIONS {
+        bigint id PK
+        bigint track_id FK "INDEX: Track sessions lookup"
+        varchar title
+        text description
+        timestamp start_time "INDEX: Timeline sorting and clash detection"
+        timestamp end_time
+        varchar location_or_room
+    }
+
+    SPEAKERS {
+        bigint id PK
+        varchar full_name
+        varchar email UK "INDEX: Speaker lookup"
+        text bio
+        varchar organization_or_title
+        varchar photo_url
+    }
+
+    SESSION_SPEAKERS {
+        bigint session_id PK "FK - INDEX: Composite FK join"
+        bigint speaker_id PK "FK - INDEX: Composite FK join"
+    }
+
+    EVENT_REGISTRATIONS {
+        bigint id PK
+        bigint event_id FK "INDEX: Event attendee headcounts"
+        bigint user_id FK "INDEX: User registrations lookup"
+        varchar registration_status "CONFIRMED, CANCELLED, WAITLISTED"
+        varchar dietary_restrictions
+        timestamp registration_time "INDEX: Billing cutoff and registration order"
+        varchar unique_qr_code UK "INDEX: Fast QR check-in lookup"
+    }
+
+    ATTENDEE_SESSIONS {
+        bigint registration_id PK "FK - INDEX: Registration session mapping"
+        bigint session_id PK "FK - INDEX: Session capacity mapping"
+    }
+
+    %% Non-code-generated: Schema only
+    CHECK_IN_RECORDS {
+        bigint id PK
+        bigint registration_id FK "INDEX: Registration verification lookup"
+        bigint checked_in_by_user_id FK "INDEX: Staff audit lookup"
+        timestamp check_in_timestamp "INDEX: Real-time attendance timeline"
+        varchar entry_point_location
+    }
+
+    NOTIFICATION_LOGS {
+        bigint id PK
+        bigint event_id FK "INDEX: Event broadcast history"
+        bigint sender_user_id FK "INDEX: Organizer sender history"
+        bigint recipient_user_id FK "INDEX: Attendee notification inbox"
+        varchar notification_type "EMAIL, SYSTEM_BROADCAST"
+        varchar subject
+        text message_body
+        timestamp sent_at "INDEX: Chronological history query"
+        varchar delivery_status "SENT, FAILED, PENDING"
+    }
+
+    PLATFORM_RATES {
+        bigint id PK
+        decimal rate_per_attendee "Configurable rate set by Platform Owner"
+        date effective_start_date "INDEX: Rate validity date query"
+        date effective_end_date
+        boolean is_active "INDEX: Active configuration lookup"
+        timestamp created_at
+    }
+
+    INVOICES {
+        bigint id PK
+        bigint organization_id FK "INDEX: Monthly org billing history"
+        varchar invoice_number UK "INDEX: Invoice lookup key"
+        date billing_period_start
+        date billing_period_end
+        int total_attendee_count "Sum of event_attendee_counts"
+        decimal applied_rate_per_attendee "Snapshot rate applied"
+        decimal invoice_amount "Calculated: rate_per_attendee * total_attendee_count"
+        varchar payment_status "UNPAID, PAID, OVERDUE"
+        timestamp issued_at "INDEX: Invoice statement date query"
+        date due_date
+    }
+
+    INVOICE_ITEMS {
+        bigint id PK
+        bigint invoice_id FK "INDEX: Invoice breakdown lookup"
+        bigint event_id FK "INDEX: Event billing reference"
+        int event_attendee_count "Count of registered attendees for event"
+        decimal rate_applied
+        decimal line_total "Calculated: event_attendee_count * rate_applied"
+    }
