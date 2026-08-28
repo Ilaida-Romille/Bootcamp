@@ -27,4 +27,5 @@ public interface EventService {
     void deleteEvent(
             Long eventId,
             String authenticatedUserEmail);
+        
 }

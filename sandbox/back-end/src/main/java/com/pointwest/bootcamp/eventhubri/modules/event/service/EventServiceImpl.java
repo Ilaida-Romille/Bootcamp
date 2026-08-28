@@ -6,12 +6,16 @@ import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventCreateRequestDto
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventResponseDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventUpdateRequestDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event;
+import com.pointwest.bootcamp.eventhubri.modules.event.exception.EventNotFoundException;
 import com.pointwest.bootcamp.eventhubri.modules.event.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.management.RuntimeErrorException;
 
 @Service
 @RequiredArgsConstructor
@@ -95,8 +99,7 @@ public class EventServiceImpl implements EventService {
 
         Event event = eventRepository
                 .findByIdAndOrganizationId(eventId, organizationId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Event not found with ID: " + eventId));
+                .orElseThrow(() -> new EventNotFoundException(eventId));
 
         return toResponse(event);
     }
@@ -113,8 +116,7 @@ public class EventServiceImpl implements EventService {
 
         Event event = eventRepository
                 .findByIdAndOrganizationId(eventId, organizationId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Event not found with ID: " + eventId));
+                .orElseThrow(() -> new EventNotFoundException(eventId));
 
         updateFields(event, request);
 
@@ -141,8 +143,7 @@ public class EventServiceImpl implements EventService {
 
         Event event = eventRepository
                 .findByIdAndOrganizationId(eventId, organizationId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Event not found with ID: " + eventId));
+                .orElseThrow(() -> new EventNotFoundException(eventId));
 
         eventRepository.delete(event);
     }
@@ -217,6 +218,11 @@ public class EventServiceImpl implements EventService {
             event.setStatus(request.status());
         }
     }
+
+    // private AppUser getAuthenticatedUserById(String identifier){
+    //     Long userId = Long.parseLong(identifier);
+    //     return appUserRepository.findByIdOptional(userId).orElseThrow(() -> new RuntimeException("Cannot find user"));
+    // }
 
     private void validateEventTimes(
             java.time.LocalDateTime startTime,
