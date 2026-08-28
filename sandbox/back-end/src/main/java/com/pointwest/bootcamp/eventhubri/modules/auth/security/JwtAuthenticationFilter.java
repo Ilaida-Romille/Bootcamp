@@ -8,10 +8,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -45,21 +48,32 @@ public class JwtAuthenticationFilter
                     .getAuthentication() == null) {
 
                 Claims claims = jwtService.parse(token);
-
-                Long userId = Long.valueOf(claims.getSubject());
-
-                CustomUserDetails userDetails = userDetailsService
-                        .loadUserById(userId);
+                String email = claims.getSubject();
+                
+                CustomUserDetails userDetails = (CustomUserDetails) userDetailsService
+                        .loadUserByUsername(email);
 
                 if (!userDetails.isEnabled()) {
                     filterChain.doFilter(request, response);
                     return;
                 }
 
+                //fix this later
+                List<?> rawAuthorities = claims.get("authorities", List.class);
+
+                List<SimpleGrantedAuthority> grantedAuthorities = Collections.EMPTY_LIST;
+
+                if (rawAuthorities != null) {
+                    grantedAuthorities = rawAuthorities.stream()
+                            .map(Object::toString)
+                            .map(SimpleGrantedAuthority::new)
+                            .toList();
+                }
+
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails,
+                        email,
                         null,
-                        userDetails.getAuthorities());
+                        grantedAuthorities);
 
                 SecurityContextHolder
                         .getContext()
