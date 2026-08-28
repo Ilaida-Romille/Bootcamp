@@ -7,6 +7,7 @@ import com.pointwest.bootcamp.eventhubri.modules.event.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('MANAGE_EVENTS')")
     public ResponseEntity<EventResponseDto> createEvent(
             @Valid @RequestBody EventCreateRequestDto request,
             Authentication authentication) {
@@ -36,6 +38,7 @@ public class EventController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('VIEW_ALL_ORGANIZATIONS')")
     public ResponseEntity<List<EventResponseDto>> getAllEvents(
             Authentication authentication) {
 
@@ -45,6 +48,7 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}")
+    @PreAuthorize("hasAuthority('MANAGE_AGENDA')")
     public ResponseEntity<EventResponseDto> getEventById(
             @PathVariable Long eventId,
             Authentication authentication) {
