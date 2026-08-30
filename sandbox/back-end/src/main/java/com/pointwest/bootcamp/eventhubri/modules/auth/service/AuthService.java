@@ -25,252 +25,252 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final AppUserRepository appUserRepository;
-    private final OrganizationRepository organizationRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+        private final AppUserRepository appUserRepository;
+        private final OrganizationRepository organizationRepository;
+        private final RefreshTokenRepository refreshTokenRepository;
+        private final PasswordEncoder passwordEncoder;
+        private final JwtService jwtService;
 
-    private final SecureRandom secureRandom = new SecureRandom();
+        private final SecureRandom secureRandom = new SecureRandom();
 
-    private static final long REFRESH_TOKEN_DAYS = 30;
+        private static final long REFRESH_TOKEN_DAYS = 30;
 
-    @Transactional
-    public void registerOrganizer(
-            RegisterOrganizerRequestDto request) {
+        @Transactional
+        public void registerOrganizer(
+                        RegisterOrganizerRequestDto request) {
 
-        if (appUserRepository
-                .existsByEmailIgnoreCase(request.email())) {
+                if (appUserRepository
+                                .existsByEmailIgnoreCase(request.email())) {
 
-            throw new IllegalArgumentException(
-                    "An account with this email already exists");
+                        throw new IllegalArgumentException(
+                                        "An account with this email already exists");
+                }
+
+                if (organizationRepository
+                                .existsByPrimaryContactEmailIgnoreCase(
+                                                request.primaryContactEmail())) {
+
+                        throw new IllegalArgumentException(
+                                        "An organization with this email already exists");
+                }
+
+                Organization organization = Organization.builder()
+                                .companyName(request.companyName())
+                                .primaryContactEmail(
+                                                request.primaryContactEmail())
+                                .primaryContactPhone(
+                                                request.primaryContactPhone())
+                                .status(
+                                                Organization.Status.PENDING)
+                                .build();
+
+                organization = organizationRepository.save(organization);
+
+                AppUser user = AppUser.builder()
+                                .organization(organization)
+                                .email(request.email())
+                                .passwordHash(
+                                                passwordEncoder.encode(
+                                                                request.password()))
+                                .firstName(request.firstName())
+                                .lastName(request.lastName())
+                                .role(Role.ATTENDEE)
+                                .status(AppUser.Status.ACTIVE)
+                                .build();
+
+                appUserRepository.save(user);
         }
 
-        if (organizationRepository
-                .existsByPrimaryContactEmailIgnoreCase(
-                        request.primaryContactEmail())) {
+        @Transactional
+        public AuthResult login(
+                        LoginRequestDto request) {
 
-            throw new IllegalArgumentException(
-                    "An organization with this email already exists");
+                AppUser user = appUserRepository
+                                .findByEmailIgnoreCase(
+                                                request.email())
+                                .orElseThrow(() -> new IllegalArgumentException(
+                                                "Invalid email or password"));
+
+                if (user.getStatus() != AppUser.Status.ACTIVE) {
+                        throw new IllegalStateException(
+                                        "User account is inactive");
+                }
+
+                if (!passwordEncoder.matches(
+                                request.password(),
+                                user.getPasswordHash())) {
+                        throw new IllegalArgumentException(
+                                        "Invalid email or password");
+                }
+
+                String accessToken = jwtService.generateAccessToken(user);
+
+                RefreshTokenPair refreshTokenPair = createRefreshToken(user);
+
+                return new AuthResult(
+                                accessToken,
+                                jwtService.getExpirationSeconds(),
+                                refreshTokenPair.rawToken());
         }
 
-        Organization organization = Organization.builder()
-                .companyName(request.companyName())
-                .primaryContactEmail(
-                        request.primaryContactEmail())
-                .primaryContactPhone(
-                        request.primaryContactPhone())
-                .status(
-                        Organization.Status.PENDING)
-                .build();
+        @Transactional
+        public AuthResult refresh(
+                        String rawRefreshToken) {
 
-        organization = organizationRepository.save(organization);
+                String tokenHash = hashToken(rawRefreshToken);
 
-        AppUser user = AppUser.builder()
-                .organization(organization)
-                .email(request.email())
-                .passwordHash(
-                        passwordEncoder.encode(
-                                request.password()))
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .role(Role.ORGANIZER_ADMIN)
-                .status(AppUser.Status.ACTIVE)
-                .build();
+                RefreshToken current = refreshTokenRepository
+                                .findByTokenHashForUpdate(tokenHash)
+                                .orElseThrow(() -> new IllegalArgumentException(
+                                                "Invalid refresh token"));
 
-        appUserRepository.save(user);
-    }
+                /*
+                 * Reuse detection.
+                 */
+                if (current.isUsed() || current.isRevoked()) {
 
-    @Transactional
-    public AuthResult login(
-            LoginRequestDto request) {
+                        refreshTokenRepository.revokeFamily(
+                                        current.getFamilyId());
 
-        AppUser user = appUserRepository
-                .findByEmailIgnoreCase(
-                        request.email())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Invalid email or password"));
+                        throw new IllegalArgumentException(
+                                        "Refresh token reuse detected");
+                }
 
-        if (user.getStatus() != AppUser.Status.ACTIVE) {
-            throw new IllegalStateException(
-                    "User account is inactive");
+                if (current.isExpired()) {
+
+                        current.setRevokedAt(
+                                        LocalDateTime.now());
+
+                        throw new IllegalArgumentException(
+                                        "Refresh token has expired");
+                }
+
+                AppUser user = current.getUser();
+
+                if (user.getStatus() != AppUser.Status.ACTIVE) {
+
+                        refreshTokenRepository.revokeFamily(
+                                        current.getFamilyId());
+
+                        throw new IllegalStateException(
+                                        "User account is inactive");
+                }
+
+                current.setUsedAt(
+                                LocalDateTime.now());
+
+                String accessToken = jwtService.generateAccessToken(user);
+
+                RefreshTokenPair replacement = createRefreshToken(
+                                user,
+                                current.getFamilyId());
+
+                current.setReplacedByTokenId(
+                                replacement.entity().getId());
+
+                refreshTokenRepository.save(current);
+
+                return new AuthResult(
+                                accessToken,
+                                jwtService.getExpirationSeconds(),
+                                replacement.rawToken());
         }
 
-        if (!passwordEncoder.matches(
-                request.password(),
-                user.getPasswordHash())) {
-            throw new IllegalArgumentException(
-                    "Invalid email or password");
+        @Transactional
+        public void logout(String rawRefreshToken) {
+
+                if (rawRefreshToken == null ||
+                                rawRefreshToken.isBlank()) {
+                        return;
+                }
+
+                refreshTokenRepository
+                                .findByTokenHash(
+                                                hashToken(rawRefreshToken))
+                                .ifPresent(token -> {
+
+                                        refreshTokenRepository.revokeFamily(
+                                                        token.getFamilyId());
+                                });
         }
 
-        String accessToken = jwtService.generateAccessToken(user);
-
-        RefreshTokenPair refreshTokenPair = createRefreshToken(user);
-
-        return new AuthResult(
-                accessToken,
-                jwtService.getExpirationSeconds(),
-                refreshTokenPair.rawToken());
-    }
-
-    @Transactional
-    public AuthResult refresh(
-            String rawRefreshToken) {
-
-        String tokenHash = hashToken(rawRefreshToken);
-
-        RefreshToken current = refreshTokenRepository
-                .findByTokenHashForUpdate(tokenHash)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Invalid refresh token"));
-
-        /*
-         * Reuse detection.
-         */
-        if (current.isUsed() || current.isRevoked()) {
-
-            refreshTokenRepository.revokeFamily(
-                    current.getFamilyId());
-
-            throw new IllegalArgumentException(
-                    "Refresh token reuse detected");
+        private RefreshTokenPair createRefreshToken(
+                        AppUser user) {
+                return createRefreshToken(
+                                user,
+                                UUID.randomUUID());
         }
 
-        if (current.isExpired()) {
+        private RefreshTokenPair createRefreshToken(
+                        AppUser user,
+                        UUID familyId) {
 
-            current.setRevokedAt(
-                    LocalDateTime.now());
+                String rawToken = generateRandomToken();
 
-            throw new IllegalArgumentException(
-                    "Refresh token has expired");
+                RefreshToken token = RefreshToken.builder()
+                                .user(user)
+                                .tokenHash(hashToken(rawToken))
+                                .familyId(familyId)
+                                .expiresAt(
+                                                LocalDateTime.now()
+                                                                .plusDays(
+                                                                                REFRESH_TOKEN_DAYS))
+                                .build();
+
+                RefreshToken saved = refreshTokenRepository.save(token);
+
+                return new RefreshTokenPair(
+                                rawToken,
+                                saved);
         }
 
-        AppUser user = current.getUser();
+        private String generateRandomToken() {
 
-        if (user.getStatus() != AppUser.Status.ACTIVE) {
+                byte[] bytes = new byte[32];
 
-            refreshTokenRepository.revokeFamily(
-                    current.getFamilyId());
+                secureRandom.nextBytes(bytes);
 
-            throw new IllegalStateException(
-                    "User account is inactive");
+                return Base64.getUrlEncoder()
+                                .withoutPadding()
+                                .encodeToString(bytes);
         }
 
-        current.setUsedAt(
-                LocalDateTime.now());
+        private String hashToken(String token) {
 
-        String accessToken = jwtService.generateAccessToken(user);
+                try {
 
-        RefreshTokenPair replacement = createRefreshToken(
-                user,
-                current.getFamilyId());
+                        MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-        current.setReplacedByTokenId(
-                replacement.entity().getId());
+                        byte[] hash = digest.digest(
+                                        token.getBytes(
+                                                        StandardCharsets.UTF_8));
 
-        refreshTokenRepository.save(current);
+                        StringBuilder result = new StringBuilder();
 
-        return new AuthResult(
-                accessToken,
-                jwtService.getExpirationSeconds(),
-                replacement.rawToken());
-    }
+                        for (byte b : hash) {
+                                result.append(
+                                                String.format(
+                                                                "%02x",
+                                                                b));
+                        }
 
-    @Transactional
-    public void logout(String rawRefreshToken) {
+                        return result.toString();
 
-        if (rawRefreshToken == null ||
-                rawRefreshToken.isBlank()) {
-            return;
+                } catch (Exception ex) {
+                        throw new IllegalStateException(
+                                        "Could not hash refresh token",
+                                        ex);
+                }
         }
 
-        refreshTokenRepository
-                .findByTokenHash(
-                        hashToken(rawRefreshToken))
-                .ifPresent(token -> {
-
-                    refreshTokenRepository.revokeFamily(
-                            token.getFamilyId());
-                });
-    }
-
-    private RefreshTokenPair createRefreshToken(
-            AppUser user) {
-        return createRefreshToken(
-                user,
-                UUID.randomUUID());
-    }
-
-    private RefreshTokenPair createRefreshToken(
-            AppUser user,
-            UUID familyId) {
-
-        String rawToken = generateRandomToken();
-
-        RefreshToken token = RefreshToken.builder()
-                .user(user)
-                .tokenHash(hashToken(rawToken))
-                .familyId(familyId)
-                .expiresAt(
-                        LocalDateTime.now()
-                                .plusDays(
-                                        REFRESH_TOKEN_DAYS))
-                .build();
-
-        RefreshToken saved = refreshTokenRepository.save(token);
-
-        return new RefreshTokenPair(
-                rawToken,
-                saved);
-    }
-
-    private String generateRandomToken() {
-
-        byte[] bytes = new byte[32];
-
-        secureRandom.nextBytes(bytes);
-
-        return Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(bytes);
-    }
-
-    private String hashToken(String token) {
-
-        try {
-
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-
-            byte[] hash = digest.digest(
-                    token.getBytes(
-                            StandardCharsets.UTF_8));
-
-            StringBuilder result = new StringBuilder();
-
-            for (byte b : hash) {
-                result.append(
-                        String.format(
-                                "%02x",
-                                b));
-            }
-
-            return result.toString();
-
-        } catch (Exception ex) {
-            throw new IllegalStateException(
-                    "Could not hash refresh token",
-                    ex);
+        public record AuthResult(
+                        String accessToken,
+                        long expiresIn,
+                        String refreshToken) {
         }
-    }
 
-    public record AuthResult(
-            String accessToken,
-            long expiresIn,
-            String refreshToken) {
-    }
-
-    private record RefreshTokenPair(
-            String rawToken,
-            RefreshToken entity) {
-    }
+        private record RefreshTokenPair(
+                        String rawToken,
+                        RefreshToken entity) {
+        }
 }
