@@ -20,7 +20,7 @@ import javax.management.RuntimeErrorException;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class EventServiceImpl implements EventService {
+public abstract class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final AppUserRepository appUserRepository;
@@ -220,8 +220,9 @@ public class EventServiceImpl implements EventService {
     }
 
     // private AppUser getAuthenticatedUserById(String identifier){
-    //     Long userId = Long.parseLong(identifier);
-    //     return appUserRepository.findByIdOptional(userId).orElseThrow(() -> new RuntimeException("Cannot find user"));
+    // Long userId = Long.parseLong(identifier);
+    // return appUserRepository.findByIdOptional(userId).orElseThrow(() -> new
+    // RuntimeException("Cannot find user"));
     // }
 
     private void validateEventTimes(

@@ -1,31 +1,41 @@
 package com.pointwest.bootcamp.eventhubri.modules.event.service;
 
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventCreateRequestDto;
+import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventDiscoveryFilterDto;
+import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventDiscoveryResponseDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventResponseDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventUpdateRequestDto;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 public interface EventService {
 
-    EventResponseDto createEvent(
-            EventCreateRequestDto request,
-            String authenticatedUserEmail);
+        EventResponseDto createEvent(
+                        EventCreateRequestDto request,
+                        String authenticatedUserEmail);
 
-    List<EventResponseDto> getAllEvents(
-            String authenticatedUserEmail);
+        List<EventResponseDto> getAllEvents(
+                        String authenticatedUserEmail);
 
-    EventResponseDto getEventById(
-            Long eventId,
-            String authenticatedUserEmail);
+        EventResponseDto getEventById(
+                        Long eventId,
+                        String authenticatedUserEmail);
 
-    EventResponseDto updateEvent(
-            Long eventId,
-            EventUpdateRequestDto request,
-            String authenticatedUserEmail);
+        EventResponseDto updateEvent(
+                        Long eventId,
+                        EventUpdateRequestDto request,
+                        String authenticatedUserEmail);
 
-    void deleteEvent(
-            Long eventId,
-            String authenticatedUserEmail);
-        
+        void deleteEvent(
+                        Long eventId,
+                        String authenticatedUserEmail);
+
+        // Attendee Specifics
+
+        Page<EventDiscoveryResponseDto> browsedPublishedEvents(EventDiscoveryFilterDto filter, Pageable pageable);
+
+        EventDiscoveryResponseDto getPublishedEvents(Long eventId);
 }
