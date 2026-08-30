@@ -1,6 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Session, SessionUser, LoginCredentials, UserRole } from '../models/session.model';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
+import { Session, SessionUser, LoginCredentials, UserRole, AuthResponse, JwtPayload } from '../models/session.model';
+import { AuthRoutingService } from './auth-routing.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
@@ -8,120 +11,99 @@ export class SessionService {
   private readonly sessionSubject$ = new BehaviorSubject<Session | null>(null);
   private readonly isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
 
+  private readonly http = inject(HttpClient);
+  private readonly authRouting = inject(AuthRoutingService);
+
   constructor() {
     this.loadSessionFromStorage();
   }
 
-  /**
-   * Load session from localStorage on service initialization
-   */
   private loadSessionFromStorage(): void {
     const stored = localStorage.getItem(this.storageKey);
     if (stored) {
       try {
         const session = JSON.parse(stored) as Session;
-        // Check if session has expired
         if (new Date(session.expiresAt) > new Date()) {
           this.sessionSubject$.next(session);
           this.isAuthenticatedSubject$.next(true);
         } else {
-          // Session expired, clear it
           this.logout();
         }
       } catch {
-        // Invalid session data, clear it
         this.logout();
       }
     }
   }
 
   /**
-   * Create a new session for the user (mock login)
+   * Authenticates with Spring Boot backend and stores JWT session context
    */
-  login(credentials: LoginCredentials): Session {
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
-
-    const user: SessionUser = {
-      id: `USER-${Date.now()}`,
+  login(credentials: Omit<LoginCredentials, 'role'>): Observable<AuthResponse> {
+    const payload = {
       email: credentials.email,
-      name: credentials.email.split('@')[0], // Extract name from email
-      role: credentials.role,
-      createdAt: now.toISOString()
+      password: credentials.password
     };
 
-    const mockToken = btoa(`${user.id}:${credentials.email}:${Date.now()}`);
+    return this.http.post<AuthResponse>('http://localhost:8080/api/auth/login', payload).pipe(
+      tap((response) => {
+        const decoded = jwtDecode<JwtPayload>(response.accessToken);
+        const userRole = this.authRouting.mapBackendRoleToUserRole(decoded.role);
 
-    const session: Session = {
-      user,
-      token: mockToken,
-      expiresAt: expiresAt.toISOString()
-    };
+        if (!userRole) {
+          throw new Error('Unrecognized backend role claim');
+        }
 
-    // Persist to localStorage
-    localStorage.setItem(this.storageKey, JSON.stringify(session));
+        const user: SessionUser = {
+          id: decoded.sub,
+          email: decoded.email,
+          name: decoded.email.split('@')[0],
+          role: userRole,
+          createdAt: new Date().toISOString()
+        };
 
-    // Update observables
-    this.sessionSubject$.next(session);
-    this.isAuthenticatedSubject$.next(true);
+        const session: Session = {
+          user,
+          token: response.accessToken,
+          expiresAt: new Date(decoded.exp * 1000).toISOString()
+        };
 
-    return session;
+        localStorage.setItem(this.storageKey, JSON.stringify(session));
+        this.sessionSubject$.next(session);
+        this.isAuthenticatedSubject$.next(true);
+      })
+    );
   }
 
-  /**
-   * Destroy the current session (logout)
-   */
   logout(): void {
     localStorage.removeItem(this.storageKey);
     this.sessionSubject$.next(null);
     this.isAuthenticatedSubject$.next(false);
   }
 
-  /**
-   * Get the current session as observable
-   */
   getSession(): Observable<Session | null> {
     return this.sessionSubject$.asObservable();
   }
 
-  /**
-   * Get the current session synchronously (for guards)
-   */
   getCurrentSession(): Session | null {
     return this.sessionSubject$.value;
   }
 
-  /**
-   * Check if user is authenticated
-   */
   isAuthenticated(): Observable<boolean> {
     return this.isAuthenticatedSubject$.asObservable();
   }
 
-  /**
-   * Check if user is authenticated synchronously (for guards)
-   */
   isAuthenticatedSync(): boolean {
     return this.isAuthenticatedSubject$.value;
   }
 
-  /**
-   * Get current user's role
-   */
   getCurrentUserRole(): UserRole | null {
     return this.sessionSubject$.value?.user.role ?? null;
   }
 
-  /**
-   * Check if user has a specific role
-   */
   hasRole(role: UserRole): boolean {
     return this.getCurrentUserRole() === role;
   }
 
-  /**
-   * Check if user has any of the specified roles
-   */
   hasAnyRole(roles: UserRole[]): boolean {
     const currentRole = this.getCurrentUserRole();
     return currentRole !== null && roles.includes(currentRole);
