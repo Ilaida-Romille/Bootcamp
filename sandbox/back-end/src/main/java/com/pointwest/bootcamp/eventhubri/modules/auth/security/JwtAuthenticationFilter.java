@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter
 
                 Claims claims = jwtService.parse(token);
                 String email = claims.getSubject();
-                
+
                 CustomUserDetails userDetails = (CustomUserDetails) userDetailsService
                         .loadUserByUsername(email);
 
@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter
                     return;
                 }
 
-                //fix this later
+                // fix this later
                 List<?> rawAuthorities = claims.get("authorities", List.class);
 
                 List<SimpleGrantedAuthority> grantedAuthorities = Collections.EMPTY_LIST;
