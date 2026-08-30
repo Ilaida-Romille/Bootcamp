@@ -15,6 +15,7 @@ import {
   describePasswordErrors,
   passwordStrengthValidator,
 } from '../../../../core/validators/password-strength.validator';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login-form',
@@ -75,28 +76,37 @@ export class LoginFormComponent {
       return;
     }
 
-    const { email, password: _password } = this.form.getRawValue();
-    
-    // Resolve the user's role based on email
-    const role = this.authRouting.resolveRole(email);
-    if (!role) {
-      this.accessDeniedMessage.set(
-        'This corporate domain or email configuration is unregistered. Contact your organization admin for access.',
-      );
-      return;
-    }
+    const { email, password } = this.form.getRawValue();
 
-    // Create a new session
-    this.sessionService.login({
-      email,
-      password: _password,
-      role
+    this.sessionService.login({ email, password }).subscribe({
+      next: () => {
+        const role = this.sessionService.getCurrentUserRole();
+        if (role) {
+          const destination = this.authRouting.resolveRoute(role);
+          if (destination) {
+            this.router.navigateByUrl(destination);
+            return;
+          }
+        }
+        this.accessDeniedMessage.set('Unable to determine landing route for account.');
+      },
+      error: (err: HttpErrorResponse | Error) => {
+        // Handle HTTP Response Errors
+        if (err instanceof HttpErrorResponse) {
+          if (err.status === 0) {
+            this.accessDeniedMessage.set(
+              'Unable to connect to the authentication server. Please check if the backend is running.'
+            );
+          } else if (err.status === 401 || err.status === 400) {
+            this.accessDeniedMessage.set('Invalid credentials. Please check your email and password.');
+          } else {
+            this.accessDeniedMessage.set(`Server error (${err.status}). Please try again later.`);
+          }
+        } else {
+          // Handle client-side runtime errors (e.g., JWT decode failure)
+          this.accessDeniedMessage.set(err.message || 'An unexpected error occurred.');
+        }
+      }
     });
-
-    // Navigate to the appropriate destination
-    const destination = this.authRouting.resolveRoute(email);
-    if (destination) {
-      this.router.navigateByUrl(destination);
-    }
   }
 }
