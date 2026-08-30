@@ -19,3 +19,18 @@ export interface LoginCredentials {
   password: string;
   role: UserRole;
 }
+
+export interface AuthResponse {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: number;
+  user: any;
+}
+
+export interface JwtPayload {
+  sub: string;
+  email: string;
+  role: string;
+  authorities: string[];
+  exp: number;
+}
