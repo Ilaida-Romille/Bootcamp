@@ -36,14 +36,14 @@ export function validateEventCapacity(maximum: number): string | null {
 }
 
 export function validateAgendaItems(
-  agenda: Array<{ startDateTime: string; endDateTime: string; title: string }>
+  agenda: Array<{ startTime: string; endTime: string; title: string }>
 ): string | null {
   for (let i = 0; i < agenda.length; i++) {
     const item = agenda[i];
     if (!item.title.trim()) {
       return `Agenda item ${i + 1} requires a title.`;
     }
-    if (item.startDateTime && item.endDateTime && new Date(item.endDateTime) <= new Date(item.startDateTime)) {
+    if (item.startTime && item.endTime && new Date(item.endTime) <= new Date(item.startTime)) {
       return `Agenda item ${i + 1}: end time must be after start time.`;
     }
   }
