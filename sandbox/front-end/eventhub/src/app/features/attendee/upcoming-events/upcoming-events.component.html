@@ -1,110 +1,317 @@
 <main class="custom-attendee-container">
-  <h1 class="custom-page-title">Upcoming Events</h1>
+
+  <h1 class="custom-page-title">
+    Upcoming Events
+  </h1>
+
 
   @if (dataLoadingError) {
-    <div class="alert alert-danger" role="alert">
-      {{ dataLoadingError }}
-    </div>
+
+  <div class="alert alert-danger" role="alert">
+
+    <i class="bi bi-exclamation-triangle me-2"></i>
+
+    {{ dataLoadingError }}
+
+  </div>
+
   }
 
-  <!-- Filter Bar -->
+
+  <!-- ========================================================= -->
+  <!-- Filters -->
+  <!-- ========================================================= -->
+
   <div class="filter-bar mb-4">
-    <div class="row g-2 align-items-end">
+
+    <div class="row g-3 align-items-end">
+
+
+      <!-- Search -->
       <div class="col-12 col-lg-4">
-        <label class="form-label" for="eventSearch">Search</label>
-        <input
-          id="eventSearch"
-          name="eventSearch"
-          type="text"
-          class="form-control glass-form-input"
-          [(ngModel)]="searchTerm"
-          (ngModelChange)="applyFilters()"
-          placeholder="Title, venue, or organizer" />
+
+        <label class="form-label" for="eventSearch">
+
+          Search
+
+        </label>
+
+        <input id="eventSearch" name="eventSearch" type="text" class="form-control glass-form-input"
+          [(ngModel)]="searchTerm" placeholder="Search events..." />
+
       </div>
 
-      <div class="col-6 col-lg-3">
-        <label class="form-label" for="statusFilter">Status</label>
-        <select
-          id="statusFilter"
-          name="statusFilter"
-          class="form-select glass-form-input"
-          [(ngModel)]="selectedStatus"
-          (ngModelChange)="applyFilters()">
-          @for (option of statusOptions; track option) {
-            <option [value]="option">{{ option }}</option>
+
+      <!-- Event Type -->
+      <div class="col-12 col-md-6 col-lg-2">
+
+        <label class="form-label" for="eventTypeFilter">
+
+          Event Type
+
+        </label>
+
+        <select id="eventTypeFilter" name="eventTypeFilter" class="form-select glass-form-input"
+          [(ngModel)]="selectedEventType">
+
+          @for (
+          option of eventTypeOptions;
+          track option
+          ) {
+
+          <option [value]="option">
+
+            @switch (option) {
+
+            @case ('All') {
+            All Types
+            }
+
+            @case ('PHYSICAL') {
+            Physical
+            }
+
+            @case ('VIRTUAL') {
+            Virtual
+            }
+
+            @case ('HYBRID') {
+            Hybrid
+            }
+
+            }
+
+          </option>
+
           }
+
         </select>
+
       </div>
 
-      <div class="col-6 col-lg-3">
-        <label class="form-label" for="organizerFilter">Organizer</label>
-        <select
-          id="organizerFilter"
-          name="organizerFilter"
-          class="form-select glass-form-input"
-          [(ngModel)]="selectedOrganizer"
-          (ngModelChange)="applyFilters()">
-          @for (option of organizerOptions; track option) {
-            <option [value]="option">{{ option }}</option>
-          }
-        </select>
+
+      <!-- Location -->
+      <div class="col-12 col-md-6 col-lg-2">
+
+        <label class="form-label" for="locationFilter">
+
+          Location
+
+        </label>
+
+        <input id="locationFilter" name="locationFilter" type="text" class="form-control glass-form-input"
+          [(ngModel)]="locationFilter" placeholder="Venue or location" />
+
       </div>
 
-      <div class="col-12 col-lg-2">
-        <button type="button" class="btn btn-dark w-100" (click)="clearFilters()">
-          <i class="bi bi-arrow-clockwise"></i> Reset
+
+      <!-- Start From -->
+      <div class="col-12 col-md-6 col-lg-2">
+
+        <label class="form-label" for="startFrom">
+
+          Start From
+
+        </label>
+
+        <input id="startFrom" name="startFrom" type="datetime-local" class="form-control glass-form-input"
+          [(ngModel)]="startFrom" />
+
+      </div>
+
+
+      <!-- Start To -->
+      <div class="col-12 col-md-6 col-lg-2">
+
+        <label class="form-label" for="startTo">
+
+          Start To
+
+        </label>
+
+        <input id="startTo" name="startTo" type="datetime-local" class="form-control glass-form-input"
+          [(ngModel)]="startTo" />
+
+      </div>
+
+
+      <!-- Buttons -->
+      <div class="col-12 d-flex justify-content-end gap-2">
+
+        <button type="button" class="btn btn-dark" [disabled]="isLoading" (click)="applyFilters()">
+
+          <i class="bi bi-search me-1"></i>
+
+          Apply Filters
+
         </button>
+
+
+        <button type="button" class="btn btn-outline-dark" [disabled]="isLoading" (click)="clearFilters()">
+
+          <i class="bi bi-arrow-clockwise me-1"></i>
+
+          Reset
+
+        </button>
+
       </div>
+
     </div>
+
   </div>
+
+
+  <!-- ========================================================= -->
+  <!-- Results -->
+  <!-- ========================================================= -->
 
   <small class="text-secondary d-block mb-3">
-    <i class="bi bi-info-circle"></i> Showing <strong>{{ filteredEvents.length }}</strong> event(s)
+
+    @if (isLoading) {
+
+    <span>
+
+      <span class="spinner-border spinner-border-sm me-2">
+      </span>
+
+      Loading events...
+
+    </span>
+
+    } @else {
+
+    <span>
+
+      <i class="bi bi-info-circle me-1"></i>
+
+      Showing
+
+      <strong>
+        {{ showingStart }}–{{ showingEnd }}
+      </strong>
+
+      of
+
+      <strong>
+        {{ totalElements }}
+      </strong>
+
+      event(s)
+
+    </span>
+
+    }
+
   </small>
 
-  <!-- Grid for events cards -->
+
+  <!-- ========================================================= -->
+  <!-- Event Cards -->
+  <!-- ========================================================= -->
+
+  @if (!isLoading && filteredEvents.length === 0) {
+
+  <div class="text-center py-5">
+
+    <i class="bi bi-calendar-x fs-1 d-block mb-3">
+    </i>
+
+    <h3>
+      No events found
+    </h3>
+
+    <p class="text-secondary">
+      Try adjusting your filters.
+    </p>
+
+  </div>
+
+  } @else {
+
   <section class="row g-4 matches-events-grid" id="eventsGridContainer">
-    @for (eventItem of paginatedEvents; track eventItem.id) {
-      <div class="col-12 col-md-6 col-lg-4">
-        <app-event-card [event]="eventItem"></app-event-card>
-      </div>
+
+    @for (
+    eventItem of filteredEvents;
+    track eventItem.id
+    ) {
+
+    <div class="col-12 col-md-6 col-lg-4">
+
+      <app-event-card [event]="eventItem">
+      </app-event-card>
+
+    </div>
+
     }
+
   </section>
 
-  <!-- Pagination Section -->
-  <div class="d-flex justify-content-center">
+  }
+
+
+  <!-- ========================================================= -->
+  <!-- Pagination -->
+  <!-- ========================================================= -->
+
+  @if (totalPages > 1) {
+
+  <div class="d-flex justify-content-center mt-4">
+
     <nav class="custom-pagination-container" aria-label="Page Navigation">
-      
-      <button 
-        type="button" 
-        class="custom-page-link page-control" 
-        [class.page-disabled]="currentPage === 1"
-        [disabled]="currentPage === 1"
-        (click)="setPage(currentPage - 1)">
+
+
+      <button type="button" class="custom-page-link page-control" [class.page-disabled]="
+            currentPage === 1
+          " [disabled]="
+            currentPage === 1 ||
+            isLoading
+          " (click)="
+            setPage(currentPage - 1)
+          ">
+
         « Prev
+
       </button>
-      
+
+
       <div class="custom-page-numbers-wrapper">
-        @for (page of pages; track page) {
-          <button 
-            type="button"
-            class="custom-page-link" 
-            [class.page-active]="page === currentPage"
-            (click)="setPage(page)">
-            {{ page }}
-          </button>
+
+        @for (
+        page of pages;
+        track page
+        ) {
+
+        <button type="button" class="custom-page-link" [class.page-active]="
+                page === currentPage
+              " [disabled]="isLoading" (click)="setPage(page)">
+
+          {{ page }}
+
+        </button>
+
         }
+
       </div>
-      
-      <button 
-        type="button" 
-        class="custom-page-link page-control" 
-        [class.page-disabled]="currentPage === totalPages"
-        [disabled]="currentPage === totalPages"
-        (click)="setPage(currentPage + 1)">
+
+
+      <button type="button" class="custom-page-link page-control" [class.page-disabled]="
+            currentPage === totalPages
+          " [disabled]="
+            currentPage === totalPages ||
+            isLoading
+          " (click)="
+            setPage(currentPage + 1)
+          ">
+
         Next »
+
       </button>
-      
+
     </nav>
+
   </div>
+
+  }
+
 </main>
