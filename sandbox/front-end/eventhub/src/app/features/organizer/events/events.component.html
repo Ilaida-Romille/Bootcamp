@@ -1,494 +1,1314 @@
 <section class="organizer-events-page">
-  <!-- Header with Title and Add Button -->
+
+  <!-- ============================================================
+       HEADER
+       ============================================================ -->
+
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="h2 fw-bold text-white mb-1">Manage Events</h1>
+      <h1 class="h2 fw-bold text-white mb-1">
+        Manage Events
+      </h1>
     </div>
+
     <button type="button" class="btn btn-primary btn-lg px-4" (click)="openAddEventModal()"
       [disabled]="isLoading || isFormSubmitting">
-      <i class="bi bi-plus-lg"></i> Add Event
+
+      <i class="bi bi-plus-lg"></i>
+      Add Event
     </button>
   </div>
 
-  <!-- Error Alert -->
+
+  <!-- ============================================================
+       ERROR ALERT
+       ============================================================ -->
+
   @if (dataLoadingError) {
+
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
+
     {{ dataLoadingError }}
-    <button type="button" class="btn-close" (click)="dataLoadingError = ''"></button>
+
+    <button type="button" class="btn-close" (click)="dataLoadingError = ''">
+    </button>
+
   </div>
   }
 
-  <!-- Loading State -->
+
+  <!-- ============================================================
+       LOADING
+       ============================================================ -->
+
   @if (isLoading) {
+
   <div class="alert alert-info">
-    <i class="bi bi-hourglass-split"></i> Loading events...
+    <i class="bi bi-hourglass-split"></i>
+    Loading events...
   </div>
+
   }
 
-  <!-- Single Row Filter Bar -->
+
+  <!-- ============================================================
+       FILTER BAR
+       ============================================================ -->
+
   <div class="filter-bar mb-4">
+
     <div class="row g-2 align-items-end">
+
       <div class="col-12 col-lg-3">
-        <label class="form-label small text-secondary" for="eventSearch">Search</label>
+
+        <label class="form-label small text-secondary" for="eventSearch">
+
+          Search
+
+        </label>
+
         <input id="eventSearch" name="eventSearch" type="text" class="form-control glass-form-input"
           [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" placeholder="Title, description, or venue" />
+
       </div>
 
-      <!-- Replaced Organizer Filter with Event Type -->
+
       <div class="col-6 col-lg-3">
-        <label class="form-label small text-secondary" for="eventTypeFilter">Event Type</label>
+
+        <label class="form-label small text-secondary" for="eventTypeFilter">
+
+          Event Type
+
+        </label>
+
         <select id="eventTypeFilter" name="eventTypeFilter" class="form-select glass-form-input"
           [(ngModel)]="selectedEventType" (ngModelChange)="applyFilters()">
+
           @for (option of eventTypeOptions; track option) {
-          <option [value]="option">{{ option }}</option>
+
+          <option [value]="option">
+            {{ option }}
+          </option>
+
           }
+
         </select>
+
       </div>
+
 
       <div class="col-6 col-lg-3">
-        <label class="form-label small text-secondary" for="statusFilter">Status</label>
+
+        <label class="form-label small text-secondary" for="statusFilter">
+
+          Status
+
+        </label>
+
         <select id="statusFilter" name="statusFilter" class="form-select glass-form-input" [(ngModel)]="selectedStatus"
           (ngModelChange)="applyFilters()">
+
           @for (option of statusOptions; track option) {
-          <option [value]="option">{{ option }}</option>
+
+          <option [value]="option">
+            {{ option }}
+          </option>
+
           }
+
         </select>
+
       </div>
+
 
       <div class="col-12 col-lg-3 d-flex gap-2">
+
         <button type="button" class="btn btn-dark w-100" (click)="clearLookupAndFilters()" [disabled]="isTableLoading">
-          <i class="bi bi-arrow-clockwise"></i> Reset
+
+          <i class="bi bi-arrow-clockwise"></i>
+          Reset
+
         </button>
+
         <button type="button" class="btn btn-outline-light w-100" (click)="loadEvents()" [disabled]="isTableLoading">
-          <i class="bi bi-arrow-repeat"></i> Refresh
+
+          <i class="bi bi-arrow-repeat"></i>
+          Refresh
+
         </button>
+
       </div>
+
     </div>
+
   </div>
 
-  <!-- Data Table (Only table loading state bound) -->
 
-  <!-- Data Table -->
-  <app-data-table [columns]="columns" [data]="paginatedEvents" [loading]="isLoading" [sortKey]="sortKey"
+  <!-- ============================================================
+       EVENTS TABLE
+       ============================================================ -->
+
+  <app-data-table [columns]="columns" [data]="paginatedEvents" [loading]="isTableLoading" [sortKey]="sortKey"
     [sortDir]="sortDir" emptyMessage="No events matched your filters." (sortChange)="onSortChange($event)">
 
+
     <ng-template appDtCell="event" let-ev>
-      <div class="fw-semibold text-white">{{ $any(ev).title }}</div>
-      <div class="text-secondary small">{{ $any(ev).id }}</div>
+
+      <div class="fw-semibold text-white">
+        {{ $any(ev).title }}
+      </div>
+
+      <div class="text-secondary small">
+        {{ $any(ev).id }}
+      </div>
+
     </ng-template>
+
 
     <ng-template appDtCell="organizer" let-ev>
-      <div>{{ $any(ev).organizerName }}</div>
-      <div class="text-secondary small">{{ $any(ev).organizerId }}</div>
+
+      <div>
+        {{ $any(ev).organizerName }}
+      </div>
+
+      <div class="text-secondary small">
+        {{ $any(ev).organizerId }}
+      </div>
+
     </ng-template>
+
 
     <ng-template appDtCell="status" let-ev>
+
       <span class="badge event-status-badge" [ngClass]="getStatusBadgeClass($any(ev).status)">
+
         {{ formatStatus($any(ev).status) }}
+
       </span>
+
     </ng-template>
+
 
     <ng-template appDtCell="schedule" let-ev>
-      <div>{{ $any(ev).startDateTime | date:'MMM d, y' }}</div>
-      <div class="text-secondary small">{{ $any(ev).startDateTime | date:'shortTime' }} – {{ $any(ev).endDateTime |
-        date:'shortTime' }}</div>
+
+      <div>
+        {{ $any(ev).startTime | date:'MMM d, y' }}
+      </div>
+
+      <div class="text-secondary small">
+
+        {{ $any(ev).startTime | date:'shortTime' }}
+
+        –
+
+        {{ $any(ev).endTime | date:'shortTime' }}
+
+      </div>
+
     </ng-template>
 
-    <ng-template appDtCell="registration" let-ev>
-      <div>{{ $any(ev).registrationOpensAt | date:'MMM d, y' }}</div>
-      <div class="text-secondary small">closes {{ $any(ev).registrationClosesAt | date:'MMM d, y' }}</div>
-    </ng-template>
 
     <ng-template appDtCell="actions" let-ev>
+
       <div class="action-buttons">
+
         <button type="button" class="btn btn-sm btn-action btn-view" title="View Details"
           (click)="viewEventDetails($any(ev))" [disabled]="isLookupLoading">
+
           <i class="bi bi-eye"></i>
+
         </button>
+
       </div>
+
     </ng-template>
 
   </app-data-table>
 
-  <!-- Pagination -->
+
+  <!-- ============================================================
+       PAGINATION
+       ============================================================ -->
+
   <app-pagination [currentPage]="currentPage + 1" [totalItems]="totalElements" [itemsPerPage]="itemsPerPage"
     (pageChange)="onPageChange($event)">
   </app-pagination>
 
-  <!-- Add/Edit Event Modal - Wizard -->
+
+  <!-- ============================================================
+       CREATE / EDIT EVENT MODAL
+       ============================================================ -->
+
   @if (isModalOpen) {
+
   <div class="modal-overlay" role="dialog" aria-modal="true" (click)="closeModal()" (keydown.escape)="closeModal()">
+
     <div class="modal-dialog modal-wizard" (click)="$event.stopPropagation()">
+
       <div class="modal-content">
 
-        <!-- Header -->
+
+        <!-- HEADER -->
+
         <div class="modal-header">
+
           <div>
+
             <h5 class="modal-title">
-              <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-calendar-plus'"></i>
+
+              <i class="bi" [ngClass]="
+                    isEditMode
+                      ? 'bi-pencil-square'
+                      : 'bi-calendar-plus'
+                  ">
+              </i>
+
               {{ isEditMode ? 'Edit Event' : 'Add New Event' }}
+
             </h5>
+
           </div>
-          <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()">
+          </button>
+
         </div>
 
-        <!-- Wizard Progress Bar -->
+
+        <!-- ======================================================
+               WIZARD PROGRESS
+               ====================================================== -->
+
         <div class="wizard-progress">
+
           <div class="wizard-steps">
+
+
+            <!-- STEP 1 -->
+
             <div class="wizard-step" [class.active]="wizardStep >= 1" [class.current]="wizardStep === 1">
-              <div class="wizard-step-dot"><i class="bi bi-file-text"></i></div>
-              <span>Details</span>
+
+              <div class="wizard-step-dot">
+                <i class="bi bi-file-text"></i>
+              </div>
+
+              <span>
+                Details
+              </span>
+
             </div>
-            <div class="wizard-connector" [class.active]="wizardStep >= 2"></div>
+
+
+            <div class="wizard-connector" [class.active]="wizardStep >= 2">
+            </div>
+
+
+            <!-- STEP 2 -->
+
             <div class="wizard-step" [class.active]="wizardStep >= 2" [class.current]="wizardStep === 2">
-              <div class="wizard-step-dot"><i class="bi bi-person-badge"></i></div>
-              <span>Organizer</span>
+
+              <div class="wizard-step-dot">
+                <i class="bi bi-sliders"></i>
+              </div>
+
+              <span>
+                Type / Config
+              </span>
+
             </div>
-            <div class="wizard-connector" [class.active]="wizardStep >= 3"></div>
+
+
+            <div class="wizard-connector" [class.active]="wizardStep >= 3">
+            </div>
+
+
+            <!-- STEP 3 -->
+
             <div class="wizard-step" [class.active]="wizardStep >= 3" [class.current]="wizardStep === 3">
-              <div class="wizard-step-dot"><i class="bi bi-calendar-range"></i></div>
-              <span>Schedule</span>
+
+              <div class="wizard-step-dot">
+                <i class="bi bi-calendar-range"></i>
+              </div>
+
+              <span>
+                Schedule
+              </span>
+
             </div>
-            <div class="wizard-connector" [class.active]="wizardStep >= 4"></div>
+
+
+            <div class="wizard-connector" [class.active]="wizardStep >= 4">
+            </div>
+
+
+            <!-- STEP 4 -->
+
             <div class="wizard-step" [class.active]="wizardStep >= 4" [class.current]="wizardStep === 4">
-              <div class="wizard-step-dot"><i class="bi bi-geo-alt"></i></div>
-              <span>Venue</span>
+
+              <div class="wizard-step-dot">
+                <i class="bi bi-geo-alt"></i>
+              </div>
+
+              <span>
+                Location & Capacity
+              </span>
+
             </div>
-            <div class="wizard-connector" [class.active]="wizardStep >= 5"></div>
-            <div class="wizard-step" [class.active]="wizardStep >= 5" [class.current]="wizardStep === 5">
-              <div class="wizard-step-dot"><i class="bi bi-list-task"></i></div>
-              <span>Agenda</span>
-            </div>
+
           </div>
+
         </div>
 
-        <!-- Modal Body -->
+
+        <!-- ======================================================
+               MODAL BODY
+               ====================================================== -->
+
         <div class="modal-body">
+
           @if (formError) {
+
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
+
             {{ formError }}
-            <button type="button" class="btn-close btn-close-white" (click)="formError = ''"></button>
+
+            <button type="button" class="btn-close btn-close-white" (click)="formError = ''">
+            </button>
+
           </div>
+
           }
+
 
           <form>
 
-            <!-- Step 1: Event Details -->
+
+            <!-- ==================================================
+                   STEP 1: DETAILS
+                   ================================================== -->
+
             @if (wizardStep === 1) {
+
             <div>
+
               <div class="wizard-step-header mb-3">
-                <h6>Event Details</h6>
-                <p>Enter the core information about this event.</p>
+
+                <h6>
+                  Event Details
+                </h6>
+
+                <p>
+                  Enter the core information about this event.
+                </p>
+
               </div>
+
+
               <div class="row g-3">
+
                 <div class="col-12">
-                  <label class="form-label" for="title">Event Title *</label>
+
+                  <label class="form-label" for="title">
+
+                    Event Title *
+
+                  </label>
+
                   <input id="title" name="title" type="text" class="form-control glass-form-input"
                     [(ngModel)]="formData.title" placeholder="Enter event title" />
+
                 </div>
+
+
                 <div class="col-12">
-                  <label class="form-label" for="description">Description *</label>
+
+                  <label class="form-label" for="description">
+
+                    Description *
+
+                  </label>
+
                   <textarea id="description" name="description" class="form-control glass-form-input"
-                    [(ngModel)]="formData.description" placeholder="Enter event description" rows="4"></textarea>
+                    [(ngModel)]="formData.description" placeholder="Enter event description" rows="4">
+                      </textarea>
+
                 </div>
+
+
                 <div class="col-12">
-                  <label class="form-label" for="bannerImageUrl">Banner Image URL</label>
+
+                  <label class="form-label" for="bannerImageUrl">
+
+                    Banner Image URL
+
+                  </label>
+
                   <input id="bannerImageUrl" name="bannerImageUrl" type="text" class="form-control glass-form-input"
                     [(ngModel)]="formData.bannerImageUrl" placeholder="/assets/images/events/evt_001.jpg" />
+
                 </div>
+
               </div>
+
             </div>
+
             }
 
-            <!-- Step 2: Organizer &amp; Status -->
+
+            <!-- ==================================================
+                   STEP 2: TYPE / CONFIGURATION
+                   ================================================== -->
+
             @if (wizardStep === 2) {
+
             <div>
+
               <div class="wizard-step-header mb-3">
-                <h6>Organizer &amp; Status</h6>
-                <p>Assign an organizer and set the current event status.</p>
+
+                <h6>
+                  Type & Configuration
+                </h6>
+
+                <p>
+                  Set the event format and privacy details.
+                </p>
+
               </div>
+
+
               <div class="row g-3">
+
                 <div class="col-12">
-                  <label class="form-label" for="organizerId">Organizer ID *</label>
-                  <input id="organizerId" name="organizerId" type="text" class="form-control glass-form-input"
-                    [(ngModel)]="formData.organizerId" placeholder="org_001" />
-                </div>
-                <div class="col-12">
-                  <label class="form-label" for="organizerName">Organizer Name *</label>
-                  <input id="organizerName" name="organizerName" type="text" class="form-control glass-form-input"
-                    [(ngModel)]="formData.organizerName" placeholder="Organization name" />
-                </div>
-                <div class="col-12">
-                  <label class="form-label" for="status">Status *</label>
-                  <select id="status" name="status" class="form-select glass-form-input" [(ngModel)]="formData.status">
-                    <option value="draft">Draft</option>
-                    <option value="registration_open">Registration Open</option>
-                    <option value="registration_closed">Registration Closed</option>
-                    <option value="ongoing">Ongoing</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+
+                  <label class="form-label" for="eventType">
+
+                    Event Type *
+
+                  </label>
+
+                  <select id="eventType" name="eventType" class="form-select glass-form-input"
+                    [(ngModel)]="formData.eventType">
+
+                    <option value="PHYSICAL">
+                      Physical
+                    </option>
+
+                    <option value="VIRTUAL">
+                      Virtual
+                    </option>
+
+                    <option value="HYBRID">
+                      Hybrid
+                    </option>
+
                   </select>
+
                 </div>
+
+
+                <div class="col-md-6">
+
+                  <div class="form-check mt-4">
+
+                    <input class="form-check-input" type="checkbox" id="isPrivate" name="isPrivate"
+                      [(ngModel)]="formData.isPrivate" />
+
+                    <label class="form-check-label text-secondary" for="isPrivate">
+
+                      Private Event
+
+                    </label>
+
+                  </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                  <div class="form-check mt-4">
+
+                    <input class="form-check-input" type="checkbox" id="cateringProvided" name="cateringProvided"
+                      [(ngModel)]="formData.cateringProvided" />
+
+                    <label class="form-check-label text-secondary" for="cateringProvided">
+
+                      Catering Provided
+
+                    </label>
+
+                  </div>
+
+                </div>
+
               </div>
+
             </div>
+
             }
 
-            <!-- Step 3: Schedule -->
+
+            <!-- ==================================================
+                   STEP 3: SCHEDULE
+                   ================================================== -->
+
             @if (wizardStep === 3) {
+
             <div>
+
               <div class="wizard-step-header mb-3">
-                <h6>Schedule</h6>
-                <p>Set the event dates and the registration window.</p>
+
+                <h6>
+                  Schedule
+                </h6>
+
+                <p>
+                  Set the event start and end dates.
+                </p>
+
               </div>
+
+
               <div class="row g-3">
+
                 <div class="col-md-6">
-                  <label class="form-label" for="startDateTime">Start Date &amp; Time *</label>
-                  <input id="startDateTime" name="startDateTime" type="datetime-local"
-                    class="form-control glass-form-input" [(ngModel)]="formData.startDateTime" />
+
+                  <label class="form-label" for="startTime">
+
+                    Start Date &amp; Time *
+
+                  </label>
+
+                  <input id="startTime" name="startTime" type="datetime-local" class="form-control glass-form-input"
+                    [(ngModel)]="formData.startTime" />
+
                 </div>
+
+
                 <div class="col-md-6">
-                  <label class="form-label" for="endDateTime">End Date &amp; Time *</label>
-                  <input id="endDateTime" name="endDateTime" type="datetime-local" class="form-control glass-form-input"
-                    [(ngModel)]="formData.endDateTime" />
+
+                  <label class="form-label" for="endTime">
+
+                    End Date &amp; Time *
+
+                  </label>
+
+                  <input id="endTime" name="endTime" type="datetime-local" class="form-control glass-form-input"
+                    [(ngModel)]="formData.endTime" />
+
                 </div>
+
                 <div class="col-md-6">
-                  <label class="form-label" for="registrationOpensAt">Registration Opens</label>
+                  <label class="form-label" for="registrationOpensAt">Registration Opens At *</label>
                   <input id="registrationOpensAt" name="registrationOpensAt" type="datetime-local"
                     class="form-control glass-form-input" [(ngModel)]="formData.registrationOpensAt" />
                 </div>
+
                 <div class="col-md-6">
-                  <label class="form-label" for="registrationClosesAt">Registration Closes</label>
+                  <label class="form-label" for="registrationClosesAt">Registration Closes At *</label>
                   <input id="registrationClosesAt" name="registrationClosesAt" type="datetime-local"
                     class="form-control glass-form-input" [(ngModel)]="formData.registrationClosesAt" />
                 </div>
+
               </div>
+
             </div>
+
             }
 
-            <!-- Step 4: Venue &amp; Capacity -->
+
+            <!-- ==================================================
+                   STEP 4: LOCATION & CAPACITY
+                   ================================================== -->
+
             @if (wizardStep === 4) {
+
             <div>
+
               <div class="wizard-step-header mb-3">
-                <h6>Venue &amp; Capacity</h6>
-                <p>Specify where the event takes place and how many can attend.</p>
+
+                <h6>
+                  Location & Capacity
+                </h6>
+
+                <p>
+                  Specify where the event takes place and how
+                  many can attend.
+                </p>
+
               </div>
+
+
               <div class="row g-3">
+
                 <div class="col-12">
-                  <label class="form-label" for="venue">Venue *</label>
-                  <input id="venue" name="venue" type="text" class="form-control glass-form-input"
-                    [(ngModel)]="formData.venue" placeholder="Event venue" />
+
+                  <label class="form-label" for="locationAddress">
+
+                    Location Address
+
+                  </label>
+
+                  <input id="locationAddress" name="locationAddress" type="text" class="form-control glass-form-input"
+                    [(ngModel)]="formData.locationAddress" placeholder="Required for physical/hybrid events" />
+
                 </div>
+
+
                 <div class="col-12">
-                  <label class="form-label" for="maxCapacity">Max Capacity *</label>
+
+                  <label class="form-label" for="virtualMeetingUrl">
+
+                    Virtual Meeting URL
+
+                  </label>
+
+                  <input id="virtualMeetingUrl" name="virtualMeetingUrl" type="text"
+                    class="form-control glass-form-input" [(ngModel)]="formData.virtualMeetingUrl"
+                    placeholder="Required for virtual/hybrid events" />
+
+                </div>
+
+
+                <div class="col-12">
+
+                  <label class="form-label" for="maxCapacity">
+
+                    Max Capacity *
+
+                  </label>
+
                   <input id="maxCapacity" name="maxCapacity" type="number" class="form-control glass-form-input"
-                    [(ngModel)]="formData.capacity.maximum" placeholder="0" min="1" />
+                    [(ngModel)]="formData.maxCapacity" placeholder="0" min="1" />
+
                 </div>
+
               </div>
+
             </div>
-            }
 
-            <!-- Step 5: Agenda -->
-            @if (wizardStep === 5) {
-            <div>
-              <div class="wizard-step-header mb-3">
-                <h6>Agenda</h6>
-                <p>Add and manage the schedule items for this event. All fields are optional.</p>
-              </div>
-
-              @for (item of formData.agenda; track $index) {
-              <div class="card mb-3 border-secondary bg-transparent">
-                <div class="card-header d-flex justify-content-between align-items-center border-secondary py-2">
-                  <span class="small text-white fw-semibold">
-                    Item {{ $index + 1 }}
-                    @if (item.isBreak) {
-                    <span class="text-secondary"> &mdash; Break</span>
-                    }
-                  </span>
-                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeAgendaItem($index)">
-                    <i class="bi bi-x-lg"></i>
-                  </button>
-                </div>
-                <div class="card-body">
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="form-label" [for]="'agendaStart' + $index">Start Time</label>
-                      <input [id]="'agendaStart' + $index" [name]="'agendaStart' + $index" type="datetime-local"
-                        class="form-control glass-form-input" [(ngModel)]="item.startDateTime" />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label" [for]="'agendaEnd' + $index">End Time</label>
-                      <input [id]="'agendaEnd' + $index" [name]="'agendaEnd' + $index" type="datetime-local"
-                        class="form-control glass-form-input" [(ngModel)]="item.endDateTime" />
-                    </div>
-                    <div class="col-12">
-                      <label class="form-label" [for]="'agendaTitle' + $index">Title *</label>
-                      <input [id]="'agendaTitle' + $index" [name]="'agendaTitle' + $index" type="text"
-                        class="form-control glass-form-input" [(ngModel)]="item.title" placeholder="Session title" />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label" [for]="'agendaSpeaker' + $index">Speaker</label>
-                      <input [id]="'agendaSpeaker' + $index" [name]="'agendaSpeaker' + $index" type="text"
-                        class="form-control glass-form-input" [(ngModel)]="item.speaker" placeholder="Speaker name" />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label" [for]="'agendaLocation' + $index">Location</label>
-                      <input [id]="'agendaLocation' + $index" [name]="'agendaLocation' + $index" type="text"
-                        class="form-control glass-form-input" [(ngModel)]="item.location" placeholder="Room or area" />
-                    </div>
-                    <div class="col-12">
-                      <label class="form-label" [for]="'agendaDesc' + $index">Description</label>
-                      <textarea [id]="'agendaDesc' + $index" [name]="'agendaDesc' + $index"
-                        class="form-control glass-form-input" [(ngModel)]="item.description" rows="2"
-                        placeholder="Brief description"></textarea>
-                    </div>
-                    <div class="col-12">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" [id]="'agendaBreak' + $index"
-                          [name]="'agendaBreak' + $index" [(ngModel)]="item.isBreak" />
-                        <label class="form-check-label text-secondary" [for]="'agendaBreak' + $index">
-                          This is a break / intermission
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              }
-
-              @if (formData.agenda.length === 0) {
-              <p class="text-secondary fst-italic small mb-3">
-                No agenda items yet. Click &ldquo;Add Item&rdquo; to create one.
-              </p>
-              }
-
-              <button type="button" class="btn btn-outline-primary w-100" (click)="addAgendaItem()">
-                <i class="bi bi-plus-lg"></i> Add Agenda Item
-              </button>
-            </div>
             }
 
           </form>
+
         </div>
 
-        <!-- Footer Navigation -->
+
+        <!-- ======================================================
+               WIZARD FOOTER
+               ====================================================== -->
+
         <div class="modal-footer wizard-footer">
-          <span class="wizard-step-counter">Step {{ wizardStep }} of {{ totalWizardSteps }}</span>
+
+          <span class="wizard-step-counter">
+            Step {{ wizardStep }} of {{ totalWizardSteps }}
+          </span>
+
+
           <div class="d-flex gap-2">
+
             <button type="button" class="btn btn-outline-light" (click)="closeModal()" [disabled]="isFormSubmitting">
+
               Cancel
+
             </button>
+
+
             @if (wizardStep > 1) {
+
             <button type="button" class="btn btn-dark" (click)="prevStep()" [disabled]="isFormSubmitting">
-              <i class="bi bi-arrow-left"></i> Back
+
+              <i class="bi bi-arrow-left"></i>
+              Back
+
             </button>
+
             }
-            @if (wizardStep < totalWizardSteps) { <button type="button" class="btn btn-primary" (click)="nextStep()">
-              Next <i class="bi bi-arrow-right"></i>
+
+
+            @if (wizardStep < totalWizardSteps) { <button type="button" class="btn btn-primary" (click)="nextStep()"
+              [disabled]="isFormSubmitting">
+
+              Next
+              <i class="bi bi-arrow-right"></i>
+
               </button>
+
               }
+
+
               @if (wizardStep === totalWizardSteps) {
+
               <button type="button" class="btn btn-primary" (click)="submitForm()" [disabled]="isFormSubmitting">
-                {{ isFormSubmitting ? 'Saving...' : (isEditMode ? 'Update Event' : 'Add Event') }}
+
+                {{
+                isFormSubmitting
+                ? 'Saving...'
+                : (isEditMode
+                ? 'Update Event'
+                : 'Add Event')
+                }}
+
               </button>
+
               }
+
           </div>
+
         </div>
 
+      </div>
+
+    </div>
+
+  </div>
+
+  }
+
+
+  <!-- ============================================================
+       POST-CREATION AGENDA PROMPT
+       ============================================================ -->
+
+  @if (showAgendaPrompt && newlyCreatedEvent) {
+  <div class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center p-4">
+        <h5 class="text-white mb-2">{{ newlyCreatedEvent.title }}</h5>
+        <p class="text-secondary">Your event has been created successfully. Would you like to build its agenda now?</p>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+          <button type="button" class="btn btn-outline-light" (click)="closeAgendaPrompt()">Maybe Later</button>
+          <button type="button" class="btn btn-primary" (click)="openAgendaBuilder()">Build Agenda</button>
+        </div>
       </div>
     </div>
   </div>
   }
 
-  <!-- View Event Details Modal -->
+
+  <!-- ============================================================
+       VIEW EVENT DETAILS MODAL
+       ============================================================ -->
+
   @if (isViewModalOpen && viewingEvent) {
+
   <div class="modal-overlay" role="dialog" aria-modal="true" (click)="closeViewModal()"
     (keydown.escape)="closeViewModal()">
+
     <div class="modal-dialog modal-view-event" (click)="$event.stopPropagation()">
+
       <div class="modal-content">
 
+
+        <!-- HEADER -->
+
         <div class="modal-header">
+
           <h5 class="modal-title">
-            <i class="bi bi-calendar-event"></i> Event Details
+
+            <i class="bi bi-calendar-event"></i>
+
+            Event Details
+
           </h5>
-          <button type="button" class="btn-close btn-close-white" (click)="closeViewModal()"></button>
+
+          <button type="button" class="btn-close btn-close-white" (click)="closeViewModal()">
+          </button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div class="modal-body">
+
+
+          <!-- BANNER -->
+
+          @if (viewingEvent.bannerImageUrl) {
+
+          <div class="view-event-banner mb-4">
+
+            <img [src]="viewingEvent.bannerImageUrl" [alt]="viewingEvent.title" class="view-event-banner-img" />
+
+          </div>
+
+          }
+
+
+          <!-- TITLE -->
+
+          <div class="view-event-header mb-4">
+
+            <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap">
+
+              <div>
+
+                <h4 class="view-event-title mb-1">
+                  {{ viewingEvent.title }}
+                </h4>
+
+                <span class="view-id-badge">
+                  {{ viewingEvent.id }}
+                </span>
+
+              </div>
+
+
+              <span class="badge event-status-badge" [ngClass]="
+                    getStatusBadgeClass(viewingEvent.status)
+                  ">
+
+                {{ formatStatus(viewingEvent.status) }}
+
+              </span>
+
+            </div>
+
+
+            <p class="view-event-description mt-3 mb-0">
+
+              {{ viewingEvent.description }}
+
+            </p>
+
+          </div>
+
+
+          <!-- DETAIL GRID -->
+
+          <div class="view-event-grid">
+
+
+            <div class="view-detail-card">
+
+              <span class="view-detail-label">
+
+                <i class="bi bi-person-badge"></i>
+
+                Organizer
+
+              </span>
+
+              <span class="view-detail-value">
+                {{ viewingEvent.organizerName }}
+              </span>
+
+              <span class="view-detail-sub">
+                {{ viewingEvent.organizerId }}
+              </span>
+
+            </div>
+
+
+            <div class="view-detail-card">
+
+              <span class="view-detail-label">
+
+                <i class="bi bi-geo-alt"></i>
+
+                Venue
+
+              </span>
+
+              <span class="view-detail-value">
+                {{ viewingEvent.locationAddress }}
+              </span>
+
+            </div>
+
+
+            <div class="view-detail-card">
+
+              <span class="view-detail-label">
+
+                <i class="bi bi-calendar-range"></i>
+
+                Schedule
+
+              </span>
+
+              <span class="view-detail-value">
+
+                {{ viewingEvent.startTime | date:'mediumDate' }}
+
+              </span>
+
+              <span class="view-detail-sub">
+
+                {{ viewingEvent.startTime | date:'shortTime' }}
+
+                –
+
+                {{ viewingEvent.endTime | date:'shortTime' }}
+
+              </span>
+
+            </div>
+
+
+            <div class="view-detail-card">
+
+              <span class="view-detail-label">
+
+                <i class="bi bi-pencil-square"></i>
+
+                Registration Window
+
+              </span>
+
+              <span class="view-detail-value">
+
+                {{ viewingEvent.registrationOpensAt | date:'mediumDate' }}
+
+              </span>
+
+              <span class="view-detail-sub">
+
+                until
+
+                {{ viewingEvent.registrationClosesAt | date:'mediumDate' }}
+
+              </span>
+
+            </div>
+
+
+            <div class="view-detail-card">
+
+              <span class="view-detail-label">
+
+                <i class="bi bi-people"></i>
+
+                Capacity
+
+              </span>
+
+              <span class="view-detail-value">
+
+                {{ viewingEvent.capacity.registered }}
+
+                /
+
+                {{ viewingEvent.capacity.maximum }}
+
+                registered
+
+              </span>
+
+              <div class="view-capacity-bar mt-2">
+
+                <div class="view-capacity-fill" [style.width.%]="
+                      viewingEvent.capacity.maximum > 0
+                        ? (
+                            viewingEvent.capacity.registered /
+                            viewingEvent.capacity.maximum
+                          ) * 100
+                        : 0
+                    ">
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ====================================================
+                 DECOUPLED AGENDA
+                 ==================================================== -->
+
+          <div class="view-agenda-section mt-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+
+              <span class="view-detail-label">
+
+                <i class="bi bi-list-task"></i>
+
+                Agendas
+
+              </span>
+
+
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="
+                    openAgendaManagement(viewingEvent!)
+                  ">
+
+                <i class="bi bi-pencil"></i>
+
+                Manage
+
+              </button>
+
+            </div>
+
+
+            @if (isAgendaLoading) {
+
+            <div class="text-secondary py-3">
+
+              <span class="spinner-border spinner-border-sm me-2">
+              </span>
+
+              Loading agendas...
+
+            </div>
+
+            }
+
+
+            @if (!isAgendaLoading && agendaError) {
+
+            <div class="alert alert-danger">
+
+              {{ agendaError }}
+
+            </div>
+
+            }
+
+
+            @if (
+            !isAgendaLoading &&
+            !agendaError &&
+            viewingEventAgendas.length === 0
+            ) {
+
+            <div class="text-secondary py-3">
+
+              <i class="bi bi-calendar-x me-2"></i>
+
+              No agendas have been created for this event yet.
+
+            </div>
+
+            }
+
+
+            @if (
+            !isAgendaLoading &&
+            viewingEventAgendas.length > 0
+            ) {
+
+            <div class="view-agenda-list">
+
+              @for (
+              agenda of viewingEventAgendas;
+              track agenda.id
+              ) {
+
+              <div class="view-agenda-item">
+
+                <div class="view-agenda-time">
+
+                  {{ agenda.agendaDate | date:'mediumDate' }}
+
+                </div>
+
+
+                <div class="view-agenda-body">
+
+                  <div class="view-agenda-title">
+
+                    {{ agenda.title }}
+
+                  </div>
+
+
+                  @if (agenda.description) {
+
+                  <div class="view-agenda-desc">
+
+                    {{ agenda.description }}
+
+                  </div>
+
+                  }
+
+                </div>
+
+              </div>
+
+              }
+
+            </div>
+
+            }
+
+          </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="modal-footer">
+
+          <button type="button" class="btn" type="button" btn-outline-light (click)="closeViewModal()">
+
+            Close
+
+          </button>
+
+
+          <button type="button" class="btn btn-outline-danger" (click)="
+                openDeleteConfirm(viewingEvent!);
+                closeViewModal()
+              " [disabled]="isDeleting">
+
+            <i class="bi bi-trash"></i>
+
+            Delete
+
+          </button>
+
+
+          <button type="button" class="btn btn-outline-success" (click)="
+                openEditEventModal(viewingEvent!);
+                closeViewModal()
+              ">
+
+            <i class="bi bi-pencil"></i>
+
+            Edit
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  }
+
+
+  <!-- ============================================================
+       AGENDA MANAGEMENT MODAL
+       ============================================================ -->
+
+  @if (isAgendaModalOpen && agendaEvent) {
+  <div class="modal-overlay" role="dialog" aria-modal="true" (click)="closeAgendaManagement()"
+    (keydown.escape)="closeAgendaManagement()">
+    <div class="modal-dialog modal-xl" (click)="$event.stopPropagation()">
+      <div class="modal-content bg-dark text-white p-3 border-secondary">
+
+        <div class="modal-header border-secondary mb-3">
+          <h5 class="modal-title text-white">
+            <i class="bi bi-calendar-plus me-2"></i>Manage Agenda
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeAgendaManagement()"></button>
         </div>
 
         <div class="modal-body">
-          <!-- Banner -->
-          @if (viewingEvent.bannerImageUrl) {
-          <div class="view-event-banner mb-4">
-            <img [src]="viewingEvent.bannerImageUrl" [alt]="viewingEvent.title" class="view-event-banner-img" />
+          @if (agendaError) {
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            {{ agendaError }}
+            <button type="button" class="btn-close btn-close-white" (click)="agendaError = ''"></button>
           </div>
           }
 
-          <!-- Title & Status Header -->
-          <div class="view-event-header mb-4">
-            <div class="d-flex align-items-start justify-content-between gap-2 flex-wrap">
-              <div>
-                <h4 class="view-event-title mb-1">{{ viewingEvent.title }}</h4>
-                <span class="view-id-badge">{{ viewingEvent.id }}</span>
-              </div>
-              <span class="badge event-status-badge" [ngClass]="getStatusBadgeClass(viewingEvent.status)">
-                {{ formatStatus(viewingEvent.status) }}
-              </span>
+          <!-- Agenda Info -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label small text-secondary">Agenda Title *</label>
+              <input type="text" class="form-control glass-form-input text-white" [(ngModel)]="agendaFormData.title"
+                placeholder="e.g., Day 1: Keynote & Workshops" />
             </div>
-            <p class="view-event-description mt-3 mb-0">{{ viewingEvent.description }}</p>
+            <div class="col-md-6">
+              <label class="form-label small text-secondary">Description</label>
+
+              <input type="text" class="form-control glass-form-input text-white"
+                [(ngModel)]="agendaFormData.description" placeholder="Brief overview for this agenda day" />
+            </div>
           </div>
 
-          <!-- Detail Grid -->
-          <div class="view-event-grid">
-            <div class="view-detail-card">
-              <span class="view-detail-label"><i class="bi bi-person-badge"></i> Organizer</span>
-              <span class="view-detail-value">{{ viewingEvent.organizerName }}</span>
-              <span class="view-detail-sub">{{ viewingEvent.organizerId }}</span>
+          <hr class="border-secondary my-4" />
+
+          <!-- Tracks Header -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="text-white mb-0"><i class="bi bi-layers me-2"></i>Tracks</h6>
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="addTrackToAgenda()">
+              <i class="bi bi-plus-lg me-1"></i>Click to add Track
+            </button>
+          </div>
+
+          <!-- Dynamic Tracks Column/Row View -->
+          @if (localTracks.length === 0) {
+          <div class="text-center py-4 border border-dashed border-secondary rounded text-secondary mb-3">
+            No tracks added yet. Click "+ Click to add Track" to start adding tracks and sessions.
+          </div>
+          }
+
+          @for (track of localTracks; track track.id ?? $index; let trackIndex = $index) {
+          <div class="card bg-secondary bg-opacity-10 border-secondary mb-3 p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge bg-primary">Track {{ trackIndex + 1 }}</span>
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeTrackFromAgenda(trackIndex)">
+                <i class="bi bi-trash"></i>
+              </button>
             </div>
-            <div class="view-detail-card">
-              <span class="view-detail-label"><i class="bi bi-geo-alt"></i> Venue</span>
-              <span class="view-detail-value">{{ viewingEvent.venue }}</span>
+
+            <!-- Track Fields -->
+            <div class="row g-2 mb-3">
+              <div class="col-md-4">
+                <label class="form-label small text-secondary">Track Title (Name) *</label>
+                <input type="text" class="form-control glass-form-input text-white" [(ngModel)]="track.name"
+                  placeholder="e.g., Room 1 / Main Stage" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small text-secondary">Description</label>
+                <input type="text" class="form-control glass-form-input text-white" [(ngModel)]="track.description"
+                  placeholder="Track details" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label small text-secondary">Start Time *</label>
+                <input type="datetime-local" class="form-control glass-form-input text-white"
+                  [(ngModel)]="track.startTime" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label small text-secondary">End Time *</label>
+                <input type="datetime-local" class="form-control glass-form-input text-white"
+                  [(ngModel)]="track.endTime" />
+              </div>
             </div>
-            <div class="view-detail-card">
-              <span class="view-detail-label"><i class="bi bi-calendar-range"></i> Schedule</span>
-              <span class="view-detail-value">{{ viewingEvent.startDateTime | date:'mediumDate' }}</span>
-              <span class="view-detail-sub">{{ viewingEvent.startDateTime | date:'shortTime' }} – {{
-                viewingEvent.endDateTime | date:'shortTime' }}</span>
-            </div>
-            <div class="view-detail-card">
-              <span class="view-detail-label"><i class="bi bi-pencil-square"></i> Registration Window</span>
-              <span class="view-detail-value">{{ viewingEvent.registrationOpensAt | date:'mediumDate' }}</span>
-              <span class="view-detail-sub">until {{ viewingEvent.registrationClosesAt | date:'mediumDate' }}</span>
-            </div>
-            <div class="view-detail-card">
-              <span class="view-detail-label"><i class="bi bi-people"></i> Capacity</span>
-              <span class="view-detail-value">{{ viewingEvent.capacity.registered }} / {{
-                viewingEvent.capacity.maximum
-                }} registered</span>
-              <div class="view-capacity-bar mt-2">
-                <div class="view-capacity-fill"
-                  [style.width.%]="viewingEvent.capacity.maximum > 0 ? (viewingEvent.capacity.registered / viewingEvent.capacity.maximum) * 100 : 0">
+
+            <!-- Sessions Section inside Track -->
+            <div class="p-2 bg-dark rounded border border-secondary">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-semibold text-secondary">Sessions in this track</span>
+                <button type="button" class="btn btn-sm btn-outline-success" (click)="addSessionToTrack(trackIndex)">
+                  <i class="bi bi-plus-circle me-1"></i>Add Session
+                </button>
+              </div>
+
+              @if (track.sessions.length === 0) {
+              <p class="small text-secondary mb-0 py-2 text-center">No sessions added to this track yet.</p>
+              }
+
+              @for (session of track.sessions; track session.id ?? $index; let sessionIndex = $index) {
+              <div class="row g-2 align-items-center mb-2 pb-2 border-bottom border-secondary">
+                <div class="col-md-4">
+                  <input type="text" class="form-control form-control-sm glass-form-input text-white"
+                    [(ngModel)]="session.title" placeholder="Session Title *" />
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Agenda -->
-          @if (viewingEvent.agenda && viewingEvent.agenda.length > 0) {
-          <div class="view-agenda-section mt-3">
-            <span class="view-detail-label mb-2 d-block"><i class="bi bi-list-task"></i> Agenda</span>
-            <div class="view-agenda-list">
-              @for (item of viewingEvent.agenda; track $index) {
-              <div class="view-agenda-item" [class.view-agenda-break]="item.isBreak">
-                <div class="view-agenda-time">{{ item.startDateTime | date:'shortTime' }}</div>
-                <div class="view-agenda-body">
-                  <div class="view-agenda-title">{{ item.title }}</div>
-                  @if (item.speaker) {
-                  <div class="view-agenda-speaker"><i class="bi bi-mic"></i> {{ item.speaker }}</div>
-                  }
-                  @if (item.location) {
-                  <div class="view-agenda-location"><i class="bi bi-geo-alt"></i> {{ item.location }}</div>
-                  }
-                  @if (item.description) {
-                  <div class="view-agenda-desc">{{ item.description }}</div>
-                  }
+                <div class="col-md-4">
+                  <input type="text" class="form-control form-control-sm glass-form-input text-white"
+                    [(ngModel)]="session.description" placeholder="Description" />
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control form-control-sm glass-form-input text-white"
+                    [(ngModel)]="session.locationOrRoom" placeholder="Location / Room" />
+                </div>
+                <div class="col-md-1 text-end">
+                  <button type="button" class="btn btn-sm btn-outline-danger"
+                    (click)="removeSessionFromTrack(trackIndex, sessionIndex)">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
                 </div>
               </div>
               }
@@ -497,15 +1317,12 @@
           }
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-light" (click)="closeViewModal()">Close</button>
-          <button type="button" class="btn btn-outline-danger"
-            (click)="openDeleteConfirm(viewingEvent!); closeViewModal()" [disabled]="isDeleting">
-            <i class="bi bi-trash"></i> Delete
-          </button>
-          <button type="button" class="btn btn-outline-success"
-            (click)="openEditEventModal(viewingEvent!); closeViewModal()">
-            <i class="bi bi-pencil"></i> Edit
+        <div class="modal-footer border-secondary mt-3">
+          <button type="button" class="btn btn-outline-light" (click)="closeAgendaManagement()">Close</button>
+          <button type="button" class="btn btn-primary px-4" [disabled]="isAgendaSubmitting || !agendaFormData.title"
+            (click)="buildCompleteScheduleItem()">
+            @if (isAgendaSubmitting) { <span class="spinner-border spinner-border-sm me-1"></span> }
+            Save Complete Agenda
           </button>
         </div>
 
@@ -514,51 +1331,131 @@
   </div>
   }
 
-  <!-- Delete Confirmation Modal -->
+
+  <!-- ============================================================
+       DELETE CONFIRMATION
+       ============================================================ -->
+
   @if (showDeleteConfirm) {
+
   <div class="modal-overlay" role="dialog" aria-modal="true" (click)="closeDeleteConfirm()"
     (keydown.escape)="closeDeleteConfirm()">
+
     <div class="modal-dialog modal-sm" (click)="$event.stopPropagation()">
+
       <div class="modal-content">
+
+
         <div class="modal-header border-danger">
+
           <h5 class="modal-title text-danger">
-            <i class="bi bi-exclamation-triangle"></i> Confirm Delete
+
+            <i class="bi bi-exclamation-triangle"></i>
+
+            Confirm Delete
+
           </h5>
-          <button type="button" class="btn-close btn-close-white" (click)="closeDeleteConfirm()"></button>
+
+          <button type="button" class="btn-close btn-close-white" (click)="closeDeleteConfirm()">
+          </button>
+
         </div>
+
 
         <div class="modal-body">
+
           <p class="mb-0">
-            Are you sure you want to delete <strong>{{ deleteConfirmName }}</strong>? This action cannot be undone.
+
+            Are you sure you want to delete
+
+            <strong>
+              {{ deleteConfirmName }}
+            </strong>?
+
+            This action cannot be undone.
+
           </p>
+
         </div>
+
 
         <div class="modal-footer">
+
           <button type="button" class="btn btn-outline-light" (click)="closeDeleteConfirm()" [disabled]="isDeleting">
+
             Cancel
+
           </button>
+
+
           <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="isDeleting">
-            {{ isDeleting ? 'Deleting...' : 'Delete Event' }}
+
+            {{
+            isDeleting
+            ? 'Deleting...'
+            : 'Delete Event'
+            }}
+
           </button>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
   }
 
-  <!-- Toast Notification -->
+
+  <!-- ============================================================
+       TOAST
+       ============================================================ -->
+
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+
     @if (showToastNotif) {
+
     <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header" [ngClass]="toastType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'">
-        <i class="bi me-2" [ngClass]="toastType === 'success' ? 'bi-check-circle-fill' : 'bi-trash-fill'"></i>
-        <strong class="me-auto">{{ toastTitle }}</strong>
-        <button type="button" class="btn-close btn-close-white" (click)="showToastNotif = false"></button>
+
+      <div class="toast-header" [ngClass]="
+            toastType === 'success'
+              ? 'bg-success text-white'
+              : 'bg-danger text-white'
+          ">
+
+        <i class="bi me-2" [ngClass]="
+              toastType === 'success'
+                ? 'bi-check-circle-fill'
+                : 'bi-trash-fill'
+            ">
+        </i>
+
+        <strong class="me-auto">
+          {{ toastTitle }}
+        </strong>
+
+        <button type="button" class="btn-close btn-close-white" (click)="showToastNotif = false">
+        </button>
+
       </div>
-      <div class="toast-body" [ngClass]="toastType === 'success' ? 'bg-success text-white' : 'bg-danger text-white'">
+
+
+      <div class="toast-body" [ngClass]="
+            toastType === 'success'
+              ? 'bg-success text-white'
+              : 'bg-danger text-white'
+          ">
+
         {{ toastMessage }}
+
       </div>
+
     </div>
+
     }
+
   </div>
+
 </section>

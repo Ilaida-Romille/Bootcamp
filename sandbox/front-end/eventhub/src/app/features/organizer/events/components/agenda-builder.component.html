@@ -1,0 +1,605 @@
+<div class="agenda-builder">
+
+    <!-- HEADER -->
+    <div class="agenda-builder-header">
+
+        <div>
+            <p class="eyebrow">EVENT PROGRAM</p>
+
+            <h2>
+                Build Agenda
+            </h2>
+
+            <p class="event-name">
+                {{ eventTitle }}
+            </p>
+        </div>
+
+        <button type="button" class="btn btn-primary" (click)="openAgendaForm()">
+            <i class="bi bi-plus-lg"></i>
+            Add Agenda
+        </button>
+
+    </div>
+
+
+    <!-- LOADING -->
+    @if (loading) {
+
+    <div class="agenda-loading">
+
+        <div class="spinner-border" role="status"></div>
+
+        <span>
+            Loading agendas...
+        </span>
+
+    </div>
+    }
+
+
+    <!-- EMPTY STATE -->
+    @if (!loading && agendas.length === 0) {
+
+    <div class="agenda-empty">
+
+        <div class="empty-icon">
+            <i class="bi bi-calendar3"></i>
+        </div>
+
+        <h3>
+            No agenda yet
+        </h3>
+
+        <p>
+            Start building your event schedule by creating
+            your first agenda.
+        </p>
+
+        <button type="button" class="btn btn-primary" (click)="openAgendaForm()">
+            <i class="bi bi-plus-lg"></i>
+            Create First Agenda
+        </button>
+
+    </div>
+    }
+
+
+    <!-- AGENDAS -->
+    @if (!loading && agendas.length > 0) {
+
+    <div class="agenda-list">
+
+        @for (agenda of agendas; track agenda.id) {
+
+        <section class="agenda-card">
+
+            <!-- AGENDA HEADER -->
+            <div class="agenda-card-header">
+
+                <div class="agenda-date">
+
+                    <div class="date-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="date-label">
+                            {{ agenda.agendaDate | date:'EEEE, MMMM d, y' }}
+                        </span>
+
+                        <h3>
+                            {{ agenda.title }}
+                        </h3>
+
+                        @if (agenda.description) {
+
+                        <p>
+                            {{ agenda.description }}
+                        </p>
+
+                        }
+
+                    </div>
+
+                </div>
+
+
+                <button type="button" class="btn btn-outline-primary btn-sm" (click)="openTrackForm(agenda)">
+                    <i class="bi bi-plus-lg"></i>
+                    Add Track
+                </button>
+
+            </div>
+
+
+            <!-- TRACKS -->
+            <div class="tracks">
+
+                @if (agenda.tracks.length === 0) {
+
+                <div class="track-empty">
+
+                    <i class="bi bi-diagram-3"></i>
+
+                    <span>
+                        No tracks have been added to this agenda.
+                    </span>
+
+                </div>
+
+                }
+
+
+                @for (
+                track of agenda.tracks;
+                track track.id
+                ) {
+
+                <div class="track-card">
+
+                    <!-- TRACK HEADER -->
+                    <div class="track-header">
+
+                        <div>
+
+                            <div class="track-title">
+
+                                <span class="track-order">
+                                    {{ track.displayOrder }}
+                                </span>
+
+                                <div>
+
+                                    <h4>
+                                        {{ track.name }}
+                                    </h4>
+
+                                    @if (track.description) {
+
+                                    <p>
+                                        {{ track.description }}
+                                    </p>
+
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                            (click)="openSessionForm(agenda, track)">
+                            <i class="bi bi-plus-lg"></i>
+                            Add Session
+                        </button>
+
+                    </div>
+
+
+                    <!-- SESSIONS -->
+                    <div class="sessions">
+
+                        @if (track.sessions.length === 0) {
+
+                        <div class="session-empty">
+                            No sessions yet.
+                        </div>
+
+                        }
+
+
+                        @for (
+                        session of track.sessions;
+                        track session.id
+                        ) {
+
+                        <article class="session-item">
+
+                            <div class="session-time">
+
+                                <strong>
+                                    {{ session.startTime | date:'h:mm a' }}
+                                </strong>
+
+                                <span>
+                                    {{ session.endTime | date:'h:mm a' }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="session-content">
+
+                                <h5>
+                                    {{ session.title }}
+                                </h5>
+
+                                @if (session.locationOrRoom) {
+
+                                <span class="session-location">
+
+                                    <i class="bi bi-geo-alt"></i>
+
+                                    {{ session.locationOrRoom }}
+
+                                </span>
+
+                                }
+
+                            </div>
+
+                        </article>
+
+                        }
+
+                    </div>
+
+                </div>
+
+                }
+
+            </div>
+
+        </section>
+
+        }
+
+    </div>
+
+    }
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- CREATE AGENDA MODAL -->
+<!-- ========================================================= -->
+
+@if (showAgendaForm) {
+
+<div class="modal-backdrop-custom">
+
+    <div class="agenda-modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    NEW AGENDA
+                </span>
+
+                <h3>
+                    Create Agenda
+                </h3>
+
+            </div>
+
+            <button type="button" class="btn-close" (click)="cancelAgenda()"></button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Date
+                </label>
+
+                <input type="date" class="form-control" [(ngModel)]="agendaForm.agendaDate" />
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Title
+                </label>
+
+                <input type="text" class="form-control" placeholder="e.g. Day 1 — Conference"
+                    [(ngModel)]="agendaForm.title" />
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Description
+                    <span class="text-muted">
+                        Optional
+                    </span>
+                </label>
+
+                <textarea class="form-control" rows="3" placeholder="Describe this day's agenda..."
+                    [(ngModel)]="agendaForm.description"></textarea>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button type="button" class="btn btn-light" (click)="cancelAgenda()">
+                Cancel
+            </button>
+
+            <button type="button" class="btn btn-primary" [disabled]="
+            saving ||
+            !agendaForm.agendaDate ||
+            !agendaForm.title.trim()
+          " (click)="createAgenda()">
+
+                @if (saving) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                }
+
+                Create Agenda
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+}
+
+
+<!-- ========================================================= -->
+<!-- CREATE TRACK MODAL -->
+<!-- ========================================================= -->
+
+@if (showTrackForm && selectedAgenda) {
+
+<div class="modal-backdrop-custom">
+
+    <div class="agenda-modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    {{ selectedAgenda.title }}
+                </span>
+
+                <h3>
+                    Add Track
+                </h3>
+
+            </div>
+
+            <button type="button" class="btn-close" (click)="cancelTrack()"></button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Track Name
+                </label>
+
+                <input type="text" class="form-control" placeholder="e.g. Main Conference"
+                    [(ngModel)]="trackForm.name" />
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Description
+                    <span class="text-muted">
+                        Optional
+                    </span>
+                </label>
+
+                <textarea class="form-control" rows="3" placeholder="Describe this track..."
+                    [(ngModel)]="trackForm.description"></textarea>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Display Order
+                </label>
+
+                <input type="number" min="1" class="form-control" [(ngModel)]="trackForm.displayOrder" />
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button type="button" class="btn btn-light" (click)="cancelTrack()">
+                Cancel
+            </button>
+
+            <button type="button" class="btn btn-primary" [disabled]="
+            saving ||
+            !trackForm.name.trim()
+          " (click)="createTrack()">
+
+                @if (saving) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                }
+
+                Create Track
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+}
+
+
+<!-- ========================================================= -->
+<!-- CREATE SESSION MODAL -->
+<!-- ========================================================= -->
+
+@if (showSessionForm && selectedTrack) {
+
+<div class="modal-backdrop-custom">
+
+    <div class="agenda-modal agenda-modal-lg">
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    {{ selectedTrack.name }}
+                </span>
+
+                <h3>
+                    Add Session
+                </h3>
+
+            </div>
+
+            <button type="button" class="btn-close" (click)="cancelSession()"></button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Session Title
+                </label>
+
+                <input type="text" class="form-control" placeholder="e.g. Building Scalable APIs"
+                    [(ngModel)]="sessionForm.title" />
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Description
+                    <span class="text-muted">
+                        Optional
+                    </span>
+                </label>
+
+                <textarea class="form-control" rows="3" placeholder="Describe the session..."
+                    [(ngModel)]="sessionForm.description"></textarea>
+
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+                        Start Time
+                    </label>
+
+                    <input type="datetime-local" class="form-control" [(ngModel)]="sessionForm.startTime" />
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+                        End Time
+                    </label>
+
+                    <input type="datetime-local" class="form-control" [(ngModel)]="sessionForm.endTime" />
+
+                </div>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Location / Room
+                    <span class="text-muted">
+                        Optional
+                    </span>
+                </label>
+
+                <input type="text" class="form-control" placeholder="e.g. Room 101"
+                    [(ngModel)]="sessionForm.locationOrRoom" />
+
+            </div>
+
+
+            <!-- Speaker selector can be plugged in here -->
+            <div class="speaker-placeholder">
+
+                <i class="bi bi-person-plus"></i>
+
+                <div>
+
+                    <strong>
+                        Speakers
+                    </strong>
+
+                    <p>
+                        Speaker selection can be connected
+                        to your Speaker API here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button type="button" class="btn btn-light" (click)="cancelSession()">
+                Cancel
+            </button>
+
+            <button type="button" class="btn btn-primary" [disabled]="
+            saving ||
+            !sessionForm.title.trim() ||
+            !sessionForm.startTime ||
+            !sessionForm.endTime
+          " (click)="createSession()">
+
+                @if (saving) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                }
+
+                Create Session
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+}
