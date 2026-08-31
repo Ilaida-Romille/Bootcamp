@@ -5,7 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { DataTableComponent, ColumnDef, SortEvent } from '../../../shared/components/data-table/data-table.component';
 import { DataTableCellDirective } from '../../../shared/components/data-table/data-table-cell.directive';
-import { Event, EventStatus } from './models/event.model';
+import { Event, EventResponse, Eventstatus, EventStatus, EventType } from './models/event.model';
 import { OrganizerEventsApiService, EventInput } from './services/organizer-events-api.service';
 import {
   validateEventSchedule,
@@ -26,38 +26,38 @@ export class OrganizerEventsComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   // Data
-  events: Event[] = [];
+  events: EventResponse[] = [];
+  totalElements = 0;
+  currentPage = 0;
+  itemsPerPage = 10;
   filteredEvents: Event[] = [];
 
   readonly columns: ColumnDef[] = [
-    { key: 'event',        header: 'Event' },
-    { key: 'organizer',    header: 'Organizer' },
-    { key: 'status',       header: 'Status',              sortable: false },
-    { key: 'schedule',     header: 'Schedule' },
+    { key: 'event', header: 'Event' },
+    { key: 'organizer', header: 'Organizer' },
+    { key: 'status', header: 'Status', sortable: false },
+    { key: 'schedule', header: 'Schedule' },
     { key: 'registration', header: 'Registration Window' },
-    { key: 'venue',        header: 'Venue' },
-    { key: 'actions',      header: 'Actions',             sortable: false, cssClass: 'text-center' }
+    { key: 'venue', header: 'Venue' },
+    { key: 'actions', header: 'Actions', sortable: false, cssClass: 'text-center' }
   ];
 
-  sortKey = 'schedule';
+  sortKey = 'startTime';
   sortDir: 'asc' | 'desc' = 'asc';
 
   // Filters
   searchTerm = '';
-  selectedOrganizer = 'All';
-  selectedStatus = 'All';
-  eventIdQuery = '';
+  selectedEventType: EventType | 'All' = 'All';
+  selectedStatus: EventStatus | 'All' = 'All';
 
   // Filter options
-  organizerOptions: string[] = ['All'];
-  statusOptions: string[] = ['All'];
+  eventTypeOptions: (EventType | 'All')[] = ['All', 'PHYSICAL', 'VIRTUAL', 'HYBRID'];
+  statusOptions: (Eventstatus | 'All')[] = ['All', 'DRAFT', 'PUBLISHED', 'COMPLETED', 'CANCELLED'];
 
-  // Pagination
-  currentPage = 1;
-  itemsPerPage = 8;
 
   // Loading states
   isLoading = false;
+  isTableLoading = false;
   isLookupLoading = false;
   isFormSubmitting = false;
   isDeleting = false;
@@ -101,117 +101,117 @@ export class OrganizerEventsComponent implements OnInit {
 
   // ============ Loading & Filtering ============
   loadEvents(): void {
-    this.isLoading = true;
+    this.isTableLoading = true; // Set only table loading state
     this.dataLoadingError = '';
 
-    this.eventsApi.getEvents().subscribe({
-      next: (events) => {
-        this.events = [...events].sort(
-          (a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime()
-        );
+    const statusParam = this.selectedStatus === 'All'
+      ? undefined
+      : (this.selectedStatus.toUpperCase() as EventStatus);
 
-        this.organizerOptions = ['All', ...new Set(this.events.map((item) => item.organizerName))];
-        this.statusOptions = ['All', ...new Set(this.events.map((item) => this.formatStatus(item.status)))];
+    const eventTypeParam = this.selectedEventType === 'All'
+      ? undefined
+      : this.selectedEventType;
 
-        this.applyFilters();
-        this.isLoading = false;
-        this.cdr.detectChanges();
+    const sortParam = `${this.sortKey},${this.sortDir}`;
+
+    this.eventsApi.getEvents(
+      this.currentPage,
+      this.itemsPerPage,
+      sortParam,
+      statusParam,
+      eventTypeParam, // Pass mapped event type to API
+      this.searchTerm.trim() === '' ? undefined : this.searchTerm.trim()
+    ).subscribe({
+      next: (response) => {
+        this.filteredEvents = response.content.map((item: any) => ({
+          id: String(item.id),
+          title: item.title,
+          description: item.description,
+          organizerId: String(item.organizationId),
+          organizerName: item.organizationName,
+          status: item.status ? item.status.toLowerCase() : 'draft',
+          startDateTime: item.startTime,
+          endDateTime: item.endTime,
+          registrationOpensAt: item.registrationStartTime || item.createdAt,
+          registrationClosesAt: item.registrationEndTime || item.startTime,
+          venue: item.locationAddress || item.virtualMeetingUrl || 'N/A',
+          bannerImageUrl: item.bannerImageUrl,
+          capacity: {
+            maximum: item.maxCapacity || 0,
+            registered: 0
+          },
+          agenda: []
+        }));
+
+        this.totalElements = response.totalElements;
       },
       error: (error: HttpErrorResponse) => {
-        this.events = [];
         this.filteredEvents = [];
-        this.isLoading = false;
-        this.dataLoadingError = this.getApiErrorMessage(error, 'Unable to load events from the API.');
+        this.totalElements = 0;
+        this.dataLoadingError = 'Unable to load events.';
+      },
+      complete: () => {
+        this.isTableLoading = false; // Turn off table loading state
         this.cdr.detectChanges();
       }
     });
   }
 
   applyFilters(): void {
-    this.isLookupMode = false;
-
-    const normalizedSearch = this.searchTerm.trim().toLowerCase();
-
-    this.filteredEvents = this.events.filter((event) => {
-      const matchesSearch =
-        normalizedSearch.length === 0 ||
-        event.title.toLowerCase().includes(normalizedSearch) ||
-        event.description.toLowerCase().includes(normalizedSearch) ||
-        event.venue.toLowerCase().includes(normalizedSearch);
-
-      const matchesOrganizer = this.selectedOrganizer === 'All' || event.organizerName === this.selectedOrganizer;
-      const formattedStatus = this.formatStatus(event.status);
-      const matchesStatus = this.selectedStatus === 'All' || formattedStatus === this.selectedStatus;
-
-      return matchesSearch && matchesOrganizer && matchesStatus;
-    });
-
-    this.currentPage = 1;
+    this.currentPage = 0; // Reset to first page when filtering
+    this.loadEvents();
   }
 
-  lookupById(): void {
-    const id = this.eventIdQuery.trim();
-    if (!id) {
-      return;
-    }
+  // lookupById(): void {
+  //   const id = this.eventIdQuery.trim();
+  //   if (!id) {
+  //     return;
+  //   }
 
-    this.isLookupLoading = true;
-    this.dataLoadingError = '';
+  //   this.isLookupLoading = true;
+  //   this.dataLoadingError = '';
 
-    this.eventsApi.getEventById(id).subscribe({
-      next: (event) => {
-        this.filteredEvents = [event];
-        this.isLookupMode = true;
-        this.currentPage = 1;
-        this.isLookupLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.filteredEvents = [];
-        this.isLookupMode = true;
-        this.isLookupLoading = false;
-        this.dataLoadingError = this.getApiErrorMessage(error, `No event found for ID "${id}".`);
-        this.cdr.detectChanges();
-      }
-    });
-  }
+  //   this.eventsApi.getEventById(id).subscribe({
+  //     next: (event) => {
+  //       this.filteredEvents = [event];
+  //       this.isLookupMode = true;
+  //       this.currentPage = 1;
+  //       this.isLookupLoading = false;
+  //       this.cdr.detectChanges();
+  //     },
+  //     error: (error: HttpErrorResponse) => {
+  //       this.filteredEvents = [];
+  //       this.isLookupMode = true;
+  //       this.isLookupLoading = false;
+  //       this.dataLoadingError = this.getApiErrorMessage(error, `No event found for ID "${id}".`);
+  //       this.cdr.detectChanges();
+  //     }
+  //   });
+  // }
 
   clearLookupAndFilters(): void {
-    this.eventIdQuery = '';
     this.searchTerm = '';
-    this.selectedOrganizer = 'All';
+    this.selectedEventType = 'All';
     this.selectedStatus = 'All';
-    this.isLookupMode = false;
-    this.applyFilters();
+    this.currentPage = 0;
+    this.loadEvents();
   }
 
   onPageChange(page: number): void {
-    this.currentPage = page;
+    // Angular paginators are often 1-indexed; subtract 1 for Spring Boot (0-indexed)
+    this.currentPage = page - 1;
+    this.loadEvents();
   }
 
   get paginatedEvents(): Event[] {
-    const getSortVal = (e: Event): string => {
-      switch (this.sortKey) {
-        case 'event':        return e.title;
-        case 'organizer':    return e.organizerName;
-        case 'schedule':     return e.startDateTime;
-        case 'registration': return e.registrationOpensAt;
-        case 'venue':        return e.venue;
-        default:             return '';
-      }
-    };
-    const sorted = [...this.filteredEvents].sort((a, b) => {
-      const cmp = getSortVal(a).localeCompare(getSortVal(b));
-      return this.sortDir === 'asc' ? cmp : -cmp;
-    });
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return sorted.slice(start, start + this.itemsPerPage);
+    return this.filteredEvents;
   }
 
   onSortChange(event: SortEvent): void {
     this.sortKey = event.key;
     this.sortDir = event.dir;
-    this.currentPage = 1;
+    this.currentPage = 0; // Reset to first page on sort change
+    this.loadEvents();
   }
 
   // ============ Modal & Form Management ============
@@ -318,58 +318,58 @@ export class OrganizerEventsComponent implements OnInit {
   }
 
   private createEvent(): void {
-    this.isFormSubmitting = true;
-    this.formError = '';
+    // this.isFormSubmitting = true;
+    // this.formError = '';
 
-    this.eventsApi.createEvent(this.buildEventPayload()).subscribe({
-      next: (newEvent) => {
-        this.events.push(newEvent);
-        this.events.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime());
-        this.applyFilters();
-        this.isFormSubmitting = false;
-        this.isModalOpen = false;
-        this.editingEventId = null;
-        this.formData = this.getDefaultFormData();
-        this.formError = '';
-        this.triggerToast('Event created successfully.', 'success', 'Event Created');
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.formError = this.getApiErrorMessage(error, 'Failed to create event. Please try again.');
-        this.isFormSubmitting = false;
-        this.cdr.detectChanges();
-      }
-    });
+    // this.eventsApi.createEvent(this.buildEventPayload()).subscribe({
+    //   next: (newEvent) => {
+    //     this.events.push(newEvent);
+    //     this.events.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime());
+    //     this.applyFilters();
+    //     this.isFormSubmitting = false;
+    //     this.isModalOpen = false;
+    //     this.editingEventId = null;
+    //     this.formData = this.getDefaultFormData();
+    //     this.formError = '';
+    //     this.triggerToast('Event created successfully.', 'success', 'Event Created');
+    //     this.cdr.detectChanges();
+    //   },
+    //   error: (error: HttpErrorResponse) => {
+    //     this.formError = this.getApiErrorMessage(error, 'Failed to create event. Please try again.');
+    //     this.isFormSubmitting = false;
+    //     this.cdr.detectChanges();
+    //   }
+    // });
   }
 
   private updateEvent(): void {
-    if (!this.editingEventId) return;
+    // if (!this.editingEventId) return;
 
-    this.isFormSubmitting = true;
-    this.formError = '';
+    // this.isFormSubmitting = true;
+    // this.formError = '';
 
-    this.eventsApi.updateEvent(this.editingEventId, this.buildEventPayload()).subscribe({
-      next: (updatedEvent) => {
-        const index = this.events.findIndex((evt) => evt.id === this.editingEventId);
-        if (index !== -1) {
-          this.events[index] = updatedEvent;
-        }
-        this.applyFilters();
-        this.isFormSubmitting = false;
-        this.isModalOpen = false;
-        this.isEditMode = false;
-        this.editingEventId = null;
-        this.formData = this.getDefaultFormData();
-        this.formError = '';
-        this.triggerToast('Event updated successfully.', 'success', 'Event Updated');
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.formError = this.getApiErrorMessage(error, 'Failed to update event. Please try again.');
-        this.isFormSubmitting = false;
-        this.cdr.detectChanges();
-      }
-    });
+    // this.eventsApi.updateEvent(this.editingEventId, this.buildEventPayload()).subscribe({
+    //   next: (updatedEvent) => {
+    //     const index = this.events.findIndex((evt) => evt.id === this.editingEventId);
+    //     if (index !== -1) {
+    //       this.events[index] = updatedEvent;
+    //     }
+    //     this.applyFilters();
+    //     this.isFormSubmitting = false;
+    //     this.isModalOpen = false;
+    //     this.isEditMode = false;
+    //     this.editingEventId = null;
+    //     this.formData = this.getDefaultFormData();
+    //     this.formError = '';
+    //     this.triggerToast('Event updated successfully.', 'success', 'Event Updated');
+    //     this.cdr.detectChanges();
+    //   },
+    //   error: (error: HttpErrorResponse) => {
+    //     this.formError = this.getApiErrorMessage(error, 'Failed to update event. Please try again.');
+    //     this.isFormSubmitting = false;
+    //     this.cdr.detectChanges();
+    //   }
+    // });
   }
 
   // ============ Delete Functionality ============
@@ -386,32 +386,32 @@ export class OrganizerEventsComponent implements OnInit {
   }
 
   confirmDelete(): void {
-    if (!this.deleteConfirmId) return;
+    // if (!this.deleteConfirmId) return;
 
-    this.isDeleting = true;
-    const eventId = this.deleteConfirmId;
+    // this.isDeleting = true;
+    // const eventId = this.deleteConfirmId;
 
-    this.eventsApi.deleteEvent(eventId).subscribe({
-      next: () => {
-        this.events = this.events.filter((evt) => evt.id !== eventId);
-        this.applyFilters();
-        this.isDeleting = false;
-        this.showDeleteConfirm = false;
-        this.deleteConfirmId = null;
-        this.deleteConfirmName = '';
-        this.triggerToast('Event deleted successfully.', 'danger', 'Event Deleted');
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        const errorMsg = this.getApiErrorMessage(error, 'Failed to delete event. Please try again.');
-        this.dataLoadingError = errorMsg;
-        this.isDeleting = false;
-        this.showDeleteConfirm = false;
-        this.deleteConfirmId = null;
-        this.deleteConfirmName = '';
-        this.cdr.detectChanges();
-      }
-    });
+    // this.eventsApi.deleteEvent(eventId).subscribe({
+    //   next: () => {
+    //     this.events = this.events.filter((evt) => evt.id !== eventId);
+    //     this.applyFilters();
+    //     this.isDeleting = false;
+    //     this.showDeleteConfirm = false;
+    //     this.deleteConfirmId = null;
+    //     this.deleteConfirmName = '';
+    //     this.triggerToast('Event deleted successfully.', 'danger', 'Event Deleted');
+    //     this.cdr.detectChanges();
+    //   },
+    //   error: (error: HttpErrorResponse) => {
+    //     const errorMsg = this.getApiErrorMessage(error, 'Failed to delete event. Please try again.');
+    //     this.dataLoadingError = errorMsg;
+    //     this.isDeleting = false;
+    //     this.showDeleteConfirm = false;
+    //     this.deleteConfirmId = null;
+    //     this.deleteConfirmName = '';
+    //     this.cdr.detectChanges();
+    //   }
+    // });
   }
 
   addAgendaItem(): void {
@@ -473,7 +473,7 @@ export class OrganizerEventsComponent implements OnInit {
 
   private isFormValid(): boolean {
     const { title, description, organizerId, organizerName, startDateTime, endDateTime,
-            registrationOpensAt, registrationClosesAt, venue, capacity } = this.formData;
+      registrationOpensAt, registrationClosesAt, venue, capacity } = this.formData;
 
     if (
       !title.trim() ||
@@ -536,26 +536,20 @@ export class OrganizerEventsComponent implements OnInit {
     return typeof message === 'string' && message.trim().length > 0 ? message : fallback;
   }
 
-  formatStatus(status: EventStatus): string {
-    return status
-      .split('_')
-      .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
-      .join(' ');
+  formatStatus(status: Eventstatus): string {
+    if (!status) return 'Draft';
+    return status.charAt(0) + status.slice(1).toLowerCase();
   }
 
-  getStatusBadgeClass(status: EventStatus): string {
+  getStatusBadgeClass(status: Eventstatus): string {
     switch (status) {
-      case 'draft':
+      case 'DRAFT':
         return 'status-draft';
-      case 'registration_open':
+      case 'PUBLISHED':
         return 'status-registration-open';
-      case 'registration_closed':
-        return 'status-registration-closed';
-      case 'ongoing':
-        return 'status-ongoing';
-      case 'completed':
+      case 'COMPLETED':
         return 'status-completed';
-      case 'cancelled':
+      case 'CANCELLED':
         return 'status-cancelled';
       default:
         return 'status-draft';
