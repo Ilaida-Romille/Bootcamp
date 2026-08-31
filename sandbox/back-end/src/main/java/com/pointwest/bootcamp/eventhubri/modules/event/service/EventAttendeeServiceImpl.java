@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.pointwest.bootcamp.eventhubri.core.exception.ResourceNotFoundException;
@@ -27,17 +28,29 @@ public class EventAttendeeServiceImpl implements EventAttendeeService {
     private final RegistrationRepository registrationRepository;
 
     @Override
-    public Page<EventDiscoveryResponseDto> browsedPublishedEvents(EventDiscoveryFilterDto filter, Pageable pageable) {
+    public Page<EventDiscoveryResponseDto> browsedPublishedEvents(EventDiscoveryFilterDto filter, Long userOrgId,
+            Pageable pageable) {
         return eventRepository.searchDiscoverable(
-                filter.keyword(), filter.eventType(), filter.startFrom(), filter.startTo(), filter.location(), pageable)
+                userOrgId,
+                filter.keyword(),
+                filter.eventType(),
+                filter.startFrom(),
+                filter.startTo(),
+                filter.location(),
+                pageable)
                 .map(this::toDiscoveryDto);
     }
 
     @Override
-    public EventDiscoveryResponseDto getPublishedEvents(Long eventId) {
-        Event event = eventRepository.findByIdAndStatusAndIsPrivateFalse(eventId, Event.Status.PUBLISHED)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Event not found or not open to the public: " + eventId));
+    public EventDiscoveryResponseDto getPublishedEvents(Long eventId, Long organizerId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found"));
+
+        // Check visibility permissions
+        if (event.isPrivate() && !event.getOrganization().getId().equals(organizerId)) {
+            throw new AccessDeniedException("You do not have permission to view this event.");
+        }
+
         return toDiscoveryDto(event);
     }
 

@@ -7,7 +7,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface EventAttendeeService {
 
-    Page<EventDiscoveryResponseDto> browsedPublishedEvents(EventDiscoveryFilterDto filter, Pageable pageable);
+    Page<EventDiscoveryResponseDto> browsedPublishedEvents(EventDiscoveryFilterDto filter, Long organizerId,
+            Pageable pageable);
 
-    EventDiscoveryResponseDto getPublishedEvents(Long eventId);
+    EventDiscoveryResponseDto getPublishedEvents(Long eventId, Long organizerId);
 }
