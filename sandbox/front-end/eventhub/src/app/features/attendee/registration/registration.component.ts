@@ -87,19 +87,19 @@ export class RegistrationComponent implements OnInit {
   }
 
   private loadEventDetails(): void {
-    if (!this.eventId) return;
+    // if (!this.eventId) return;
 
-    this.eventsDataService.getEventById(this.eventId).subscribe({
-      next: (event) => {
-        this.event = event;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.event = null;
-        this.submissionError = 'Unable to load event details.';
-        this.cdr.detectChanges();
-      }
-    });
+    // this.eventsDataService.getEventById(this.eventId).subscribe({
+    //   next: (event) => {
+    //     this.event = event;
+    //     this.cdr.detectChanges();
+    //   },
+    //   error: () => {
+    //     this.event = null;
+    //     this.submissionError = 'Unable to load event details.';
+    //     this.cdr.detectChanges();
+    //   }
+    // });
   }
 
   get f() {

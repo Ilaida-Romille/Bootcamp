@@ -48,21 +48,21 @@ export class AgendaComponent implements OnInit {
   }
 
   private loadEventDetails(): void {
-    if (!this.eventId) return;
+    // if (!this.eventId) return;
 
-    this.eventsDataService.getEventById(this.eventId).subscribe({
-      next: (event) => {
-        this.eventDetail = event;
-        this.agendaItems = event.agenda ?? [];
-        this.navbarContext.setEventName(event.title);
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.eventDetail = null;
-        this.agendaItems = [];
-        this.cdr.detectChanges();
-      }
-    });
+    // this.eventsDataService.ge(this.eventId).subscribe({
+    //   next: (event) => {
+    //     this.eventDetail = event;
+    //     this.agendaItems = event.agenda ?? [];
+    //     this.navbarContext.setEventName(event.title);
+    //     this.cdr.detectChanges();
+    //   },
+    //   error: () => {
+    //     this.eventDetail = null;
+    //     this.agendaItems = [];
+    //     this.cdr.detectChanges();
+    //   }
+    // });
   }
 
   private loadAttendees(): void {
