@@ -38,9 +38,10 @@ public class JwtService {
 
         return Jwts.builder()
                 .issuer(issuer)
-                .subject(user.getEmail())
+                .subject(user.getId().toString())
                 .id(UUID.randomUUID().toString())
                 .claim("email", user.getEmail())
+                .claim("org_id", user.getOrganization().getId().toString())
                 .claim("role", user.getRole().name())
                 .claim(
                         "authorities",
