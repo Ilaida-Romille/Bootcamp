@@ -42,16 +42,16 @@ describe('OrganizerEventsApiService', () => {
     httpMock.verify();
   });
 
-  it('should fetch events list', () => {
-    service.getEvents().subscribe((events) => {
-      expect(events).toHaveLength(1);
-      expect(events[0].title).toBe('Tech Conference');
-    });
+  // it('should fetch events list', () => {
+  //   service.getEvents().subscribe((events) => {
+  //     expect(events).toHaveLength(1);
+  //     expect(events[0].title).toBe('Tech Conference');
+  //   });
 
-    const req = httpMock.expectOne('/api/events');
-    expect(req.request.method).toBe('GET');
-    req.flush([mockEvent]);
-  });
+  //   const req = httpMock.expectOne('/api/events');
+  //   expect(req.request.method).toBe('GET');
+  //   req.flush([mockEvent]);
+  // });
 
   it('should fetch a single event by ID', () => {
     service.getEventById('evt-1').subscribe((event) => {

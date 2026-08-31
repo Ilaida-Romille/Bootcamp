@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map, tap, catchError, throwError } from 'rxjs';
-import { Event } from '../models/event.model';
+import { Event, EventResponse, EventStatus, EventType, PaginatedResponse } from '../models/event.model';
 
 type EventsListResponse =
   | Event[]
@@ -75,23 +75,24 @@ export class OrganizerEventsApiService {
     return throwError(() => err);
   }
 
-  getEvents(): Observable<Event[]> {
-    this.loading.set(true);
-    this.error.set(null);
-    return this.http.get<EventsListResponse>(`${this.baseUrl}?all=true`).pipe(
-      map((response) => {
-        if (Array.isArray(response)) {
-          return response;
-        }
+  getEvents(
+    page: number = 0,
+    size: number = 10,
+    sort: string = 'startTime,desc',
+    status?: EventStatus,
+    eventType?: EventType,
+    search?: string
+  ): Observable<PaginatedResponse<EventResponse>> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('sort', sort);
 
-        return response.content ?? response.items ?? response.data ?? [];
-      }),
-      tap((result) => {
-        this.events.set(result);
-        this.loading.set(false);
-      }),
-      catchError((err) => this.handleError(err))
-    );
+    if (status) params = params.set('status', status);
+    if (eventType) params = params.set('eventType', eventType);
+    if (search) params = params.set('search', search);
+
+    return this.http.get<PaginatedResponse<EventResponse>>(this.baseUrl, { params });
   }
 
   getEventById(id: string): Observable<Event> {
