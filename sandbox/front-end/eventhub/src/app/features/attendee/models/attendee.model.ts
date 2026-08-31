@@ -6,6 +6,7 @@ export type EventStatus =
   | 'completed'
   | 'cancelled';
 
+
 export interface ApiAgendaItem {
   id: string;
   startDateTime: string;
@@ -16,6 +17,7 @@ export interface ApiAgendaItem {
   speaker?: string;
   isBreak: boolean;
 }
+
 
 export interface EventDetail {
   id: string;
@@ -30,15 +32,29 @@ export interface EventDetail {
   registrationClosesAt: string;
   venue: string;
   bannerImageUrl: string;
-  capacity: { maximum: number; registered: number };
+  capacity: {
+    maximum: number;
+    registered: number;
+  };
   agenda: ApiAgendaItem[];
 }
 
+
 export interface EventItemDisplay extends EventDetail {
+
   statusLabel: string;
-  statusClass: 'status-open' | 'status-filling' | 'status-full' | 'status-closed' | 'status-draft' | 'status-cancelled';
+
+  statusClass:
+  | 'status-open'
+  | 'status-filling'
+  | 'status-full'
+  | 'status-closed'
+  | 'status-draft'
+  | 'status-cancelled';
+
   remainingSlots: number;
 }
+
 
 export interface Registration {
   id: string;
@@ -50,6 +66,7 @@ export interface Registration {
   additionalNotes: string;
   registeredAt: string;
 }
+
 
 export interface RegisteredAttendee {
   id: string;
