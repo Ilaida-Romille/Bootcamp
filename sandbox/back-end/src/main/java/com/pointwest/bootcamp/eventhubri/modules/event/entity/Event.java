@@ -84,6 +84,12 @@ public class Event extends BaseAuditableEntity {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
+    @Column(name = "registration_start_time", nullable = false)
+    private LocalDateTime registrationStartTime;
+
+    @Column(name = "registration_end_time", nullable = false)
+    private LocalDateTime registrationEndTime;
+
     @Column(name = "is_private", nullable = false)
     private boolean isPrivate;
 
