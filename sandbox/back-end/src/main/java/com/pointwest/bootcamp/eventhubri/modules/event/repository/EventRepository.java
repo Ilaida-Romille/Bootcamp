@@ -18,6 +18,25 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Optional<Event> findByIdAndOrganizationId(Long id, Long organizationId);
 
+    // Organization Specific
+    @Query("""
+            SELECT e FROM Event e
+            WHERE e.organization.id = :organizationId
+            AND (:status IS NULL OR e.status = :status)
+            AND (:eventType IS NULL OR e.eventType = :eventType)
+            AND (:keyword IS NULL OR (
+                LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+                LOWER(e.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            ))
+            """)
+    Page<Event> searchOrganizationEvents(
+            @Param("organizationId") Long organizationId,
+            @Param("status") Event.Status status,
+            @Param("eventType") Event.EventType eventType,
+            @Param("keyword") String keyword,
+            Pageable pageable);
+
+    // Attendee Specific
     @Query("""
             SELECT e FROM Event e
             WHERE e.status = com.pointwest.bootcamp.eventhubri.modules.event.entity.Event.Status.PUBLISHED
