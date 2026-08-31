@@ -76,7 +76,10 @@ export class LoginFormComponent {
       return;
     }
 
-    const { email, password } = this.form.getRawValue();
+    const { email: rawEmail, password: rawPassword } = this.form.getRawValue();
+
+    const email = rawEmail.trim().toLowerCase();
+    const password = rawPassword.trim();
 
     this.sessionService.login({ email, password }).subscribe({
       next: () => {

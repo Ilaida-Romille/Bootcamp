@@ -1,5 +1,4 @@
-<section class="d-flex justify-content-center justify-content-lg-end login-col"
-    [class.started]="started()">
+<section class="d-flex justify-content-center justify-content-lg-end login-col" [class.started]="started()">
     <div class="glass-card card p-4 p-sm-5 rounded-4 w-100" style="max-width: 440px">
         <div class="text-center mb-4">
             <span class="text-uppercase fw-bold text-info fs-6 eyebrow">EventHub</span>
@@ -25,9 +24,9 @@
                         <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
                     <input class="form-control glass-input" [class.user-invalid]="email.invalid && email.touched"
-                        type="email" id="login-email" formControlName="email" placeholder="you&#64;company.com"
-                        [attr.minlength]="emailMinLength" [attr.maxlength]="emailMaxLength" autocomplete="email"
-                        spellcheck="false" />
+                        type="email" autocomplete="email" inputmode="email" id="login-email" formControlName="email"
+                        placeholder="you&#64;company.com" [attr.minlength]="emailMinLength"
+                        [attr.maxlength]="emailMaxLength" autocomplete="email" spellcheck="false" />
                 </div>
                 @if (email.invalid && email.touched) {
                 <span class="field-error mt-1 shown" role="alert">
