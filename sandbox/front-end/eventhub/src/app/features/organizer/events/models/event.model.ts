@@ -1,10 +1,10 @@
-export type EventStatus =
-  | 'draft'
-  | 'registration_open'
-  | 'registration_closed'
-  | 'ongoing'
-  | 'completed'
-  | 'cancelled';
+// export type EventStatus =
+//   | 'draft'
+//   | 'registration_open'
+//   | 'registration_closed'
+//   | 'ongoing'
+//   | 'completed'
+//   | 'cancelled';
 
 export interface EventCapacity {
   maximum: number;
@@ -13,8 +13,8 @@ export interface EventCapacity {
 
 export interface AgendaItem {
   id: string;
-  startDateTime: string;
-  endDateTime: string;
+  startTime: string;
+  endTime: string;
   title: string;
   description?: string;
   location?: string;
@@ -23,20 +23,19 @@ export interface AgendaItem {
 }
 
 export interface Event {
-  id: string;
+  id: number;
   title: string;
   description: string;
   organizerId: string;
   organizerName: string;
   status: Eventstatus;
-  startDateTime: string;
-  endDateTime: string;
+  startTime: string;
+  endTime: string;
   registrationOpensAt: string;
   registrationClosesAt: string;
-  venue: string;
+  locationAddress: string;
   bannerImageUrl: string;
   capacity: EventCapacity;
-  agenda: AgendaItem[];
 }
 
 //Back-end integration
@@ -60,10 +59,12 @@ export interface EventResponse {
   virtualMeetingUrl: string;
   startTime: string;
   endTime: string;
+  registrationStartTime: string;
+  registrationEndTime: string;
   isPrivate: boolean;
   cateringProvided: boolean;
   maxCapacity: number;
-  status: EventStatus;
+  status: Eventstatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -89,4 +90,31 @@ export interface PaginatedResponse<T> {
   totalPages: number;
   size: number;
   number: number;
+}
+
+export interface Agenda {
+  id: number;
+  eventId: number;
+  agendaDate: string; // YYYY-MM-DD
+  title: string;
+  description?: string;
+}
+
+export interface Track {
+  id: number;
+  agendaId: number;
+  name: string;
+  description?: string;
+  displayOrder: number;
+}
+
+export interface Session {
+  id: number;
+  trackId: number;
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
+  locationOrRoom?: string;
+  speakerIds?: number[];
 }
