@@ -1,5 +1,7 @@
 package com.pointwest.bootcamp.eventhubri.modules.event.controller;
 
+import com.pointwest.bootcamp.eventhubri.modules.auth.security.CurrentUser;
+import com.pointwest.bootcamp.eventhubri.modules.auth.security.SecurityUser;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventDiscoveryFilterDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventDiscoveryResponseDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event;
@@ -26,19 +28,24 @@ public class EventDiscoveryController {
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<EventDiscoveryResponseDto>> browse(
+            @CurrentUser SecurityUser authenticatedUser,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Event.EventType eventType,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startFrom,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTo,
             @RequestParam(required = false) String location,
             @PageableDefault(size = 20, sort = "startTime") Pageable pageable) {
+        Long organizerId = authenticatedUser.organizationId();
+
         var filter = new EventDiscoveryFilterDto(keyword, eventType, startFrom, startTo, location);
-        return ResponseEntity.ok(eventDiscoveryService.browsedPublishedEvents(filter, pageable));
+        return ResponseEntity.ok(eventDiscoveryService.browsedPublishedEvents(filter, organizerId, pageable));
     }
 
     @GetMapping("/{eventId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<EventDiscoveryResponseDto> getOne(@PathVariable Long eventId) {
-        return ResponseEntity.ok(eventDiscoveryService.getPublishedEvents(eventId));
+    public ResponseEntity<EventDiscoveryResponseDto> getOne(@PathVariable Long eventId,
+            @CurrentUser SecurityUser authenticatedUser) {
+        Long organizerId = authenticatedUser.organizationId();
+        return ResponseEntity.ok(eventDiscoveryService.getPublishedEvents(eventId, organizerId));
     }
 }
