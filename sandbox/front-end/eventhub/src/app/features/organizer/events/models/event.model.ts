@@ -28,7 +28,7 @@ export interface Event {
   description: string;
   organizerId: string;
   organizerName: string;
-  status: EventStatus;
+  status: Eventstatus;
   startDateTime: string;
   endDateTime: string;
   registrationOpensAt: string;
@@ -37,4 +37,56 @@ export interface Event {
   bannerImageUrl: string;
   capacity: EventCapacity;
   agenda: AgendaItem[];
+}
+
+//Back-end integration
+
+// event.models.ts
+
+export type EventType = 'PHYSICAL' | 'VIRTUAL' | 'HYBRID';
+export type Eventstatus = 'DRAFT' | 'PUBLISHED' | 'COMPLETED' | 'CANCELLED';
+
+export interface EventResponse {
+  id: number;
+  organizationId: number;
+  organizationName: string;
+  createdByUserId: number;
+  createdByName: string;
+  title: string;
+  description: string;
+  bannerImageUrl: string;
+  eventType: EventType;
+  locationAddress: string;
+  virtualMeetingUrl: string;
+  startTime: string;
+  endTime: string;
+  isPrivate: boolean;
+  cateringProvided: boolean;
+  maxCapacity: number;
+  status: EventStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EventCreateRequest {
+  title: string;
+  description: string;
+  bannerImageUrl: string;
+  eventType: EventType;
+  locationAddress: string;
+  virtualMeetingUrl: string;
+  startTime: string;
+  endTime: string;
+  isPrivate: boolean;
+  cateringProvided: boolean;
+  maxCapacity: number;
+}
+
+// Partial wrapper for Spring Data's Page<T>
+export interface PaginatedResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
 }
