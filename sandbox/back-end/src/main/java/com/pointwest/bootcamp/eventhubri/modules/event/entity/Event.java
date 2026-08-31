@@ -1,11 +1,15 @@
 package com.pointwest.bootcamp.eventhubri.modules.event.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.pointwest.bootcamp.eventhubri.core.model.BaseAuditableEntity;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.AppUser;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.Organization;
+import com.pointwest.bootcamp.eventhubri.modules.agenda.entity.Agenda;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +21,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,6 +60,9 @@ public class Event extends BaseAuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private AppUser createdBy;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Agenda> agendas = new ArrayList<>();
 
     @Column(nullable = false, length = 255)
     private String title;
@@ -103,11 +111,21 @@ public class Event extends BaseAuditableEntity {
     @Column(nullable = false, length = 20)
     private Status status;
 
+    public void addAgenda(Agenda agenda) {
+        agendas.add(agenda);
+        agenda.setEvent(this);
+    }
+
+    public void removeAgenda(Agenda agenda) {
+        agendas.remove(agenda);
+        agenda.setEvent(null);
+    }
+
     public enum EventType {
         PHYSICAL, VIRTUAL, HYBRID
     }
 
     public enum Status {
-        DRAFT, PUBLISHED, COMPLETED, CANCELLED
+        DRAFT, PUBLISHED, COMPLETED, CANCELLED, REGISTRATION_OPEN, REGISTRATION_CLOSE
     }
 }

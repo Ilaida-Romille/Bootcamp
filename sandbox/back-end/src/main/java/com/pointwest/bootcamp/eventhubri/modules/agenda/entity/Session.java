@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.pointwest.bootcamp.eventhubri.core.model.BaseAuditableEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
