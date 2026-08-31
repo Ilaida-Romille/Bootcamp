@@ -5,6 +5,7 @@ import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventDiscoveryFilterD
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventDiscoveryResponseDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventResponseDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventUpdateRequestDto;
+import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event;
 
 import java.util.List;
 
@@ -38,4 +39,13 @@ public interface EventService {
         Page<EventDiscoveryResponseDto> browsedPublishedEvents(EventDiscoveryFilterDto filter, Pageable pageable);
 
         EventDiscoveryResponseDto getPublishedEvents(Long eventId);
+
+        // Organizer Specific
+
+        Page<EventResponseDto> getOrganizationEventsPaginated(
+                        Event.Status status,
+                        Event.EventType eventType,
+                        String search,
+                        Pageable pageable,
+                        String authenticatedUserEmail);
 }

@@ -6,9 +6,14 @@ import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventCreateRequestDto
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventResponseDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventUpdateRequestDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event;
+import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event.EventType;
+import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event.Status;
 import com.pointwest.bootcamp.eventhubri.modules.event.exception.EventNotFoundException;
 import com.pointwest.bootcamp.eventhubri.modules.event.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -146,6 +151,19 @@ public abstract class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new EventNotFoundException(eventId));
 
         eventRepository.delete(event);
+    }
+
+    @Override
+    public Page<EventResponseDto> getOrganizationEventsPaginated(Status status, EventType eventType, String search,
+            Pageable pageable, String authenticatedUserEmail) {
+        AppUser user = getAuthenticatedUser(authenticatedUserEmail);
+        Long organizationId = getOrganizationId(user);
+
+        String cleanKeyword = (search != null && !search.isBlank()) ? search.trim() : null;
+
+        return eventRepository
+                .searchOrganizationEvents(organizationId, status, eventType, cleanKeyword, pageable)
+                .map(this::toResponse);
     }
 
     private AppUser getAuthenticatedUser(String email) {
@@ -307,6 +325,8 @@ public abstract class EventServiceImpl implements EventService {
                 event.getVirtualMeetingUrl(),
                 event.getStartTime(),
                 event.getEndTime(),
+                event.getRegistrationStartTime(),
+                event.getRegistrationEndTime(),
                 event.isPrivate(),
                 event.isCateringProvided(),
                 event.getMaxCapacity(),
