@@ -1,54 +1,221 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
-import { EventDetail, EventItemDisplay } from '../models/attendee.model';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { EventItemDisplay } from '../models/attendee.model';
 
-type EventsListResponse = EventDetail[] | { content?: EventDetail[]; items?: EventDetail[]; data?: EventDetail[] };
+export type EventType = 'PHYSICAL' | 'VIRTUAL' | 'HYBRID';
 
-@Injectable({ providedIn: 'root' })
+export interface EventDiscoveryResponseDto {
+  id: number;
+  organizationId: number;
+  organizationName: string;
+  title: string;
+  description: string;
+  bannerImageUrl: string;
+  eventType: EventType;
+  locationAddress: string;
+  virtualMeetingUrl: string;
+  startTime: string;
+  endTime: string;
+  cateringProvided: boolean;
+  maxCapacity: number;
+  availableSlots: number;
+  registrationOpen: boolean;
+}
+
+export interface SpringPageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
 export class EventsDataService {
-  private readonly baseUrl = '/api/events';
 
   private readonly http = inject(HttpClient);
 
-  getEvents(): Observable<EventDetail[]> {
-    return this.http.get<EventsListResponse>(`${this.baseUrl}?all=true`).pipe(
-      map((response) => {
-        if (Array.isArray(response)) return response;
-        return response.content ?? response.items ?? response.data ?? [];
-      })
+  private readonly baseUrl = '/api/events/discover';
+
+
+  /**
+   * GET /api/events/discover
+   *
+   * All filtering and pagination are handled by the backend.
+   */
+  getDiscoverableEvents(
+    page: number,
+    size: number,
+    filters: {
+      keyword?: string;
+      eventType?: EventType | 'All';
+      startFrom?: string;
+      startTo?: string;
+      location?: string;
+    }
+  ): Observable<SpringPageResponse<EventDiscoveryResponseDto>> {
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', 'startTime,asc');
+
+    if (filters.keyword?.trim()) {
+      params = params.set(
+        'keyword',
+        filters.keyword.trim()
+      );
+    }
+
+    if (
+      filters.eventType &&
+      filters.eventType !== 'All'
+    ) {
+      params = params.set(
+        'eventType',
+        filters.eventType
+      );
+    }
+
+    if (filters.startFrom?.trim()) {
+      params = params.set(
+        'startFrom',
+        filters.startFrom
+      );
+    }
+
+    if (filters.startTo?.trim()) {
+      params = params.set(
+        'startTo',
+        filters.startTo
+      );
+    }
+
+    if (filters.location?.trim()) {
+      params = params.set(
+        'location',
+        filters.location.trim()
+      );
+    }
+
+    return this.http.get<
+      SpringPageResponse<EventDiscoveryResponseDto>
+    >(this.baseUrl, { params });
+  }
+
+
+  /**
+   * GET /api/events/discover/{eventId}
+   */
+  getDiscoverableEvent(
+    eventId: number
+  ): Observable<EventDiscoveryResponseDto> {
+
+    return this.http.get<EventDiscoveryResponseDto>(
+      `${this.baseUrl}/${eventId}`
     );
   }
 
-  getEventById(eventId: string): Observable<EventDetail> {
-    return this.http.get<EventDetail>(`${this.baseUrl}/${encodeURIComponent(eventId)}`);
-  }
 
-  mapToDisplayEvent(event: EventDetail): EventItemDisplay {
-    const remaining = event.capacity.maximum - event.capacity.registered;
-    const fillRatio = event.capacity.maximum > 0 ? event.capacity.registered / event.capacity.maximum : 0;
+  /**
+   * Convert backend discovery DTO into the
+   * EventItemDisplay model used by EventCardComponent.
+   */
+  mapToDisplayEvent(
+    dto: EventDiscoveryResponseDto
+  ): EventItemDisplay {
+
+    const maximumCapacity = dto.maxCapacity ?? 0;
+
+    const remainingSlots = dto.availableSlots ?? 0;
+
+    const registered =
+      Math.max(
+        0,
+        maximumCapacity - remainingSlots
+      );
+
+
+    let status: EventItemDisplay['status'];
 
     let statusLabel: string;
+
     let statusClass: EventItemDisplay['statusClass'];
 
-    switch (event.status) {
-      case 'registration_open':
-        if (fillRatio >= 0.9) { statusLabel = 'Almost Full'; statusClass = 'status-full'; }
-        else if (fillRatio >= 0.7) { statusLabel = 'Filling Fast'; statusClass = 'status-filling'; }
-        else { statusLabel = 'Registration Open'; statusClass = 'status-open'; }
-        break;
-      case 'registration_closed':
-        statusLabel = 'Registration Closed'; statusClass = 'status-closed'; break;
-      case 'ongoing':
-        statusLabel = 'Ongoing'; statusClass = 'status-open'; break;
-      case 'completed':
-        statusLabel = 'Completed'; statusClass = 'status-closed'; break;
-      case 'cancelled':
-        statusLabel = 'Cancelled'; statusClass = 'status-cancelled'; break;
-      default:
-        statusLabel = 'Draft'; statusClass = 'status-draft';
+
+    if (dto.registrationOpen && remainingSlots > 0) {
+
+      status = 'registration_open';
+
+      statusLabel = 'Registration Open';
+
+      statusClass = 'status-open';
+
+    } else {
+
+      status = 'registration_closed';
+
+      statusLabel = 'Registration Closed';
+
+      statusClass = 'status-closed';
     }
 
-    return { ...event, statusLabel, statusClass, remainingSlots: Math.max(0, remaining) };
+
+    return {
+
+      id: dto.id.toString(),
+
+      title: dto.title,
+
+      description: dto.description ?? '',
+
+      organizerId: dto.organizationId.toString(),
+
+      organizerName: dto.organizationName,
+
+      status,
+
+      startDateTime: dto.startTime,
+
+      endDateTime: dto.endTime,
+
+      /*
+       * The discovery DTO does not currently expose
+       * registrationOpensAt / registrationClosesAt.
+       *
+       * Therefore we don't invent those values.
+       */
+      registrationOpensAt: '',
+
+      registrationClosesAt: '',
+
+      venue:
+        dto.eventType === 'VIRTUAL'
+          ? (dto.virtualMeetingUrl || 'Online Event')
+          : (dto.locationAddress || 'Online Event'),
+
+      bannerImageUrl:
+        dto.bannerImageUrl ?? '',
+
+      capacity: {
+        maximum: maximumCapacity,
+        registered
+      },
+
+      agenda: [],
+
+      statusLabel,
+
+      statusClass,
+
+      remainingSlots
+    };
   }
 }
