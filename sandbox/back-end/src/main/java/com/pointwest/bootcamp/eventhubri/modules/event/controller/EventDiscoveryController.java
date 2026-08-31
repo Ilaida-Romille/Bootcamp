@@ -3,7 +3,7 @@ package com.pointwest.bootcamp.eventhubri.modules.event.controller;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventDiscoveryFilterDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventDiscoveryResponseDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event;
-import com.pointwest.bootcamp.eventhubri.modules.event.service.EventService;
+import com.pointwest.bootcamp.eventhubri.modules.event.service.EventAttendeeService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class EventDiscoveryController {
 
-    private final EventService eventDiscoveryService;
+    private final EventAttendeeService eventDiscoveryService;
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")

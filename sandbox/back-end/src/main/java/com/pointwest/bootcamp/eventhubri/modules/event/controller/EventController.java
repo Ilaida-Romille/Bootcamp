@@ -4,7 +4,8 @@ import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventCreateRequestDto
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventResponseDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventUpdateRequestDto;
 import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event;
-import com.pointwest.bootcamp.eventhubri.modules.event.service.EventService;
+import com.pointwest.bootcamp.eventhubri.modules.event.service.EventAttendeeService;
+import com.pointwest.bootcamp.eventhubri.modules.event.service.EventOrganizerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventController {
 
-        private final EventService eventService;
+        private final EventOrganizerService eventOrganizerService;
 
         @PostMapping
         @PreAuthorize("hasAuthority('MANAGE_EVENTS')")
@@ -33,7 +34,7 @@ public class EventController {
                         @Valid @RequestBody EventCreateRequestDto request,
                         Authentication authentication) {
 
-                EventResponseDto response = eventService.createEvent(
+                EventResponseDto response = eventOrganizerService.createEvent(
                                 request,
                                 authentication.getName());
 
@@ -60,7 +61,7 @@ public class EventController {
                         Authentication authentication) {
 
                 return ResponseEntity.ok(
-                                eventService.getEventById(
+                                eventOrganizerService.getEventById(
                                                 eventId,
                                                 authentication.getName()));
         }
@@ -76,7 +77,7 @@ public class EventController {
                         @PageableDefault(size = 10, sort = "startTime", direction = Sort.Direction.DESC) Pageable pageable,
                         Authentication authentication) {
 
-                Page<EventResponseDto> response = eventService.getOrganizationEventsPaginated(
+                Page<EventResponseDto> response = eventOrganizerService.getOrganizationEventsPaginated(
                                 status,
                                 eventType,
                                 search,
@@ -93,7 +94,7 @@ public class EventController {
                         Authentication authentication) {
 
                 return ResponseEntity.ok(
-                                eventService.updateEvent(
+                                eventOrganizerService.updateEvent(
                                                 eventId,
                                                 request,
                                                 authentication.getName()));
@@ -104,7 +105,7 @@ public class EventController {
                         @PathVariable Long eventId,
                         Authentication authentication) {
 
-                eventService.deleteEvent(
+                eventOrganizerService.deleteEvent(
                                 eventId,
                                 authentication.getName());
 
