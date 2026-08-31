@@ -48,10 +48,11 @@ public class JwtAuthenticationFilter
                     .getAuthentication() == null) {
 
                 Claims claims = jwtService.parse(token);
-                String email = claims.getSubject();
+                Long userId = Long.valueOf(claims.getSubject());
 
-                CustomUserDetails userDetails = (CustomUserDetails) userDetailsService
-                        .loadUserByUsername(email);
+                CustomUserDetails userDetails = userDetailsService.loadUserById(userId);
+
+                String email = userDetails.getUsername();
 
                 if (!userDetails.isEnabled()) {
                     filterChain.doFilter(request, response);
