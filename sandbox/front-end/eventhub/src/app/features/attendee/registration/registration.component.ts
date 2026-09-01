@@ -87,19 +87,19 @@ export class RegistrationComponent implements OnInit {
   }
 
   private loadEventDetails(): void {
-    // if (!this.eventId) return;
+    if (!this.eventId) return;
 
-    // this.eventsDataService.getEventById(this.eventId).subscribe({
-    //   next: (event) => {
-    //     this.event = event;
-    //     this.cdr.detectChanges();
-    //   },
-    //   error: () => {
-    //     this.event = null;
-    //     this.submissionError = 'Unable to load event details.';
-    //     this.cdr.detectChanges();
-    //   }
-    // });
+    this.registrationService.getEventDetails(Number(this.eventId)).subscribe({
+      next: (dto) => {
+        this.event = this.eventsDataService.mapToDisplayEvent(dto);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.event = null;
+        this.submissionError = 'Unable to load event details.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   get f() {
@@ -116,25 +116,26 @@ export class RegistrationComponent implements OnInit {
       return;
     }
 
-    const email = this.registrationForm.value.emailAddress.trim().toLowerCase();
-
-    if (this.registrationService.isEmailRegisteredForEvent(email, this.eventId)) {
-      this.submissionError = 'This email is already registered for this event.';
-      return;
-    }
-
     this.isSubmitting = true;
     this.submissionError = '';
 
-    this.registrationService.registerAttendee({
-      eventId: this.eventId,
-      fullName: this.registrationForm.value.fullName.trim(),
-      emailAddress: email,
-      companyDept: this.registrationForm.value.companyDept.trim(),
-      dietary: this.registrationForm.value.dietary.trim(),
-      additionalNotes: this.registrationForm.value.additionalNotes.trim()
+    this.registrationService.register(Number(this.eventId)).subscribe({
+      next: () => {
+        this.router.navigate(['/dashboard', ATTENDEE_ROUTE_PATHS.agenda, this.eventId]);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        if (err.status === 409) {
+          this.submissionError = 'You are already registered for this event.';
+        } else if (err.status === 400) {
+          this.submissionError = err.error?.message ?? 'Invalid registration request.';
+        } else if (err.status === 403) {
+          this.submissionError = 'You do not have permission to register for this event.';
+        } else {
+          this.submissionError = 'Registration failed. Please try again.';
+        }
+        this.cdr.detectChanges();
+      }
     });
-
-    this.router.navigate(['/dashboard', ATTENDEE_ROUTE_PATHS.agenda, this.eventId]);
   }
 }
