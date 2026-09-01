@@ -1,5 +1,6 @@
 export interface Invoice {
   id: string;
+  organizationId: number;
   invoiceNumber: string;
   organizerId: string;
   organizerName: string;
@@ -12,6 +13,31 @@ export interface Invoice {
   ratePerAttendee: number;
   amount: number;
   status: 'Paid' | 'Pending' | 'Overdue';
+}
+
+export interface ApiInvoiceLineItem {
+  eventId: number;
+  eventTitle: string;
+  eventAttendeeCount: number;
+  rateApplied: number;
+  lineTotal: number;
+}
+
+export interface ApiInvoiceResponse {
+  id: number;
+  organizationId: number;
+  organizationName: string;
+  organizerEmail: string;
+  invoiceNumber: string;
+  billingPeriodStart: string;
+  billingPeriodEnd: string;
+  totalAttendeeCount: number;
+  appliedRatePerAttendee: number;
+  invoiceAmount: number;
+  paymentStatus: 'UNPAID' | 'PAID' | 'OVERDUE';
+  issuedAt: string;
+  dueDate: string;
+  items: ApiInvoiceLineItem[];
 }
 
 export interface BillingFilterCriteria {
@@ -37,32 +63,4 @@ export interface BillingOrganizer {
 export interface BillingMonth {
   code: string;
   name: string;
-}
-
-export interface BillingSourceInvoice {
-  id: string;
-  invoiceNumber: string;
-  organizerId: string;
-  organizerName: string;
-  billingPeriod: string;
-  monthCode: string;
-  attendeeCount: number;
-  ratePerAttendee: number;
-  status: 'Paid' | 'Pending' | 'Overdue';
-}
-
-export interface BillingDataResponse {
-  currency: string;
-  currencySymbol: string;
-  organizers: BillingOrganizer[];
-  months: BillingMonth[];
-  invoices: BillingSourceInvoice[];
-}
-
-export interface BillingFeatureData {
-  currency: string;
-  currencySymbol: string;
-  organizers: BillingOrganizer[];
-  months: BillingMonth[];
-  invoices: Invoice[];
 }
