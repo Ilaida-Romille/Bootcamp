@@ -19,5 +19,6 @@ public record EventDiscoveryResponseDto(
         boolean cateringProvided,
         Integer maxCapacity,
         Integer availableSlots,
-        boolean registrationOpen) {
+        boolean registrationOpen,
+        boolean isRegistered) {
 }
