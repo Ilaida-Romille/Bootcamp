@@ -38,7 +38,7 @@ public class EventDiscoveryController {
         Long organizerId = authenticatedUser.organizationId();
 
         var filter = new EventDiscoveryFilterDto(keyword, eventType, startFrom, startTo, location);
-        return ResponseEntity.ok(eventDiscoveryService.browsedPublishedEvents(filter, organizerId, pageable));
+        return ResponseEntity.ok(eventDiscoveryService.browsedPublishedEvents(filter, organizerId, authenticatedUser.userId(), pageable));
     }
 
     @GetMapping("/{eventId}")
@@ -46,6 +46,6 @@ public class EventDiscoveryController {
     public ResponseEntity<EventDiscoveryResponseDto> getOne(@PathVariable Long eventId,
             @CurrentUser SecurityUser authenticatedUser) {
         Long organizerId = authenticatedUser.organizationId();
-        return ResponseEntity.ok(eventDiscoveryService.getPublishedEvents(eventId, organizerId));
+        return ResponseEntity.ok(eventDiscoveryService.getPublishedEvents(eventId, organizerId, authenticatedUser.userId()));
     }
 }
