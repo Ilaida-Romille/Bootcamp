@@ -68,6 +68,15 @@ public class AppUser extends BaseAuditableEntity {
     @Column(nullable = false, length = 20)
     private Status status;
 
+    @Column(name = "company", length = 255)
+    private String company;
+
+    @Column(name = "dietary", length = 255)
+    private String dietary;
+
+    @Column(name = "profile_image_url", length = 512)
+    private String profileImageUrl;
+
     public enum Status {
         ACTIVE, INACTIVE
     }
