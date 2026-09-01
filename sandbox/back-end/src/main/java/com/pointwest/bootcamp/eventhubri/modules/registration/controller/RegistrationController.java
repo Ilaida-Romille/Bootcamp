@@ -49,11 +49,25 @@ public class RegistrationController {
     }
 
     @DeleteMapping("/{registrationId}")
-    @PreAuthorize("hasAuthority('MANAGE_OWN_PROFILE')")
+    @PreAuthorize("hasAuthority('MANAGE_OWN_PROFILE') or hasAuthority('MANAGE_STAFF') or hasAuthority('MANAGE_EVENTS')")
     public ResponseEntity<Void> cancelOwn(
             @PathVariable Long registrationId,
             Authentication authentication) {
-        registrationService.cancelOwnRegistration(registrationId, authentication.getName());
+        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("MANAGE_OWN_PROFILE"))) {
+            registrationService.cancelOwnRegistration(registrationId, authentication.getName());
+            return ResponseEntity.noContent().build();
+        }
+
+        registrationService.removeRegistrationForOrganizer(registrationId, authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{registrationId}/organizer-remove")
+    @PreAuthorize("hasAuthority('MANAGE_STAFF') or hasAuthority('MANAGE_EVENTS')")
+    public ResponseEntity<Void> removeRegistrationForOrganizer(
+            @PathVariable Long registrationId,
+            Authentication authentication) {
+        registrationService.removeRegistrationForOrganizer(registrationId, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 

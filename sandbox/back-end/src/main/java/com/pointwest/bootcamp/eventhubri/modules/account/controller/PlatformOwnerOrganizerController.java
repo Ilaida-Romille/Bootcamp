@@ -30,6 +30,14 @@ public class PlatformOwnerOrganizerController {
         return ResponseEntity.ok(organizerManagementService.getOrganizers(pageable));
     }
 
+    @GetMapping("/search")
+    @PreAuthorize("hasAuthority('VIEW_ALL_ORGANIZATIONS')")
+    public ResponseEntity<Page<OrganizerResponseDto>> searchOrganizers(
+            @RequestParam String query,
+            @PageableDefault(size = 500, sort = "id") Pageable pageable) {
+        return ResponseEntity.ok(organizerManagementService.searchOrganizers(query, pageable));
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('VIEW_ALL_ORGANIZATIONS')")
     public ResponseEntity<OrganizerResponseDto> getOrganizerById(@PathVariable Long id) {
