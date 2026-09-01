@@ -1,65 +1,66 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import {
-  BillingDataResponse,
-  BillingFeatureData,
-  BillingOrganizer,
-  BillingSourceInvoice,
-  Invoice
-} from '../models/billing-model/billing-model.component';
+import { ApiInvoiceResponse, Invoice } from '../models/billing-model/billing-model.component';
 
 @Injectable({ providedIn: 'root' })
 export class BillingDataService {
-  private readonly dataUrl = '/data/invoices.json';
+  private readonly baseUrl = '/api/billing';
 
   private readonly http = inject(HttpClient);
 
-  getBillingData(): Observable<BillingFeatureData> {
-    return this.http.get<BillingDataResponse>(this.dataUrl).pipe(
-      map((payload) => ({
-        currency: payload.currency,
-        currencySymbol: payload.currencySymbol,
-        organizers: payload.organizers,
-        months: payload.months,
-        invoices: payload.invoices.map((source) => this.mapSourceInvoice(source, payload.organizers))
-      }))
+  getAllInvoices(): Observable<Invoice[]> {
+    return this.http.get<ApiInvoiceResponse[]>(`${this.baseUrl}/invoices`).pipe(
+      map((invoices) => invoices.map((source) => this.mapApiInvoice(source)))
     );
   }
 
-  private mapSourceInvoice(source: BillingSourceInvoice, organizers: BillingOrganizer[]): Invoice {
-    const organizer = organizers.find((item) => item.id === source.organizerId);
-    const issueDate = this.getMonthEndDate(source.monthCode);
-    const dueDate = this.addDays(issueDate, 30);
+  generateInvoice(organizationId: number, periodStart: string, periodEnd: string): Observable<Invoice> {
+    const params = new HttpParams()
+      .set('organizationId', String(organizationId))
+      .set('periodStart', periodStart)
+      .set('periodEnd', periodEnd);
+    return this.http.post<ApiInvoiceResponse>(`${this.baseUrl}/invoices/generate`, null, { params }).pipe(
+      map((source) => this.mapApiInvoice(source))
+    );
+  }
+
+  generateBatchInvoices(periodStart: string, periodEnd: string): Observable<Invoice[]> {
+    const params = new HttpParams()
+      .set('periodStart', periodStart)
+      .set('periodEnd', periodEnd);
+    return this.http.post<ApiInvoiceResponse[]>(`${this.baseUrl}/invoices/generate/batch`, null, { params }).pipe(
+      map((invoices) => invoices.map((source) => this.mapApiInvoice(source)))
+    );
+  }
+
+  private mapApiInvoice(source: ApiInvoiceResponse): Invoice {
+    let status: 'Paid' | 'Pending' | 'Overdue' = 'Pending';
+    if (source.paymentStatus === 'PAID') {
+      status = 'Paid';
+    } else if (source.paymentStatus === 'OVERDUE') {
+      status = 'Overdue';
+    }
+
+    const monthCode = source.billingPeriodStart.slice(0, 7);
+    const period = new Date(source.billingPeriodStart + 'T00:00:00')
+      .toLocaleString('default', { month: 'long', year: 'numeric' });
 
     return {
-      id: source.id,
+      id: String(source.id),
+      organizationId: source.organizationId,
+      organizerId: String(source.organizationId),
       invoiceNumber: source.invoiceNumber,
-      organizerId: source.organizerId,
-      organizerName: source.organizerName,
-      organizerEmail: organizer?.email || 'billing@eventhub.com',
-      period: source.billingPeriod,
-      monthCode: source.monthCode,
-      issueDate,
-      dueDate,
-      attendeesCount: source.attendeeCount,
-      ratePerAttendee: source.ratePerAttendee,
-      amount: source.attendeeCount * source.ratePerAttendee,
-      status: source.status
+      organizerName: source.organizationName,
+      organizerEmail: source.organizerEmail,
+      period,
+      monthCode,
+      issueDate: source.issuedAt.slice(0, 10),
+      dueDate: source.dueDate,
+      attendeesCount: source.totalAttendeeCount,
+      ratePerAttendee: source.appliedRatePerAttendee,
+      amount: source.invoiceAmount,
+      status
     };
-  }
-
-  private getMonthEndDate(monthCode: string): string {
-    const [yearText, monthText] = monthCode.split('-');
-    const year = Number(yearText);
-    const month = Number(monthText);
-    const endDate = new Date(year, month, 0);
-    return endDate.toISOString().slice(0, 10);
-  }
-
-  private addDays(dateIso: string, days: number): string {
-    const date = new Date(dateIso);
-    date.setDate(date.getDate() + days);
-    return date.toISOString().slice(0, 10);
   }
 }
