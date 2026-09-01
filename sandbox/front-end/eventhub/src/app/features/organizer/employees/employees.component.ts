@@ -215,14 +215,6 @@ export class OrganizerEmployeesComponent implements OnInit {
   }
 
   // ============ Modal & Form Management ============
-  openAddEmployeeModal(): void {
-    this.isEditMode = false;
-    this.editingEmployeeId = null;
-    this.formData = this.getDefaultFormData();
-    this.formError = '';
-    this.isModalOpen = true;
-  }
-
   openEditEmployeeModal(employee: Employee): void {
     this.isEditMode = true;
     this.editingEmployeeId = employee.id;
@@ -242,42 +234,9 @@ export class OrganizerEmployeesComponent implements OnInit {
   }
 
   submitForm(): void {
-    if (this.isFormValid()) {
-      if (this.isEditMode && this.editingEmployeeId) {
-        this.updateEmployee();
-      } else {
-        this.createEmployee();
-      }
+    if (this.isFormValid() && this.isEditMode && this.editingEmployeeId) {
+      this.updateEmployee();
     }
-  }
-
-  private createEmployee(): void {
-    this.isFormSubmitting = true;
-    this.formError = '';
-
-    this.employeesApi.createEmployee(this.formData).subscribe({
-      next: (newEmployee) => {
-        this.employees.push(newEmployee);
-        this.employees.sort((a, b) => {
-          const nameA = `${a.lastName} ${a.firstName}`.toLowerCase();
-          const nameB = `${b.lastName} ${b.firstName}`.toLowerCase();
-          return nameA.localeCompare(nameB);
-        });
-        this.applyFilters();
-        this.isFormSubmitting = false;
-        this.isModalOpen = false;
-        this.editingEmployeeId = null;
-        this.formData = this.getDefaultFormData();
-        this.formError = '';
-        this.triggerToast('Employee added successfully.', 'success', 'Employee Added');
-        this.cdr.detectChanges();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.formError = this.getApiErrorMessage(error, 'Failed to create employee. Please try again.');
-        this.isFormSubmitting = false;
-        this.cdr.detectChanges();
-      }
-    });
   }
 
   private updateEmployee(): void {

@@ -1,16 +1,9 @@
 <section class="organizer-employees-page">
-  <!-- Header with Title and Add Button -->
+  <!-- Header with Title -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="h2 fw-bold text-white mb-1">Manage Employees</h1>
     </div>
-    <button
-      type="button"
-      class="btn btn-primary btn-lg px-4"
-      (click)="openAddEmployeeModal()"
-      [disabled]="isLoading || isFormSubmitting">
-      <i class="bi bi-plus-lg"></i> Add Employee
-    </button>
   </div>
 
   <!-- Error Alert -->
@@ -321,7 +314,7 @@
                   class="view-avatar-img" />
               } @else {
                 <img 
-                  src="/assets/images/employees/emp_107.jpg" 
+                  src="../../../../../dist/eventhub/browser/assets/images/employees/emp_107.jpg" 
                   alt="Default Avatar" 
                   class="view-avatar-img" />
               }

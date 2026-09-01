@@ -101,18 +101,6 @@ export class OrganizerEmployeesApiService {
     );
   }
 
-  createEmployee(employee: EmployeeInput): Observable<Employee> {
-    this.loading.set(true);
-    this.error.set(null);
-    return this.http.post<Employee>(this.baseUrl, employee).pipe(
-      tap((created) => {
-        this.employees.update((list) => [...list, created]);
-        this.loading.set(false);
-      }),
-      catchError((err) => this.handleError(err))
-    );
-  }
-
   updateEmployee(id: string, employee: EmployeeInput): Observable<Employee> {
     this.loading.set(true);
     this.error.set(null);
