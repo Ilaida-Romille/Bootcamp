@@ -14,7 +14,8 @@ import com.pointwest.bootcamp.eventhubri.modules.account.repository.AppUserRepos
 import com.pointwest.bootcamp.eventhubri.modules.account.repository.OrganizationRepository;
 import com.pointwest.bootcamp.eventhubri.modules.event.repository.EventRepository;
 
-import jakarta.persistence.EntityNotFoundException;
+import com.pointwest.bootcamp.eventhubri.core.exception.account.OrganizationNotFoundException;
+import com.pointwest.bootcamp.eventhubri.core.exception.account.AccountNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -97,7 +98,7 @@ public class OrganizerManagementService {
     private AppUser findOrganizerOrThrow(Long id) {
         return appUserRepository.findById(id)
                 .filter(u -> u.getRole() == Role.ORGANIZER_ADMIN)
-                .orElseThrow(() -> new EntityNotFoundException("Organizer not found: " + id));
+                .orElseThrow(() -> new AccountNotFoundException("Organizer not found: " + id));
     }
 
     private OrganizerResponseDto toDto(AppUser user) {

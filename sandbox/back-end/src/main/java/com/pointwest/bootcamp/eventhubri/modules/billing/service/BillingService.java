@@ -158,7 +158,8 @@ public class BillingService {
             PDFont fontHelvetica = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
             PDFont fontHelveticaBold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
 
-            try (PDPageContentStream content = new PDPageContentStream(document, page)) {
+            PDPageContentStream content = new PDPageContentStream(document, page);
+            try {
                 float margin = 50f;
                 float y = 780f;
 
@@ -208,7 +209,10 @@ public class BillingService {
                         String amount = formatMoney(item.getLineTotal());
 
                         if (y < 140f) {
-                            content.addPage(new PDPage(PDRectangle.A4));
+                            content.close();
+                            PDPage nextPage = new PDPage(PDRectangle.A4);
+                            document.addPage(nextPage);
+                            content = new PDPageContentStream(document, nextPage);
                             y = 780f;
                         }
 
@@ -238,6 +242,8 @@ public class BillingService {
                 y -= 18;
                 drawText(content, margin + 290f, y, "Due Date:", fontHelveticaBold, 10);
                 drawText(content, margin + 450f, y, invoice.getDueDate().toString(), fontHelvetica, 10);
+            } finally {
+                content.close();
             }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();

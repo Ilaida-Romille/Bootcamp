@@ -1,6 +1,8 @@
 package com.pointwest.bootcamp.eventhubri.modules.profile.service;
 
 import com.pointwest.bootcamp.eventhubri.core.exception.BusinessRuleViolationException;
+import com.pointwest.bootcamp.eventhubri.core.exception.profile.InvalidProfileImageException;
+import com.pointwest.bootcamp.eventhubri.core.exception.profile.ProfileImageUploadException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -56,7 +58,7 @@ public class CloudflareR2Service {
 
             client.putObject(request, RequestBody.fromBytes(file.getBytes()));
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read uploaded file", e);
+            throw new ProfileImageUploadException("Failed to read uploaded file", e);
         }
         String cleanPublicUrl = publicUrl.replaceAll("/+$", "");
         return cleanPublicUrl + "/" + key;
@@ -91,13 +93,13 @@ public class CloudflareR2Service {
 
     private void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new BusinessRuleViolationException("Uploaded file is empty.");
+            throw new InvalidProfileImageException("Uploaded file is empty.");
         }
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new BusinessRuleViolationException("File exceeds the 5 MB size limit.");
+            throw new InvalidProfileImageException("File exceeds the 5 MB size limit.");
         }
         if (!ALLOWED_TYPES.contains(file.getContentType())) {
-            throw new BusinessRuleViolationException("Only JPEG, PNG, and WebP images are accepted.");
+            throw new InvalidProfileImageException("Only JPEG, PNG, and WebP images are accepted.");
         }
     }
 

@@ -1,7 +1,9 @@
 package com.pointwest.bootcamp.eventhubri.core.exception;
 
-public class ResourceNotFoundException extends RuntimeException {
+import com.pointwest.bootcamp.eventhubri.core.exception.enums.EventhubErrorCode;
+
+public class ResourceNotFoundException extends EventhubException {
     public ResourceNotFoundException(String message) {
-        super(message);
+        super(EventhubErrorCode.RESOURCE_NOT_FOUND, message);
     }
 }

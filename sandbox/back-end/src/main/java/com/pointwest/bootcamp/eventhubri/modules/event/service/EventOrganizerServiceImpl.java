@@ -1,6 +1,9 @@
 package com.pointwest.bootcamp.eventhubri.modules.event.service;
 
+import com.pointwest.bootcamp.eventhubri.core.exception.account.AccountNotFoundException;
 import com.pointwest.bootcamp.eventhubri.core.exception.event.EventNotFoundException;
+import com.pointwest.bootcamp.eventhubri.core.exception.event.InvalidEventTimelineException;
+import com.pointwest.bootcamp.eventhubri.core.exception.event.InvalidEventTypeRequirementsException;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.AppUser;
 import com.pointwest.bootcamp.eventhubri.modules.account.repository.AppUserRepository;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventCreateRequestDto;
@@ -172,7 +175,7 @@ public class EventOrganizerServiceImpl implements EventOrganizerService {
 
         return appUserRepository
                 .findByEmail(email)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new AccountNotFoundException(
                         "Authenticated user not found"));
     }
 
@@ -254,7 +257,7 @@ public class EventOrganizerServiceImpl implements EventOrganizerService {
         }
 
         if (!endTime.isAfter(startTime)) {
-            throw new IllegalArgumentException(
+            throw new InvalidEventTimelineException(
                     "Event end time must be after start time");
         }
     }
@@ -274,7 +277,7 @@ public class EventOrganizerServiceImpl implements EventOrganizerService {
                 if (locationAddress == null ||
                         locationAddress.isBlank()) {
 
-                    throw new IllegalArgumentException(
+                    throw new InvalidEventTypeRequirementsException(
                             "Location address is required for physical events");
                 }
             }
@@ -283,7 +286,7 @@ public class EventOrganizerServiceImpl implements EventOrganizerService {
                 if (virtualMeetingUrl == null ||
                         virtualMeetingUrl.isBlank()) {
 
-                    throw new IllegalArgumentException(
+                    throw new InvalidEventTypeRequirementsException(
                             "Virtual meeting URL is required for virtual events");
                 }
             }
@@ -293,14 +296,14 @@ public class EventOrganizerServiceImpl implements EventOrganizerService {
                 if (locationAddress == null ||
                         locationAddress.isBlank()) {
 
-                    throw new IllegalArgumentException(
+                    throw new InvalidEventTypeRequirementsException(
                             "Location address is required for hybrid events");
                 }
 
                 if (virtualMeetingUrl == null ||
                         virtualMeetingUrl.isBlank()) {
 
-                    throw new IllegalArgumentException(
+                    throw new InvalidEventTypeRequirementsException(
                             "Virtual meeting URL is required for hybrid events");
                 }
             }

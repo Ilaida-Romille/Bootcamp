@@ -13,6 +13,9 @@ import org.thymeleaf.context.Context;
 
 import com.pointwest.bootcamp.eventhubri.core.exception.AccessDeniedOperationException;
 import com.pointwest.bootcamp.eventhubri.core.exception.ResourceNotFoundException;
+import com.pointwest.bootcamp.eventhubri.core.exception.communication.NoRegistrationsFoundException;
+import com.pointwest.bootcamp.eventhubri.core.exception.communication.NotificationForbiddenException;
+import com.pointwest.bootcamp.eventhubri.core.exception.communication.NotificationRecipientNotRegisteredException;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.AppUser;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.Role;
 import com.pointwest.bootcamp.eventhubri.modules.account.repository.AppUserRepository;
@@ -51,7 +54,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found."));
 
         if (sender.getRole() != Role.ORGANIZER_ADMIN && sender.getRole() != Role.ORGANIZER_STAFF) {
-            throw new AccessDeniedOperationException("You do not have permission to send event notifications.");
+            throw new NotificationForbiddenException("You do not have permission to send event notifications.");
         }
 
         Event event = eventRepository
@@ -68,15 +71,14 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
                             "Recipient user not found: " + request.recipientUserId()));
 
             registrationRepository.findByEvent_IdAndAttendee_Id(request.eventId(), recipient.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Recipient is not registered for event: " + request.eventId()));
+                    .orElseThrow(() -> new NotificationRecipientNotRegisteredException(request.eventId()));
 
             return sendSingleEmail(event, sender, recipient, request, sentAt);
         }
 
         List<Registration> registrations = registrationRepository.findByEvent_Id(request.eventId());
         if (registrations.isEmpty()) {
-            throw new ResourceNotFoundException("No registrations found for this event.");
+            throw new NoRegistrationsFoundException(request.eventId());
         }
 
         List<EmailNotificationLog> savedLogs = new ArrayList<>();

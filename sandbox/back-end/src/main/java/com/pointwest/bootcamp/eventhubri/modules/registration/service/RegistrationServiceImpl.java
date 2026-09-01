@@ -3,6 +3,10 @@ package com.pointwest.bootcamp.eventhubri.modules.registration.service;
 import com.pointwest.bootcamp.eventhubri.core.exception.AccessDeniedOperationException;
 import com.pointwest.bootcamp.eventhubri.core.exception.BusinessRuleViolationException;
 import com.pointwest.bootcamp.eventhubri.core.exception.ResourceNotFoundException;
+import com.pointwest.bootcamp.eventhubri.core.exception.account.AccountNotFoundException;
+import com.pointwest.bootcamp.eventhubri.core.exception.registration.RegistrationAlreadyCancelledException;
+import com.pointwest.bootcamp.eventhubri.core.exception.registration.RegistrationNotFoundException;
+import com.pointwest.bootcamp.eventhubri.core.exception.registration.RegistrationPeriodClosedException;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.AppUser;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.Role;
 import com.pointwest.bootcamp.eventhubri.modules.account.repository.AppUserRepository;
@@ -98,7 +102,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         assertSameOrganization(staff, registration.getEvent());
         if (registration.getEvent().getRegistrationEndTime() != null
                 && LocalDateTime.now().isAfter(registration.getEvent().getRegistrationEndTime())) {
-            throw new BusinessRuleViolationException("The registration period for this event has ended.");
+            throw new RegistrationPeriodClosedException(registration.getEvent().getId());
         }
 
         cancelRegistration(registration);
@@ -172,7 +176,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private Registration findOwned(Long registrationId, Long attendeeId) {
         return registrationRepository.findByIdAndAttendee_Id(registrationId, attendeeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Registration not found: " + registrationId));
+                .orElseThrow(() -> new RegistrationNotFoundException(registrationId));
     }
 
     private Event requireManagedEvent(Long eventId, String staffEmail) {
