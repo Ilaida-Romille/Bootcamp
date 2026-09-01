@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MetricCardComponent } from '../../../shared/components/metric-card/metric-card.component';
 import { ActionCardComponent } from '../../../shared/components/action-card/action-card.component';
 import { ChartPanelComponent, ChartDataPoint } from './components/chart-panel/chart-panel.component';
+import { PlatformOwnerDashboardService } from './services/platform-owner-dashboard.service';
 
 @Component({
   selector: 'app-platform-owner-dashboard',
@@ -17,22 +18,25 @@ import { ChartPanelComponent, ChartDataPoint } from './components/chart-panel/ch
   styleUrl: './dashboard.component.css', // Optional if you have styles
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlatformOwnerDashboardComponent { 
-  organizersCount = 128;
-  eventsCount = 342;
+export class PlatformOwnerDashboardComponent implements OnInit { 
+  organizersCount = 0;
+  eventsCount = 0;
+  monthlyEventsData: ChartDataPoint[] = [];
 
-  monthlyEventsData: ChartDataPoint[] = [
-    { label: 'Jan', value: 35 },
-    { label: 'Feb', value: 55 },
-    { label: 'Mar', value: 45 },
-    { label: 'Apr', value: 70 },
-    { label: 'May', value: 50 },
-    { label: 'Jun', value: 65 },
-    { label: 'Jul', value: 30 },
-    { label: 'Aug', value: 52 },
-    { label: 'Sep', value: 40 },
-    { label: 'Oct', value: 60 },
-    { label: 'Nov', value: 68 },
-    { label: 'Dec', value: 48 }
-  ];
+  private readonly dashboardService = inject(PlatformOwnerDashboardService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  ngOnInit(): void {
+    this.dashboardService.getDashboardMetrics().subscribe({
+      next: (metrics) => {
+        this.organizersCount = metrics.organizersCount;
+        this.eventsCount = metrics.eventsCount;
+        this.monthlyEventsData = metrics.monthlyEventsData.map((entry) => ({
+          label: entry.label,
+          value: entry.value,
+        }));
+        this.cdr.markForCheck();
+      },
+    });
+  }
 }

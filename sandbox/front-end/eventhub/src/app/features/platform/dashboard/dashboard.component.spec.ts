@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { PlatformOwnerDashboardComponent } from './dashboard.component';
+import { PlatformOwnerDashboardService } from './services/platform-owner-dashboard.service';
 import { MetricCardComponent } from '../../../shared/components/metric-card/metric-card.component';
 import { ActionCardComponent } from '../../../shared/components/action-card/action-card.component';
 import { ChartPanelComponent } from './components/chart-panel/chart-panel.component';
@@ -29,9 +31,24 @@ describe('PlatformOwnerDashboardComponent', () => {
   let component: PlatformOwnerDashboardComponent;
   let fixture: ComponentFixture<PlatformOwnerDashboardComponent>;
 
+  const dashboardServiceMock = {
+    getDashboardMetrics: () =>
+      of({
+        organizersCount: 3,
+        eventsCount: 12,
+        monthlyEventsData: [
+          { label: 'Jan', value: 1 },
+          { label: 'Feb', value: 2 },
+        ],
+      }),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PlatformOwnerDashboardComponent],
+      providers: [
+        { provide: PlatformOwnerDashboardService, useValue: dashboardServiceMock },
+      ],
     })
       // 2. Override imports to use mock child components instead of real ones
       .overrideComponent(PlatformOwnerDashboardComponent, {
