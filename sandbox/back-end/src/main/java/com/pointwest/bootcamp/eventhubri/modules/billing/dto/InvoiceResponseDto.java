@@ -11,6 +11,7 @@ public record InvoiceResponseDto(
         Long id,
         Long organizationId,
         String organizationName,
+        String organizerEmail,
         String invoiceNumber,
         LocalDate billingPeriodStart,
         LocalDate billingPeriodEnd,
