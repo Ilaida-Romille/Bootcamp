@@ -1,27 +1,21 @@
 package com.pointwest.bootcamp.eventhubri.core.exception;
 
-public abstract class EventhubException extends RuntimeException{
-    private final String errorCode;
-    private final int httpStatusCode;
+import com.pointwest.bootcamp.eventhubri.core.exception.enums.EventhubErrorCode;
 
-    protected EventhubException(String errorMessage, Throwable cause, String errorCode, int httpStatusCode){
-        super(errorMessage, cause);
+import lombok.Getter;
+
+@Getter
+public abstract class EventhubException extends RuntimeException {
+    private final EventhubErrorCode errorCode;
+
+    public EventhubException(EventhubErrorCode errorCode, String message) {
+        super(message);
         this.errorCode = errorCode;
-        this.httpStatusCode = httpStatusCode;
     }
 
-    protected EventhubException(String errorMessage, String errorCode, int httpStatusCode){
-        super(errorMessage);
+    public EventhubException(EventhubErrorCode errorCode, String message, Throwable cause) {
+        super(message, cause);
         this.errorCode = errorCode;
-        this.httpStatusCode = httpStatusCode;
-    }
-
-    public String getErrorCode(){
-        return errorCode;
-    }
-
-    public int getHttpStatusCode(){
-        return httpStatusCode;
     }
 
 }
