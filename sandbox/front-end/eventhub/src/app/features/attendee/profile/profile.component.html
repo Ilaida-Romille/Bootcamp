@@ -1,0 +1,136 @@
+<main class="custom-workspace-container">
+
+  @if (isLoadingProfile) {
+    <div class="d-flex justify-content-center py-5">
+      <div class="spinner-border text-light opacity-50" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
+
+  @if (!isLoadingProfile) {
+    <div class="row g-4 align-items-start">
+
+      <!-- LEFT: Edit Form -->
+      <div class="col-12 col-lg-6">
+        <h1 class="custom-section-title mb-4">My Profile</h1>
+
+        <!-- Avatar Upload -->
+        <div class="avatar-upload-area mb-4">
+          <div class="avatar-ring" (click)="triggerFileInput()" [class.uploading]="isUploadingPicture">
+            @if (imagePreviewUrl) {
+              <img [src]="imagePreviewUrl" alt="Profile picture" class="avatar-img" />
+            } @else {
+              <div class="avatar-placeholder-icon">
+                <i class="bi bi-person-fill"></i>
+              </div>
+            }
+            <div class="avatar-overlay">
+              @if (isUploadingPicture) {
+                <div class="spinner-border spinner-border-sm text-light" role="status"></div>
+              } @else {
+                <i class="bi bi-camera-fill"></i>
+              }
+            </div>
+          </div>
+          <input
+            #fileInput
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            class="d-none"
+            (change)="onFileSelected($event)"
+          />
+          <p class="avatar-hint">Click to upload · JPEG, PNG, WebP · max 5 MB</p>
+          @if (uploadError) {
+            <p class="field-error mt-1">{{ uploadError }}</p>
+          }
+        </div>
+
+        <!-- Profile Form -->
+        <form [formGroup]="profileForm" (ngSubmit)="onSave()" novalidate>
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-sm-6">
+              <label class="form-label mb-1">First Name *</label>
+              <input type="text" formControlName="firstName" class="form-input rounded-1"
+                [class.is-invalid]="f['firstName'].touched && f['firstName'].invalid" />
+              @if (f['firstName'].touched && f['firstName'].invalid) {
+                <span class="field-error">First name is required.</span>
+              }
+            </div>
+            <div class="col-12 col-sm-6">
+              <label class="form-label mb-1">Last Name *</label>
+              <input type="text" formControlName="lastName" class="form-input rounded-1"
+                [class.is-invalid]="f['lastName'].touched && f['lastName'].invalid" />
+              @if (f['lastName'].touched && f['lastName'].invalid) {
+                <span class="field-error">Last name is required.</span>
+              }
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label mb-1">Company / Department</label>
+            <input type="text" formControlName="company" class="form-input rounded-1" />
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label mb-1">Dietary Restrictions</label>
+            <input type="text" formControlName="dietary" class="form-input rounded-1"
+              placeholder="e.g. Vegetarian, Halal, Gluten-free" />
+          </div>
+
+          @if (saveError) {
+            <div class="alert alert-danger py-2 mb-3 small">{{ saveError }}</div>
+          }
+          @if (saveSuccess) {
+            <div class="alert alert-success py-2 mb-3 small">Profile updated successfully.</div>
+          }
+
+          <button type="submit" class="btn btn-dark action-btn rounded-1" [disabled]="isSavingProfile">
+            {{ isSavingProfile ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </form>
+      </div>
+
+      <!-- RIGHT: Digital Business Card -->
+      <div class="col-12 col-lg-6">
+        <h2 class="custom-section-title mb-4">Digital Business Card</h2>
+        <div class="business-card rounded-2">
+          <div class="card-accent-bar"></div>
+          <div class="card-inner">
+            <div class="card-avatar-wrap">
+              @if (imagePreviewUrl) {
+                <img [src]="imagePreviewUrl" alt="Profile" class="card-avatar-img" />
+              } @else {
+                <div class="card-avatar-placeholder">
+                  <i class="bi bi-person-fill"></i>
+                </div>
+              }
+            </div>
+            <div class="card-info">
+              <p class="card-name">{{ profile?.fullName || '—' }}</p>
+              @if (profile?.company) {
+                <p class="card-company">{{ profile?.company }}</p>
+              }
+              @if (profile?.organizationName && profile?.organizationName !== profile?.company) {
+                <p class="card-org">{{ profile?.organizationName }}</p>
+              }
+              <p class="card-email">
+                <i class="bi bi-envelope me-1"></i>{{ profile?.email || '—' }}
+              </p>
+              @if (profile?.dietary) {
+                <p class="card-dietary">
+                  <i class="bi bi-cup-straw me-1"></i>{{ profile?.dietary }}
+                </p>
+              }
+            </div>
+          </div>
+          <div class="card-footer-brand">
+            <span class="brand-dot"></span>EventHub
+          </div>
+        </div>
+      </div>
+
+    </div>
+  }
+
+</main>

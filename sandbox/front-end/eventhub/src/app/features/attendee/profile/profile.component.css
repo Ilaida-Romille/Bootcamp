@@ -1,0 +1,234 @@
+.custom-workspace-container {
+    padding: 1.5rem 1rem;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+@media (min-width: 992px) {
+    .custom-workspace-container {
+        padding: 2.5rem 3rem;
+    }
+}
+
+.custom-section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 1.25rem;
+    text-shadow: 0 0 15px rgba(100, 181, 246, 0.15);
+}
+
+/* ── Avatar Upload ─────────────────────────────────────── */
+.avatar-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.avatar-ring {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid rgba(100, 181, 246, 0.3);
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+}
+
+.avatar-ring:hover,
+.avatar-ring.uploading {
+    border-color: rgba(100, 181, 246, 0.7);
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.avatar-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.avatar-ring:hover .avatar-overlay,
+.avatar-ring.uploading .avatar-overlay {
+    opacity: 1;
+}
+
+.avatar-hint {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ── Form inputs (reuse site-wide pattern) ─────────────── */
+.form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: block;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.55rem 0.85rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+    border-color: rgba(100, 181, 246, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.form-input.is-invalid {
+    border-color: rgba(239, 83, 80, 0.5);
+}
+
+.field-error {
+    font-size: 0.75rem;
+    color: #ef5350;
+    display: block;
+    margin-top: 0.2rem;
+}
+
+.action-btn {
+    min-width: 140px;
+    padding: 0.55rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* ── Digital Business Card ─────────────────────────────── */
+.business-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    min-height: 200px;
+}
+
+.card-accent-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #64b5f6, #42a5f5, #1e88e5);
+}
+
+.card-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.75rem;
+}
+
+.card-avatar-wrap {
+    flex-shrink: 0;
+}
+
+.card-avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(100, 181, 246, 0.35);
+}
+
+.card-avatar-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.card-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.card-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-company {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent-blue);
+    margin: 0 0 0.1rem;
+}
+
+.card-org {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0 0 0.35rem;
+}
+
+.card-email,
+.card-dietary {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0.15rem 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-footer-brand {
+    padding: 0.6rem 1.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(100, 181, 246, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.brand-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #64b5f6;
+    display: inline-block;
+}
