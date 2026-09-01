@@ -4,6 +4,7 @@ export const ATTENDEE_ROUTE_PATHS = {
   events: 'events',
   registration: 'registration',
   agenda: 'agenda',
+  profile: 'profile',
 } as const;
 
 export const ATTENDEE_ROUTES: Routes = [
@@ -30,6 +31,12 @@ export const ATTENDEE_ROUTES: Routes = [
         loadComponent: () =>
           import('./agenda/agenda.component').then((m) => m.AgendaComponent),
         title: 'EventHub | Agenda'
+      },
+      {
+        path: ATTENDEE_ROUTE_PATHS.profile,
+        loadComponent: () =>
+          import('./profile/profile.component').then((m) => m.ProfileComponent),
+        title: 'EventHub | My Profile'
       }
     ]
   }
