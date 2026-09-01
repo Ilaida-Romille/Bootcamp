@@ -199,6 +199,104 @@
     border-radius: 0;
 }
 
+/* Agenda Day Section Headers */
+.agenda-day-block {
+    margin-bottom: 1.75rem;
+}
+
+.agenda-day-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.agenda-day-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    text-shadow: 0 0 10px rgba(100, 181, 246, 0.2);
+}
+
+.agenda-day-title {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* Track Row — Label Column + Sessions Row */
+.agenda-track-row {
+    display: flex;
+    align-items: stretch;
+    min-height: 80px;
+}
+
+.agenda-track-label {
+    width: 130px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 0.6rem;
+    background-color: rgba(0, 0, 0, 0.25);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: center;
+}
+
+.agenda-track-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    word-break: break-word;
+    text-shadow: 0 0 10px rgba(100, 181, 246, 0.2);
+}
+
+.agenda-track-sessions {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.65rem;
+    align-items: stretch;
+}
+
+/* Individual Session Cards Within a Track */
+.agenda-session-card {
+    flex: 1;
+    min-width: 180px;
+    padding: 0.6rem 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.agenda-session-card:hover {
+    background: rgba(100, 181, 246, 0.05);
+    border-color: rgba(100, 181, 246, 0.18);
+}
+
+.agenda-session-time {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    opacity: 0.9;
+}
+
+.agenda-session-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
 /* Glass Contact Action Wrapper Elements */
 .glass-contact-card {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
