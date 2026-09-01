@@ -5,7 +5,7 @@ export interface NavbarContext {
   companyName: string | null;
   userName: string | null;
   eventName: string | null;
-  currentPageKey: 'events' | 'registration' | 'agenda' | null;
+  currentPageKey: 'events' | 'registration' | 'agenda' | 'profile' | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -63,7 +63,7 @@ export class NavbarContextService {
   /**
    * Set current page key to show appropriate nav item
    */
-  setCurrentPage(page: 'events' | 'registration' | 'agenda' | null): void {
+  setCurrentPage(page: 'events' | 'registration' | 'agenda' | 'profile' | null): void {
     this.updateContext({ currentPageKey: page });
   }
 
