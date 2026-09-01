@@ -10,7 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -29,6 +29,22 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .build();
+    }
+
+    @PostMapping("/register/attendee")
+    public ResponseEntity<Void> registerAttendee(
+            @Valid @RequestBody RegisterAttendeeRequestDto request) {
+
+        authService.registerAttendee(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
+    }
+
+    @GetMapping("/organizations")
+    public ResponseEntity<List<PublicOrganizationDto>> getPublicOrganizations() {
+        return ResponseEntity.ok(authService.getPublicOrganizations());
     }
 
     @PostMapping("/login")
