@@ -53,6 +53,8 @@ export interface EventItemDisplay extends EventDetail {
   | 'status-cancelled';
 
   remainingSlots: number;
+
+  isRegistered: boolean;
 }
 
 
