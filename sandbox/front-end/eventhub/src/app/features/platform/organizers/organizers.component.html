@@ -1,45 +1,40 @@
 <h1 class="h2 fw-bold text-white mb-4">Organizers</h1>
 
-  @if (dataLoadingError) {
-    <div class="alert alert-danger" role="alert">
-      {{ dataLoadingError }}
-    </div>
-  }
+@if (dataLoadingError) {
+  <div class="alert alert-danger" role="alert">
+    {{ dataLoadingError }}
+  </div>
+}
 
-<!-- Filters Layer using Bootstrap Grid Row configurations -->
-<form class="row g-3 align-items-end mb-4" id="companyFilterForm" (submit)="$event.preventDefault(); applyFilter()">
+<!-- Filters Layer -->
+<form class="row g-3 align-items-end mb-4" (submit)="$event.preventDefault(); applyFilter()">
   <div class="col-md-7 col-lg-8">
-    <label for="searchCompany" class="form-label small text-secondary">Search by company name</label>
-    <input 
-      type="text" 
-      id="searchCompany" 
+    <label for="searchOrganizer" class="form-label small text-secondary">Search by name, organization, or email</label>
+    <input
+      type="text"
+      id="searchOrganizer"
       class="form-control glass-form-input"
       [value]="searchTerm"
       (input)="onSearchChange($event)"
-      placeholder="Enter company name...">
+      placeholder="Enter name, org, or email...">
   </div>
 
   <div class="col-md-3 col-lg-2">
-    <div class="dropdown" id="statusFilterDropdown" [class.show]="isDropdownOpen">
-      <!-- Dropdown Toggle Button -->
-      <button 
-        class="btn glass-form-input dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" 
-        type="button" 
-        id="statusFilterBtn" 
+    <label for="statusFilterBtn" class="form-label small text-secondary">Status</label>
+    <div class="dropdown" [class.show]="isDropdownOpen">
+      <button
+        id="statusFilterBtn"
+        class="btn glass-form-input dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center"
+        type="button"
         (click)="toggleDropdown()"
         [attr.aria-expanded]="isDropdownOpen">
         <span>{{ selectedStatus }}</span>
       </button>
-
-      <!-- Dropdown Items Menu -->
-      <ul class="dropdown-menu dropdown-menu-dark w-100 shadow" [class.show]="isDropdownOpen" aria-labelledby="statusFilterBtn">
+      <ul class="dropdown-menu dropdown-menu-dark w-100 shadow" [class.show]="isDropdownOpen">
         @for (status of statusOptions; track status) {
           <li>
-            <a 
-              class="dropdown-item" 
-              [class.active]="selectedStatus === status" 
-              href="javascript:void(0)" 
-              (click)="selectStatus(status)">
+            <a class="dropdown-item" [class.active]="selectedStatus === status"
+               href="javascript:void(0)" (click)="selectStatus(status)">
               {{ status }}
             </a>
           </li>
@@ -55,47 +50,134 @@
   </div>
 </form>
 
-<!-- Table Contents -->
+<!-- Table -->
 <div class="glass-table-responsive rounded-3">
-  <table class="table glass-data-table mb-0 align-middle" id="companiesTable">
+  <table class="table glass-data-table mb-0 align-middle">
     <thead>
       <tr>
-        <th scope="col">Company Name</th>
+        <th scope="col">Organizer</th>
+        <th scope="col">Organization</th>
+        <th scope="col">Email</th>
         <th scope="col"># Events</th>
         <th scope="col">Status</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
-    <tbody id="companyTableBody">
-      @for (company of paginatedCompanies; track company.id) {
+    <tbody>
+      @for (organizer of paginatedOrganizers; track organizer.id) {
         <tr>
-          <td class="fw-semibold">{{ company.name }}</td>
-          <td>{{ company.eventsCount }}</td>
+          <td class="fw-semibold">{{ organizer.fullName }}</td>
+          <td>{{ organizer.organizationName }}</td>
+          <td class="text-secondary small">{{ organizer.primaryContactEmail }}</td>
+          <td>{{ organizer.totalEvents }}</td>
           <td>
-            <span [ngClass]="getStatusBadgeClass(company.status)" class="fw-semibold">
-              {{ company.status }}
+            <span [ngClass]="getStatusBadgeClass(organizer.userStatus)" class="fw-semibold">
+              {{ getStatusLabel(organizer.userStatus) }}
             </span>
           </td>
           <td class="actions-cell">
-            <a href="javascript:void(0)">View</a>
+            <a href="javascript:void(0)" (click)="openEditModal(organizer)">Edit</a>
             <span class="action-divider">|</span>
-            <a href="javascript:void(0)">Edit</a>
+            <a href="javascript:void(0)"
+               [class.text-warning]="organizer.userStatus === 'ACTIVE'"
+               [class.text-success]="organizer.userStatus === 'INACTIVE'"
+               (click)="toggleStatus(organizer)">
+              {{ organizer.userStatus === 'ACTIVE' ? 'Deactivate' : 'Activate' }}
+            </a>
+            <span class="action-divider">|</span>
+            <a href="javascript:void(0)" class="text-danger" (click)="openDeleteModal(organizer)">Delete</a>
           </td>
         </tr>
       }
-      @if (filteredCompanies.length === 0) {
+      @if (filteredOrganizers.length === 0) {
         <tr>
-          <td colspan="4" class="text-center text-muted py-4">No organizers found.</td>
+          <td colspan="6" class="text-center text-muted py-4">No organizers found.</td>
         </tr>
       }
     </tbody>
   </table>
 </div>
 
-<!-- Replaced static HTML with <app-pagination> -->
 <app-pagination
   [currentPage]="currentPage"
-  [totalItems]="filteredCompanies.length"
+  [totalItems]="filteredOrganizers.length"
   [itemsPerPage]="itemsPerPage"
   (pageChange)="onPageChange($event)">
 </app-pagination>
+
+<!-- Edit Organizer Modal -->
+<div class="modal fade" id="editOrganizerModal" tabindex="-1" aria-labelledby="editOrganizerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light border-secondary">
+      <div class="modal-header border-secondary px-4 py-3">
+        <h5 class="modal-title fw-bold text-white" id="editOrganizerModalLabel">Edit Organizer</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form (submit)="$event.preventDefault(); submitEdit()">
+        <div class="modal-body p-4">
+          @if (actionError) {
+            <div class="alert alert-danger py-2 small" role="alert">{{ actionError }}</div>
+          }
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="editFirstName" class="form-label small text-secondary">First Name</label>
+              <input type="text" id="editFirstName" class="form-control glass-form-input"
+                     [(ngModel)]="editForm.firstName" name="firstName" required maxlength="100">
+            </div>
+            <div class="col-sm-6">
+              <label for="editLastName" class="form-label small text-secondary">Last Name</label>
+              <input type="text" id="editLastName" class="form-control glass-form-input"
+                     [(ngModel)]="editForm.lastName" name="lastName" required maxlength="100">
+            </div>
+            <div class="col-12">
+              <label for="editCompany" class="form-label small text-secondary">Company (display)</label>
+              <input type="text" id="editCompany" class="form-control glass-form-input"
+                     [(ngModel)]="editForm.company" name="company" maxlength="255">
+            </div>
+            <div class="col-12">
+              <label for="editOrgName" class="form-label small text-secondary">Organization Name</label>
+              <input type="text" id="editOrgName" class="form-control glass-form-input"
+                     [(ngModel)]="editForm.organizationName" name="organizationName" required maxlength="255">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary fw-semibold" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteOrganizerModal" tabindex="-1" aria-labelledby="deleteOrganizerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light border-secondary">
+      <div class="modal-header border-secondary px-4 py-3">
+        <h5 class="modal-title fw-bold text-white" id="deleteOrganizerModalLabel">
+          <span class="text-danger me-2">&#9888;</span> Delete Organizer
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        @if (actionError) {
+          <div class="alert alert-danger py-2 small" role="alert">{{ actionError }}</div>
+        }
+        <p class="text-secondary mb-1">You are about to permanently remove:</p>
+        <p class="fw-bold text-white mb-3">{{ deletingOrganizerName }}</p>
+        <p class="text-secondary small mb-0">
+          This will deactivate their account and suspend their organization. Associated events and invoices will be retained for record-keeping.
+        </p>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger fw-semibold" (click)="confirmDelete()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Deleting...' : 'Confirm Delete' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

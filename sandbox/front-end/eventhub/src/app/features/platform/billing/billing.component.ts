@@ -10,9 +10,6 @@ import { BatchSummaryModalComponent } from './components/batch-summary-modal/bat
 import {
   Invoice,
   BatchSummary,
-  BillingOrganizer,
-  BillingMonth,
-  BillingFeatureData
 } from './models/billing-model/billing-model.component';
 import { BillingDataService } from './services/billing-data.service';
 
@@ -33,7 +30,6 @@ declare var bootstrap: any;
 })
 export class BillingComponent implements OnInit {
   private readonly base = `/${ROUTE_PATHS.platformOwner}`;
-  private generatedInvoiceSequence = 1;
 
   adminNavItems: SidebarItem[] = [
     { label: 'Dashboard', route: `${this.base}/${PLATFORM_ROUTE_PATHS.dashboard}` },
@@ -49,10 +45,6 @@ export class BillingComponent implements OnInit {
 
   // Single Organizer Invoice Generation Inputs
   selectedGenInvoiceId: string = '';
-
-  // Dropdown Options
-  organizerOptions: BillingOrganizer[] = [];
-  monthOptions: BillingMonth[] = [];
 
   currency: string = 'PHP';
   currencySymbol: string = 'P';
@@ -103,43 +95,39 @@ export class BillingComponent implements OnInit {
   }
 
   get selectedGenMonthLabel(): string {
-    return this.selectedGenerationInvoice?.period || '-------------';
+    return this.selectedGenInvoiceId ? this.getCurrentBillingPeriod().label : '-------------';
   }
 
   private loadBillingData(): void {
     this.dataLoadingError = '';
 
-    this.billingDataService.getBillingData().subscribe({
-      next: (payload: BillingFeatureData) => {
-        this.currency = payload.currency;
-        this.currencySymbol = payload.currencySymbol;
-        this.organizerOptions = payload.organizers;
-        this.monthOptions = payload.months;
-        this.invoices = payload.invoices;
+    this.billingDataService.getAllInvoices().subscribe({
+      next: (invoices: Invoice[]) => {
+        this.invoices = invoices;
         this.applyFilter();
         this.cdr.detectChanges();
       },
       error: () => {
         this.invoices = [];
         this.filteredInvoices = [];
-        this.dataLoadingError = 'Unable to load billing data from /data/invoices.json.';
+        this.dataLoadingError = 'Unable to load billing data. Please check your connection.';
         this.cdr.detectChanges();
       }
     });
   }
 
-  private getMonthEndDate(monthCode: string): string {
-    const [yearText, monthText] = monthCode.split('-');
-    const year = Number(yearText);
-    const month = Number(monthText);
-    const endDate = new Date(year, month, 0);
-    return endDate.toISOString().slice(0, 10);
-  }
-
-  private addDays(dateIso: string, days: number): string {
-    const date = new Date(dateIso);
-    date.setDate(date.getDate() + days);
-    return date.toISOString().slice(0, 10);
+  private getCurrentBillingPeriod(): { periodStart: string; periodEnd: string; label: string } {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const mm = String(month).padStart(2, '0');
+    const lastDay = new Date(year, month, 0).getDate();
+    const label = now.toLocaleString('default', { month: 'long', year: 'numeric' });
+    return {
+      periodStart: `${year}-${mm}-01`,
+      periodEnd: `${year}-${mm}-${String(lastDay).padStart(2, '0')}`,
+      label
+    };
   }
 
   applyFilter(): void {
@@ -191,48 +179,33 @@ export class BillingComponent implements OnInit {
   }
 
   generateBatchInvoices(): void {
-    const targetMonth = this.monthOptions.at(-1);
-    if (!targetMonth) {
-      return;
-    }
+    const { periodStart, periodEnd, label } = this.getCurrentBillingPeriod();
 
-    let sampleBatch = this.invoices.filter(inv => inv.monthCode === targetMonth.code);
+    this.billingDataService.generateBatchInvoices(periodStart, periodEnd).subscribe({
+      next: (batchInvoices: Invoice[]) => {
+        this.invoices.unshift(...batchInvoices);
+        this.applyFilter();
 
-    if (sampleBatch.length === 0) {
-      sampleBatch = this.organizerOptions.map((organizer, index) => {
-        const attendeesCount = 30 + index * 5;
-        const ratePerAttendee = 1200;
-        return {
-          id: `generated_${targetMonth.code}_${organizer.id}`,
-          invoiceNumber: `INV-${targetMonth.code.replace('-', '')}-${index + 1}`,
-          organizerId: organizer.id,
-          organizerName: organizer.name,
-          organizerEmail: organizer.email,
-          period: targetMonth.name,
-          monthCode: targetMonth.code,
-          issueDate: this.getMonthEndDate(targetMonth.code),
-          dueDate: this.addDays(this.getMonthEndDate(targetMonth.code), 30),
-          attendeesCount,
-          ratePerAttendee,
-          amount: attendeesCount * ratePerAttendee,
-          status: 'Pending' as const
+        this.activeBatchSummary = {
+          period: label,
+          organizersCount: batchInvoices.length,
+          totalAttendees: batchInvoices.reduce((sum, inv) => sum + inv.attendeesCount, 0),
+          totalAmount: batchInvoices.reduce((sum, inv) => sum + inv.amount, 0),
+          invoices: batchInvoices
         };
-      });
-    }
 
-    this.activeBatchSummary = {
-      period: targetMonth.name,
-      organizersCount: sampleBatch.length,
-      totalAttendees: sampleBatch.reduce((sum, item) => sum + item.attendeesCount, 0),
-      totalAmount: sampleBatch.reduce((sum, item) => sum + item.amount, 0),
-      invoices: sampleBatch
-    };
-
-    const modalElement = document.getElementById('batchSummaryModal');
-    if (modalElement) {
-      const modal = new bootstrap.Modal(modalElement);
-      modal.show();
-    }
+        const modalElement = document.getElementById('batchSummaryModal');
+        if (modalElement) {
+          const modal = new bootstrap.Modal(modalElement);
+          modal.show();
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.dataLoadingError = 'Failed to generate batch invoices.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   generateSingleInvoice(): void {
@@ -241,41 +214,25 @@ export class BillingComponent implements OnInit {
     }
 
     const selectedInvoice = this.selectedGenerationInvoice;
-
     if (!selectedInvoice) {
       return;
     }
 
-    const issueDate = this.getMonthEndDate(selectedInvoice.monthCode);
-    const dueDate = this.addDays(issueDate, 30);
-    const previousInvoices = this.invoices.filter(inv => inv.organizerId === selectedInvoice.organizerId);
-    const previousRate = previousInvoices[0]?.ratePerAttendee ?? 1000;
-    const attendeesCount = previousInvoices.length > 0
-      ? Math.round(previousInvoices.reduce((sum, inv) => sum + inv.attendeesCount, 0) / previousInvoices.length)
-      : 30;
-    const sequence = String(this.generatedInvoiceSequence++).padStart(4, '0');
+    const { periodStart, periodEnd } = this.getCurrentBillingPeriod();
 
-    const newInvoice: Invoice = {
-      id: `generated_${Date.now()}`,
-      invoiceNumber: `INV-${selectedInvoice.monthCode.replace('-', '')}-${sequence}`,
-      organizerId: selectedInvoice.organizerId,
-      organizerName: selectedInvoice.organizerName,
-      organizerEmail: selectedInvoice.organizerEmail,
-      period: selectedInvoice.period,
-      monthCode: selectedInvoice.monthCode,
-      issueDate,
-      dueDate,
-      attendeesCount,
-      ratePerAttendee: previousRate,
-      amount: attendeesCount * previousRate,
-      status: 'Pending'
-    };
-
-    this.invoices.unshift(newInvoice);
-    this.applyFilter();
-    this.openInvoiceModal(newInvoice);
-
-    this.selectedGenInvoiceId = '';
+    this.billingDataService.generateInvoice(selectedInvoice.organizationId, periodStart, periodEnd).subscribe({
+      next: (newInvoice: Invoice) => {
+        this.invoices.unshift(newInvoice);
+        this.applyFilter();
+        this.openInvoiceModal(newInvoice);
+        this.selectedGenInvoiceId = '';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.dataLoadingError = 'Failed to generate invoice.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   getStatusBadgeClass(status: string): string {
