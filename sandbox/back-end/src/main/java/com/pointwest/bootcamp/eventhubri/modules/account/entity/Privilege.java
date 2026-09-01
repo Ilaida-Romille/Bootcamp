@@ -4,6 +4,7 @@ package com.pointwest.bootcamp.eventhubri.modules.account.entity;
 public enum Privilege {
     MANAGE_PLATFORM_RATES,
     VIEW_ALL_ORGANIZATIONS,
+    MANAGE_ORGANIZATIONS,
     VIEW_ALL_INVOICES,
     MANAGE_EVENTS,
     MANAGE_STAFF,
