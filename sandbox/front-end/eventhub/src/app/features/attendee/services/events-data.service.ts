@@ -21,6 +21,32 @@ export interface EventDiscoveryResponseDto {
   maxCapacity: number;
   availableSlots: number;
   registrationOpen: boolean;
+  isRegistered: boolean;
+}
+
+export interface AgendaSessionSummary {
+  id: number;
+  title: string;
+  startTime: string;
+  endTime: string;
+  locationOrRoom: string | null;
+}
+
+export interface AgendaTrackSummary {
+  id: number;
+  name: string;
+  description: string | null;
+  displayOrder: number;
+  sessions: AgendaSessionSummary[];
+}
+
+export interface AgendaResponseDto {
+  id: number;
+  eventId: number;
+  agendaDate: string;
+  title: string;
+  description: string | null;
+  tracks: AgendaTrackSummary[];
 }
 
 export interface SpringPageResponse<T> {
@@ -125,6 +151,19 @@ export class EventsDataService {
 
 
   /**
+   * GET /api/events/{eventId}/agendas
+   */
+  getAgendasByEvent(
+    eventId: number
+  ): Observable<AgendaResponseDto[]> {
+
+    return this.http.get<AgendaResponseDto[]>(
+      `/api/events/${eventId}/agendas`
+    );
+  }
+
+
+  /**
    * Convert backend discovery DTO into the
    * EventItemDisplay model used by EventCardComponent.
    */
@@ -215,7 +254,9 @@ export class EventsDataService {
 
       statusClass,
 
-      remainingSlots
+      remainingSlots,
+
+      isRegistered: dto.isRegistered ?? false
     };
   }
 }
