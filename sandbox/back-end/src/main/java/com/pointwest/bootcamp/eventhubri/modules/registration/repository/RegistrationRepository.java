@@ -5,8 +5,11 @@ import com.pointwest.bootcamp.eventhubri.modules.registration.entity.Registratio
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface RegistrationRepository extends JpaRepository<Registration, Long> {
 
@@ -23,4 +26,7 @@ public interface RegistrationRepository extends JpaRepository<Registration, Long
     long countByEvent_IdAndStatus(Long eventId, RegistrationStatus status);
 
     Optional<Registration> findFirstByEvent_IdAndStatusOrderByCreatedAtAsc(Long eventId, RegistrationStatus status);
+
+    @Query("SELECT r.event.id FROM Registration r WHERE r.attendee.id = :attendeeId AND r.status <> 'CANCELLED'")
+    Set<Long> findActiveRegisteredEventIds(@Param("attendeeId") Long attendeeId);
 }
