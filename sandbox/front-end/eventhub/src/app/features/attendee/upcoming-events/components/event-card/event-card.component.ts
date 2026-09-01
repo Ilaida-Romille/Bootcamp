@@ -46,7 +46,12 @@ export class EventCardComponent {
 
     return (
       this.event.status === 'registration_open' &&
-      this.event.remainingSlots > 0
+      this.event.remainingSlots > 0 &&
+      !this.event.isRegistered
     );
+  }
+
+  get isRegistered(): boolean {
+    return this.event.isRegistered;
   }
 }

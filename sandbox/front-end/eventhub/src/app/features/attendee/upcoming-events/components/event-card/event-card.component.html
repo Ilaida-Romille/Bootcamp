@@ -19,13 +19,21 @@
         <p class="event-date"><i class="bi bi-calendar3"></i> {{ event.startDateTime | date:'MMM dd, yyyy' }}</p>
         <p class="event-venue"><i class="bi bi-geo-alt"></i> {{ event.venue }}</p>
         <p class="event-organizer">Organized by {{ event.organizerName }}</p>
-        <button
-          type="button"
-          [routerLink]="canRegister ? ['/dashboard', ATTENDEE_PATHS.registration, event.id] : null"
-          [disabled]="!canRegister"
-          class="btn btn-glass-outline event-btn rounded-2">
-          {{ canRegister ? 'Register Now' : event.statusLabel }}
-        </button>
+        @if (isRegistered) {
+          <a
+            [routerLink]="['/dashboard', ATTENDEE_PATHS.agenda, event.id]"
+            class="btn btn-glass-outline event-btn rounded-2">
+            View Agenda
+          </a>
+        } @else {
+          <button
+            type="button"
+            [routerLink]="canRegister ? ['/dashboard', ATTENDEE_PATHS.registration, event.id] : null"
+            [disabled]="!canRegister"
+            class="btn btn-glass-outline event-btn rounded-2">
+            {{ canRegister ? 'Register Now' : event.statusLabel }}
+          </button>
+        }
       </div>
     </div>
 
