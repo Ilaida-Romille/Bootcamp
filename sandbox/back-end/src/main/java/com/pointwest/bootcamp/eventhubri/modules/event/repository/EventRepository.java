@@ -77,4 +77,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
         Optional<Event> findByIdAndStatusAndIsPrivateFalse(Long id, Event.Status status);
 
+        long countByOrganizationId(Long organizationId);
+
 }

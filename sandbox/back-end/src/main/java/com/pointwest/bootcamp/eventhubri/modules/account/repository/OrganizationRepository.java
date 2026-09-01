@@ -1,5 +1,7 @@
 package com.pointwest.bootcamp.eventhubri.modules.account.repository;
 
+import java.util.List;
+
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.Organization;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -8,4 +10,6 @@ public interface OrganizationRepository
 
     boolean existsByPrimaryContactEmailIgnoreCase(
             String primaryContactEmail);
+
+    List<Organization> findByStatus(Organization.Status status);
 }
