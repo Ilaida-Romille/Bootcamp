@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiAgendaItem } from '../../../models/attendee.model';
+import { AgendaResponseDto } from '../../../services/events-data.service';
 
 @Component({
   selector: 'app-agenda-timeline',
@@ -8,50 +8,50 @@ import { ApiAgendaItem } from '../../../models/attendee.model';
   imports: [CommonModule],
   template: `
     <h1 class="custom-section-title">Agenda</h1>
-    @if (items.length === 0) {
+    @if (agendas.length === 0) {
       <div class="text-secondary small py-3">
         No agenda items available.
       </div>
     }
-    <div class="d-flex flex-column gap-2 custom-agenda-timeline">
-      @for (item of items; track $index) {
-        <div
-          class="glass-agenda-card rounded-1 overflow-hidden"
-          [class.agenda-break]="item.isBreak">
-          <div class="agenda-time">
-            <span>{{ item.startDateTime | date:'h:mm a' }}</span>
-            <span class="agenda-time-divider">–</span>
-            <span>{{ item.endDateTime | date:'h:mm a' }}</span>
-          </div>
-          <div class="agenda-body">
-            <div class="agenda-title text-white" [class.agenda-break-label]="item.isBreak">
-              {{ item.title }}
-              @if (item.isBreak) {
-                <span class="agenda-break-badge">Break</span>
-              }
-            </div>
-            @if (item.description) {
-              <div class="agenda-description">{{ item.description }}</div>
-            }
-            <div class="agenda-meta d-flex gap-3 flex-wrap mt-1">
-              @if (item.speaker) {
-                <span class="agenda-meta-item">
-                  <i class="bi bi-person"></i> {{ item.speaker }}
-                </span>
-              }
-              @if (item.location) {
-                <span class="agenda-meta-item">
-                  <i class="bi bi-geo-alt"></i> {{ item.location }}
-                </span>
-              }
-            </div>
-          </div>
+    @for (agenda of agendas; track agenda.id) {
+      <div class="agenda-day-block">
+        <div class="agenda-day-header">
+          <span class="agenda-day-label">{{ agenda.agendaDate | date:'EEEE, MMMM d' }}</span>
+          @if (agenda.title) {
+            <span class="agenda-day-title">— {{ agenda.title }}</span>
+          }
         </div>
-      }
-    </div>
+        <div class="custom-agenda-timeline d-flex flex-column gap-2">
+          @for (track of agenda.tracks; track track.id) {
+            @if (track.sessions.length > 0) {
+              <div class="glass-agenda-card agenda-track-row rounded-1 overflow-hidden">
+                <div class="agenda-track-label">
+                  <span class="agenda-track-name">{{ track.name }}</span>
+                </div>
+                <div class="agenda-track-sessions">
+                  @for (session of track.sessions; track session.id) {
+                    <div class="agenda-session-card">
+                      <div class="agenda-session-time">
+                        {{ session.startTime | date:'h:mm a' }}&nbsp;&ndash;&nbsp;{{ session.endTime | date:'h:mm a' }}
+                      </div>
+                      <div class="agenda-session-title">{{ session.title }}</div>
+                      @if (session.locationOrRoom) {
+                        <div class="agenda-meta-item">
+                          <i class="bi bi-geo-alt"></i> {{ session.locationOrRoom }}
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    }
   `,
   styleUrls: ['../../agenda.component.css']
 })
 export class AgendaTimelineComponent {
-  @Input() items: ApiAgendaItem[] = [];
+  @Input() agendas: AgendaResponseDto[] = [];
 }
