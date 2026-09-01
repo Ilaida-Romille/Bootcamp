@@ -29,4 +29,12 @@ public class EventRegistrationController {
         return ResponseEntity.ok(
                 registrationService.listRegistrationsForEvent(eventId, status, authentication.getName(), pageable));
     }
+
+    @GetMapping("/attendees")
+    @PreAuthorize("hasAuthority('REGISTER_FOR_EVENT')")
+    public ResponseEntity<Page<RegistrationResponseDto>> listAttendeesPublic(
+            @PathVariable Long eventId,
+            @PageableDefault(size = 50, sort = "createdAt") Pageable pageable) {
+        return ResponseEntity.ok(registrationService.listConfirmedAttendeesForEvent(eventId, pageable));
+    }
 }
