@@ -79,4 +79,20 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
         long countByOrganizationId(Long organizationId);
 
+        // Platform Owner Dashboard
+        @Query("""
+                        SELECT count(e) FROM Event e
+                        WHERE year(e.createdAt) = :year
+                        """)
+        long countEventsCreatedInYear(@Param("year") int year);
+
+        @Query("""
+                        SELECT month(e.createdAt), count(e)
+                        FROM Event e
+                        WHERE year(e.createdAt) = :year
+                        GROUP BY month(e.createdAt)
+                        ORDER BY month(e.createdAt)
+                        """)
+        List<Object[]> countEventsByMonthInYear(@Param("year") int year);
+
 }
