@@ -170,6 +170,14 @@ public class BillingService {
         return "INV-" + organizationId + "-" + System.currentTimeMillis();
     }
 
+    @Transactional
+    public List<InvoiceResponseDto> generateBatchInvoices(LocalDate periodStart, LocalDate periodEnd) {
+        List<Organization> activeOrganizations = organizationRepository.findByStatus(Organization.Status.ACTIVE);
+        return activeOrganizations.stream()
+                .map(org -> generateInvoice(org.getId(), periodStart, periodEnd))
+                .toList();
+    }
+
     private InvoiceResponseDto toDto(OrganizationInvoice invoice) {
         List<InvoiceResponseDto.InvoiceLineItem> items = invoice.getItems().stream()
                 .map(item -> new InvoiceResponseDto.InvoiceLineItem(
@@ -184,6 +192,7 @@ public class BillingService {
                 invoice.getId(),
                 invoice.getOrganization().getId(),
                 invoice.getOrganization().getCompanyName(),
+                invoice.getOrganization().getPrimaryContactEmail(),
                 invoice.getInvoiceNumber(),
                 invoice.getBillingPeriodStart(),
                 invoice.getBillingPeriodEnd(),
