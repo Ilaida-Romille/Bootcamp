@@ -85,20 +85,23 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new BusinessRuleViolationException("This registration is already cancelled.");
         }
 
-        boolean wasConfirmed = registration.getStatus() == RegistrationStatus.CONFIRMED;
-        registration.setStatus(RegistrationStatus.CANCELLED);
-        registrationRepository.save(registration);
+        cancelRegistration(registration);
+    }
 
-        // Promote the longest-waiting waitlisted attendee into the freed slot.
-        if (wasConfirmed) {
-            registrationRepository
-                    .findFirstByEvent_IdAndStatusOrderByCreatedAtAsc(
-                            registration.getEvent().getId(), RegistrationStatus.WAITLISTED)
-                    .ifPresent(next -> {
-                        next.setStatus(RegistrationStatus.CONFIRMED);
-                        registrationRepository.save(next);
-                    });
+    @Override
+    @Transactional
+    public void removeRegistrationForOrganizer(Long registrationId, String staffEmail) {
+        AppUser staff = requireUser(staffEmail);
+        Registration registration = registrationRepository.findById(registrationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Registration not found: " + registrationId));
+
+        assertSameOrganization(staff, registration.getEvent());
+        if (registration.getEvent().getRegistrationEndTime() != null
+                && LocalDateTime.now().isAfter(registration.getEvent().getRegistrationEndTime())) {
+            throw new BusinessRuleViolationException("The registration period for this event has ended.");
         }
+
+        cancelRegistration(registration);
     }
 
     @Override
@@ -145,6 +148,26 @@ public class RegistrationServiceImpl implements RegistrationService {
         assertSameOrganization(staff, registration.getEvent());
         registration.setStatus(newStatus);
         return toResponseDto(registrationRepository.save(registration));
+    }
+
+    private void cancelRegistration(Registration registration) {
+        if (registration.getStatus() == RegistrationStatus.CANCELLED) {
+            throw new BusinessRuleViolationException("This registration is already cancelled.");
+        }
+
+        boolean wasConfirmed = registration.getStatus() == RegistrationStatus.CONFIRMED;
+        registration.setStatus(RegistrationStatus.CANCELLED);
+        registrationRepository.save(registration);
+
+        if (wasConfirmed) {
+            registrationRepository
+                    .findFirstByEvent_IdAndStatusOrderByCreatedAtAsc(
+                            registration.getEvent().getId(), RegistrationStatus.WAITLISTED)
+                    .ifPresent(next -> {
+                        next.setStatus(RegistrationStatus.CONFIRMED);
+                        registrationRepository.save(next);
+                    });
+        }
     }
 
     private Registration findOwned(Long registrationId, Long attendeeId) {

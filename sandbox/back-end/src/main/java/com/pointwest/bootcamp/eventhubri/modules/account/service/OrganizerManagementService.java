@@ -33,6 +33,18 @@ public class OrganizerManagementService {
     }
 
     @Transactional(readOnly = true)
+    public Page<OrganizerResponseDto> searchOrganizers(String query, Pageable pageable) {
+        String normalizedQuery = query == null ? "" : query.trim();
+        if (normalizedQuery.isBlank()) {
+            return getOrganizers(pageable);
+        }
+
+        return appUserRepository
+                .searchOrganizers(Role.ORGANIZER_ADMIN, Organization.Status.SUSPENDED, normalizedQuery, pageable)
+                .map(this::toDto);
+    }
+
+    @Transactional(readOnly = true)
     public OrganizerResponseDto getOrganizerById(Long id) {
         AppUser user = findOrganizerOrThrow(id);
         return toDto(user);
@@ -71,7 +83,8 @@ public class OrganizerManagementService {
     @Transactional
     public void deleteOrganizer(Long id) {
         AppUser user = findOrganizerOrThrow(id);
-        // Soft-delete: deactivate user and suspend organization so they no longer appear in lists
+        // Soft-delete: deactivate user and suspend organization so they no longer
+        // appear in lists
         user.setStatus(AppUser.Status.INACTIVE);
         appUserRepository.save(user);
 

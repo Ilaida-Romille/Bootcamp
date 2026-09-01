@@ -15,6 +15,8 @@ public interface RegistrationService {
 
     void cancelOwnRegistration(Long registrationId, String attendeeEmail);
 
+    void removeRegistrationForOrganizer(Long registrationId, String staffEmail);
+
     Page<RegistrationResponseDto> listRegistrationsForEvent(
             Long eventId, RegistrationStatus statusFilter, String staffEmail, Pageable pageable);
 
