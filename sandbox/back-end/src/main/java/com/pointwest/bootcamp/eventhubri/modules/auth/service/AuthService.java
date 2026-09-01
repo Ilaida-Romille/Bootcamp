@@ -1,5 +1,14 @@
 package com.pointwest.bootcamp.eventhubri.modules.auth.service;
 
+import com.pointwest.bootcamp.eventhubri.core.exception.auth.InvalidEmailOrPasswordException;
+import com.pointwest.bootcamp.eventhubri.core.exception.auth.InvalidRefreshToken;
+import com.pointwest.bootcamp.eventhubri.core.exception.auth.OrganizationAlreadyExistException;
+import com.pointwest.bootcamp.eventhubri.core.exception.auth.OrganizationNotFounException;
+import com.pointwest.bootcamp.eventhubri.core.exception.auth.RefreshTokenCouldNotHashException;
+import com.pointwest.bootcamp.eventhubri.core.exception.auth.RefreshTokenExpiredException;
+import com.pointwest.bootcamp.eventhubri.core.exception.auth.RefreshTokenReusedException;
+import com.pointwest.bootcamp.eventhubri.core.exception.auth.UserAlreadyExistException;
+import com.pointwest.bootcamp.eventhubri.core.exception.auth.UserInactiveException;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.AppUser;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.Organization;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.Role;
@@ -45,15 +54,14 @@ public class AuthService {
                 if (appUserRepository
                                 .existsByEmailIgnoreCase(request.email())) {
 
-                        throw new IllegalArgumentException(
-                                        "An account with this email already exists");
+                        throw new UserAlreadyExistException("An account with this email already exists");
                 }
 
                 if (organizationRepository
                                 .existsByPrimaryContactEmailIgnoreCase(
                                                 request.primaryContactEmail())) {
 
-                        throw new IllegalArgumentException(
+                        throw new OrganizationAlreadyExistException(
                                         "An organization with this email already exists");
                 }
 
@@ -88,14 +96,14 @@ public class AuthService {
         public void registerAttendee(RegisterAttendeeRequestDto request) {
 
                 if (appUserRepository.existsByEmailIgnoreCase(request.email())) {
-                        throw new IllegalArgumentException(
+                        throw new UserAlreadyExistException(
                                         "An account with this email already exists");
                 }
 
                 Organization organization = organizationRepository
                                 .findById(request.organizationId())
-                                .orElseThrow(() -> new EntityNotFoundException(
-                                                "Organization not found: " + request.organizationId()));
+                                .orElseThrow(() -> new OrganizationNotFounException(
+                                                "Organization not found: "));
 
                 AppUser user = AppUser.builder()
                                 .organization(organization)
@@ -133,18 +141,18 @@ public class AuthService {
                 AppUser user = appUserRepository
                                 .findByEmailIgnoreCase(
                                                 request.email())
-                                .orElseThrow(() -> new IllegalArgumentException(
+                                .orElseThrow(() -> new InvalidEmailOrPasswordException(
                                                 "Invalid email or password"));
 
                 if (user.getStatus() != AppUser.Status.ACTIVE) {
-                        throw new IllegalStateException(
+                        throw new UserInactiveException(
                                         "User account is inactive");
                 }
 
                 if (!passwordEncoder.matches(
                                 request.password(),
                                 user.getPasswordHash())) {
-                        throw new IllegalArgumentException(
+                        throw new InvalidEmailOrPasswordException(
                                         "Invalid email or password");
                 }
 
@@ -166,7 +174,7 @@ public class AuthService {
 
                 RefreshToken current = refreshTokenRepository
                                 .findByTokenHashForUpdate(tokenHash)
-                                .orElseThrow(() -> new IllegalArgumentException(
+                                .orElseThrow(() -> new InvalidRefreshToken(
                                                 "Invalid refresh token"));
 
                 /*
@@ -177,7 +185,7 @@ public class AuthService {
                         refreshTokenRepository.revokeFamily(
                                         current.getFamilyId());
 
-                        throw new IllegalArgumentException(
+                        throw new RefreshTokenReusedException(
                                         "Refresh token reuse detected");
                 }
 
@@ -186,7 +194,7 @@ public class AuthService {
                         current.setRevokedAt(
                                         LocalDateTime.now());
 
-                        throw new IllegalArgumentException(
+                        throw new RefreshTokenExpiredException(
                                         "Refresh token has expired");
                 }
 
@@ -197,7 +205,7 @@ public class AuthService {
                         refreshTokenRepository.revokeFamily(
                                         current.getFamilyId());
 
-                        throw new IllegalStateException(
+                        throw new UserInactiveException(
                                         "User account is inactive");
                 }
 
@@ -302,7 +310,7 @@ public class AuthService {
                         return result.toString();
 
                 } catch (Exception ex) {
-                        throw new IllegalStateException(
+                        throw new RefreshTokenCouldNotHashException(
                                         "Could not hash refresh token",
                                         ex);
                 }

@@ -1,5 +1,6 @@
 package com.pointwest.bootcamp.eventhubri.modules.event.service;
 
+import com.pointwest.bootcamp.eventhubri.core.exception.event.EventNotFoundException;
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.AppUser;
 import com.pointwest.bootcamp.eventhubri.modules.account.repository.AppUserRepository;
 import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventCreateRequestDto;
@@ -8,7 +9,6 @@ import com.pointwest.bootcamp.eventhubri.modules.event.dto.EventUpdateRequestDto
 import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event;
 import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event.EventType;
 import com.pointwest.bootcamp.eventhubri.modules.event.entity.Event.Status;
-import com.pointwest.bootcamp.eventhubri.modules.event.exception.EventNotFoundException;
 import com.pointwest.bootcamp.eventhubri.modules.event.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 
