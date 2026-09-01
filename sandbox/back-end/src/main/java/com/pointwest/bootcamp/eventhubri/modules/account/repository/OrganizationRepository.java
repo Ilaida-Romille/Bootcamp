@@ -1,5 +1,6 @@
 package com.pointwest.bootcamp.eventhubri.modules.account.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.pointwest.bootcamp.eventhubri.modules.account.entity.Organization;
@@ -12,4 +13,8 @@ public interface OrganizationRepository
             String primaryContactEmail);
 
     List<Organization> findByStatus(Organization.Status status);
+
+    List<Organization> findByStatusIn(Collection<Organization.Status> statuses);
+
+    List<Organization> findByStatusNot(Organization.Status status);
 }
