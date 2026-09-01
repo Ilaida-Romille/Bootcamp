@@ -4,6 +4,7 @@ import { roleGuard } from './core/guards/role.guard';
 
 export const ROUTE_PATHS = {
   landing: '',
+  signup: 'signup',
   attendee: 'dashboard',
   organizer: 'organizer',
   platformOwner: 'platform-owner',
@@ -16,6 +17,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/landing/landing.component').then((m) => m.LandingComponent),
     title: 'EventHub | Sign In',
+  },
+  {
+    path: ROUTE_PATHS.signup,
+    loadComponent: () =>
+      import('./features/landing/signup/signup.component').then((m) => m.SignupComponent),
+    title: 'EventHub | Sign Up',
   },
 
   // 2. Attendee Feature Section (Protected - requires login as attendee)
