@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-
+import { Router, RouterLink } from '@angular/router';
 import { AuthRoutingService } from '../../../../core/services/auth-routing.service';
 import { SessionService } from '../../../../core/services/session.service';
 import {
@@ -21,7 +20,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   selector: 'app-login-form',
   standalone: true,
   host: { class: 'col-12 col-md-6 col-lg-5' },
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
