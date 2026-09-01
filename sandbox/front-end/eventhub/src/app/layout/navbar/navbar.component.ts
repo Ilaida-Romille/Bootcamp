@@ -6,6 +6,7 @@ import { filter } from 'rxjs/operators';
 import { SessionService } from '../../core/services/session.service';
 import { SessionUtilityService } from '../../core/services/session-utility.service';
 import { NavbarContextService, NavbarContext } from '../../core/services/navbar-context.service';
+import { ProfileDrawerService } from '../../core/services/profile-drawer.service';
 import { UserRole, Session } from '../../core/models/session.model';
 import { ROUTE_PATHS } from '../../app.routes';
 
@@ -31,6 +32,7 @@ export class NavbarComponent implements OnInit {
   private readonly sessionService = inject(SessionService);
   private readonly sessionUtility = inject(SessionUtilityService);
   private readonly navbarContext = inject(NavbarContextService);
+  private readonly profileDrawer = inject(ProfileDrawerService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -172,6 +174,11 @@ export class NavbarComponent implements OnInit {
   onLogout(): void {
     this.sessionUtility.logout();
     this.dropdownOpen = false;
+  }
+
+  openProfile(): void {
+    this.dropdownOpen = false;
+    this.profileDrawer.open();
   }
 
   /**
