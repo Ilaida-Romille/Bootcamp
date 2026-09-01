@@ -74,7 +74,7 @@ public class AuthService {
                                                                 request.password()))
                                 .firstName(request.firstName())
                                 .lastName(request.lastName())
-                                .role(Role.ATTENDEE)
+                                .role(Role.ORGANIZER_ADMIN)
                                 .status(AppUser.Status.ACTIVE)
                                 .build();
 

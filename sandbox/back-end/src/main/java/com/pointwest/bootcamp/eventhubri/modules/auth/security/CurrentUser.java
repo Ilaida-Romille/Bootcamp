@@ -8,6 +8,6 @@ import java.lang.annotation.*;
 @Documented
 // This tells Spring to look at the CustomUserDetails principal, but we still
 // need to map it
-@AuthenticationPrincipal(expression = "@securityUtils.getAuthenticatedUser(authentication)")
+@AuthenticationPrincipal(expression = "new com.pointwest.bootcamp.eventhubri.modules.auth.security.SecurityUser(userId, username, organizationId)")
 public @interface CurrentUser {
 }

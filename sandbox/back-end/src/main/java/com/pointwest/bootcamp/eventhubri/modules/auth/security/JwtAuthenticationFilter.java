@@ -12,7 +12,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.GrantedAuthority;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,9 +34,7 @@ public class JwtAuthenticationFilter
 
         String header = request.getHeader("Authorization");
 
-        if (header == null ||
-                !header.startsWith("Bearer ")) {
-
+        if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -42,45 +42,30 @@ public class JwtAuthenticationFilter
         String token = header.substring(7);
 
         try {
-
-            if (SecurityContextHolder
-                    .getContext()
-                    .getAuthentication() == null) {
-
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
                 Claims claims = jwtService.parse(token);
                 Long userId = Long.valueOf(claims.getSubject());
 
+                // 1. Fetch user details from database or construct SecurityUser
                 CustomUserDetails userDetails = userDetailsService.loadUserById(userId);
-
-                String email = userDetails.getUsername();
 
                 if (!userDetails.isEnabled()) {
                     filterChain.doFilter(request, response);
                     return;
                 }
 
-                // fix this later
-                List<?> rawAuthorities = claims.get("authorities", List.class);
+                // 2. Use authorities directly from CustomUserDetails
+                Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
-                List<SimpleGrantedAuthority> grantedAuthorities = Collections.EMPTY_LIST;
-
-                if (rawAuthorities != null) {
-                    grantedAuthorities = rawAuthorities.stream()
-                            .map(Object::toString)
-                            .map(SimpleGrantedAuthority::new)
-                            .toList();
-                }
-
+                // 3. Set CustomUserDetails as the PRINCIPAL (1st argument)
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        email,
+                        userDetails, // ✅ Set CustomUserDetails as principal instead of String email
                         null,
-                        grantedAuthorities);
+                        authorities
+                );
 
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
         } catch (Exception ex) {
             SecurityContextHolder.clearContext();
         }
