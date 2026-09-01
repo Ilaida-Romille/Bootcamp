@@ -19,7 +19,10 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -74,11 +77,53 @@ public class AuthService {
                                                                 request.password()))
                                 .firstName(request.firstName())
                                 .lastName(request.lastName())
+                                .role(Role.ORGANIZER_ADMIN)
+                                .status(AppUser.Status.ACTIVE)
+                                .build();
+
+                appUserRepository.save(user);
+        }
+
+        @Transactional
+        public void registerAttendee(RegisterAttendeeRequestDto request) {
+
+                if (appUserRepository.existsByEmailIgnoreCase(request.email())) {
+                        throw new IllegalArgumentException(
+                                        "An account with this email already exists");
+                }
+
+                Organization organization = organizationRepository
+                                .findById(request.organizationId())
+                                .orElseThrow(() -> new EntityNotFoundException(
+                                                "Organization not found: " + request.organizationId()));
+
+                AppUser user = AppUser.builder()
+                                .organization(organization)
+                                .email(request.email())
+                                .passwordHash(
+                                                passwordEncoder.encode(
+                                                                request.password()))
+                                .firstName(request.firstName())
+                                .lastName(request.lastName())
                                 .role(Role.ATTENDEE)
                                 .status(AppUser.Status.ACTIVE)
                                 .build();
 
                 appUserRepository.save(user);
+        }
+
+        @Transactional(readOnly = true)
+        public List<PublicOrganizationDto> getPublicOrganizations() {
+                return organizationRepository
+                                .findByStatusIn(
+                                                List.of(
+                                                                Organization.Status.ACTIVE,
+                                                                Organization.Status.PENDING))
+                                .stream()
+                                .map(org -> new PublicOrganizationDto(
+                                                org.getId(),
+                                                org.getCompanyName()))
+                                .toList();
         }
 
         @Transactional
