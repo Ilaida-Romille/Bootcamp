@@ -75,14 +75,19 @@ export class AgendaComponent implements OnInit {
   private loadAttendees(): void {
     if (!this.eventId) return;
 
-    this.registrationService.getRegistrationsByEventId(this.eventId).subscribe({
-      next: (attendees) => {
-        this.attendees = attendees;
+    this.registrationService.getEventAttendees(Number(this.eventId)).subscribe({
+      next: (page) => {
+        this.attendees = page.content.map(r => ({
+          id: r.id.toString(),
+          name: r.attendeeName,
+          company: '',
+          email: '',
+          eventId: r.eventId.toString()
+        }));
         this.cdr.detectChanges();
       },
       error: () => {
         this.attendees = [];
-        this.loadingError = 'Unable to load attendees.';
         this.cdr.detectChanges();
       }
     });
