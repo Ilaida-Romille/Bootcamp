@@ -18,6 +18,8 @@ public interface RegistrationService {
     Page<RegistrationResponseDto> listRegistrationsForEvent(
             Long eventId, RegistrationStatus statusFilter, String staffEmail, Pageable pageable);
 
+    Page<RegistrationResponseDto> listConfirmedAttendeesForEvent(Long eventId, Pageable pageable);
+
     RegistrationResponseDto checkInAttendee(Long registrationId, String staffEmail);
 
     RegistrationResponseDto updateStatus(Long registrationId, RegistrationStatus newStatus, String staffEmail);

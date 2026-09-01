@@ -112,6 +112,14 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<RegistrationResponseDto> listConfirmedAttendeesForEvent(Long eventId, Pageable pageable) {
+        return registrationRepository
+                .findByEvent_IdAndStatus(eventId, RegistrationStatus.CONFIRMED, pageable)
+                .map(this::toResponseDto);
+    }
+
+    @Override
     @Transactional
     public RegistrationResponseDto checkInAttendee(Long registrationId, String staffEmail) {
         AppUser staff = requireUser(staffEmail);
