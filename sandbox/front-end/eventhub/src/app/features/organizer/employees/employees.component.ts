@@ -24,13 +24,11 @@ export class OrganizerEmployeesComponent implements OnInit {
   filteredEmployees: Employee[] = [];
 
   readonly columns: ColumnDef[] = [
-    { key: 'name',               header: 'Employee' },
-    { key: 'email',              header: 'Email' },
-    { key: 'company',            header: 'Company' },
-    { key: 'department',         header: 'Department' },
-    { key: 'jobTitle',           header: 'Job Title' },
-    { key: 'registeredEventIds', header: 'Registered Events', sortable: false },
-    { key: 'actions',            header: 'Actions',           sortable: false, cssClass: 'text-center' }
+    { key: 'name', header: 'Employee' },
+    { key: 'company', header: 'Company' },
+    { key: 'email', header: 'Email' },
+    { key: 'role', header: 'Role' },
+    { key: 'actions', header: 'Actions', sortable: false, cssClass: 'text-center' }
   ];
 
   sortKey = 'name';
@@ -39,13 +37,11 @@ export class OrganizerEmployeesComponent implements OnInit {
   // Filters
   searchTerm = '';
   selectedCompany = 'All';
-  selectedDepartment = 'All';
-  eventIdFilter = '';
+  eventTitleFilter = '';
   employeeIdQuery = '';
 
   // Filter options
   companyOptions: string[] = ['All'];
-  departmentOptions: string[] = ['All'];
 
   // Pagination
   currentPage = 1;
@@ -70,7 +66,7 @@ export class OrganizerEmployeesComponent implements OnInit {
   isModalOpen = false;
   isEditMode = false;
   editingEmployeeId: string | null = null;
-  editRegisteredEventIds: string[] = [];
+  editRegisteredEvents: Array<{ registrationId: string; eventId: string; title: string }> = [];
 
   // Confirmation dialog
   showDeleteConfirm = false;
@@ -105,7 +101,6 @@ export class OrganizerEmployeesComponent implements OnInit {
         });
 
         this.companyOptions = ['All', ...new Set(this.employees.map((item) => item.company))];
-        this.departmentOptions = ['All', ...new Set(this.employees.map((item) => item.department))];
 
         this.applyFilters();
         this.isLoading = false;
@@ -125,24 +120,22 @@ export class OrganizerEmployeesComponent implements OnInit {
     this.isLookupMode = false;
 
     const normalizedSearch = this.searchTerm.trim().toLowerCase();
-    const normalizedEventId = this.eventIdFilter.trim().toLowerCase();
+    const normalizedEventTitle = this.eventTitleFilter.trim().toLowerCase();
 
     this.filteredEmployees = this.employees.filter((employee) => {
       const fullName = `${employee.firstName} ${employee.lastName}`.toLowerCase();
       const matchesSearch =
         normalizedSearch.length === 0 ||
         fullName.includes(normalizedSearch) ||
-        employee.email.toLowerCase().includes(normalizedSearch) ||
-        employee.jobTitle.toLowerCase().includes(normalizedSearch);
+        employee.email.toLowerCase().includes(normalizedSearch);
 
       const matchesCompany = this.selectedCompany === 'All' || employee.company === this.selectedCompany;
-      const matchesDepartment = this.selectedDepartment === 'All' || employee.department === this.selectedDepartment;
 
-      const matchesEventId =
-        normalizedEventId.length === 0 ||
-        employee.registeredEventIds.some((eventId) => eventId.toLowerCase().includes(normalizedEventId));
+      const matchesEventTitle =
+        normalizedEventTitle.length === 0 ||
+        employee.registeredEvents.some((event) => event.title.toLowerCase().includes(normalizedEventTitle));
 
-      return matchesSearch && matchesCompany && matchesDepartment && matchesEventId;
+      return matchesSearch && matchesCompany && matchesEventTitle;
     });
 
     this.currentPage = 1;
@@ -179,8 +172,7 @@ export class OrganizerEmployeesComponent implements OnInit {
     this.employeeIdQuery = '';
     this.searchTerm = '';
     this.selectedCompany = 'All';
-    this.selectedDepartment = 'All';
-    this.eventIdFilter = '';
+    this.eventTitleFilter = '';
     this.isLookupMode = false;
     this.applyFilters();
   }
@@ -192,12 +184,11 @@ export class OrganizerEmployeesComponent implements OnInit {
   get paginatedEmployees(): Employee[] {
     const getSortVal = (e: Employee): string => {
       switch (this.sortKey) {
-        case 'name':       return `${e.firstName} ${e.lastName}`;
-        case 'email':      return e.email;
-        case 'company':    return e.company;
-        case 'department': return e.department;
-        case 'jobTitle':   return e.jobTitle;
-        default:           return '';
+        case 'name': return `${e.firstName} ${e.lastName}`;
+        case 'email': return e.email;
+        case 'company': return e.company;
+        case 'role': return e.role ?? '';
+        default: return '';
       }
     };
     const sorted = [...this.filteredEmployees].sort((a, b) => {
@@ -218,8 +209,13 @@ export class OrganizerEmployeesComponent implements OnInit {
   openEditEmployeeModal(employee: Employee): void {
     this.isEditMode = true;
     this.editingEmployeeId = employee.id;
-    this.formData = { ...employee };
-    this.editRegisteredEventIds = [...employee.registeredEventIds];
+    this.formData = {
+      firstName: employee.firstName,
+      lastName: employee.lastName,
+      email: employee.email,
+      company: employee.company
+    };
+    this.editRegisteredEvents = [...(employee.registeredEvents ?? [])];
     this.formError = '';
     this.isModalOpen = true;
   }
@@ -230,7 +226,7 @@ export class OrganizerEmployeesComponent implements OnInit {
     this.editingEmployeeId = null;
     this.formData = this.getDefaultFormData();
     this.formError = '';
-    this.editRegisteredEventIds = [];
+    this.editRegisteredEvents = [];
   }
 
   submitForm(): void {
@@ -246,8 +242,7 @@ export class OrganizerEmployeesComponent implements OnInit {
     this.formError = '';
 
     this.employeesApi.updateEmployee(this.editingEmployeeId, {
-      ...this.formData,
-      registeredEventIds: this.editRegisteredEventIds
+      ...this.formData
     }).subscribe({
       next: (updatedEmployee) => {
         const index = this.employees.findIndex((emp) => emp.id === this.editingEmployeeId);
@@ -314,8 +309,16 @@ export class OrganizerEmployeesComponent implements OnInit {
     });
   }
 
-  unregisterEvent(eventId: string): void {
-    this.editRegisteredEventIds = this.editRegisteredEventIds.filter((id) => id !== eventId);
+  unregisterEvent(event: { registrationId: string; eventId: string; title: string; canCancelRegistration?: boolean }): void {
+    if (!event.canCancelRegistration) {
+      return;
+    }
+
+    this.editRegisteredEvents = this.editRegisteredEvents.filter((item) => item.registrationId !== event.registrationId);
+  }
+
+  canCancelRegistration(event: { canCancelRegistration?: boolean; registrationId?: string; eventId?: string; title?: string } | null | undefined): boolean {
+    return !!event?.canCancelRegistration;
   }
 
   // ============ View Details ============
@@ -337,16 +340,14 @@ export class OrganizerEmployeesComponent implements OnInit {
       firstName: '',
       lastName: '',
       email: '',
-      company: '',
-      department: '',
-      jobTitle: ''
+      company: ''
     };
   }
 
   private isFormValid(): boolean {
-    const { firstName, lastName, email, company, department, jobTitle } = this.formData;
+    const { firstName, lastName, email, company } = this.formData;
 
-    if (!firstName.trim() || !lastName.trim() || !email.trim() || !company.trim() || !department.trim() || !jobTitle.trim()) {
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !company.trim()) {
       this.formError = 'All required fields must be filled.';
       this.cdr.detectChanges();
       return false;

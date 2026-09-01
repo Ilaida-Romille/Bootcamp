@@ -29,9 +29,24 @@ export class PlatformOwnerOrganizerService {
   private readonly baseUrl = '/api/platform-owner/organizers';
   private readonly http = inject(HttpClient);
 
-  getOrganizers(): Observable<OrganizerApiResponse[]> {
-    const params = new HttpParams().set('size', '500').set('page', '0');
+  getOrganizers(
+    page: number = 0,
+    size: number = 10
+  ): Observable<OrganizerApiResponse[]> {
+    const params = new HttpParams().set('size', size.toString()).set('page', page.toString());
     return this.http.get<{ content: OrganizerApiResponse[] }>(this.baseUrl, { params }).pipe(
+      map(page => page.content)
+    );
+  }
+
+  searchOrganizers(query: string): Observable<OrganizerApiResponse[]> {
+    const trimmedQuery = query.trim();
+    const params = new HttpParams()
+      .set('query', trimmedQuery)
+      .set('size', '500')
+      .set('page', '0');
+
+    return this.http.get<{ content: OrganizerApiResponse[] }>(`${this.baseUrl}/search`, { params }).pipe(
       map(page => page.content)
     );
   }

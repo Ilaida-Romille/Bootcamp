@@ -1176,6 +1176,15 @@
 
           </button>
 
+
+          <button type="button" class="btn btn-primary" (click)="openNotifyModal()">
+
+            <i class="bi bi-bell"></i>
+
+            Notify Registrants
+
+          </button>
+
         </div>
 
       </div>
@@ -1329,6 +1338,103 @@
       </div>
     </div>
   </div>
+  }
+
+
+  <!-- ============================================================
+       NOTIFY REGISTRANTS MODAL
+       ============================================================ -->
+
+  @if (isNotifyModalOpen) {
+
+  <div class="modal-overlay" role="dialog" aria-modal="true" (click)="closeNotifyModal()"
+    (keydown.escape)="closeNotifyModal()">
+
+    <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+
+      <div class="modal-content">
+
+        <div class="modal-header">
+
+          <h5 class="modal-title">
+
+            <i class="bi bi-bell"></i>
+
+            Notify Registrants
+
+          </h5>
+
+          <button type="button" class="btn-close btn-close-white" (click)="closeNotifyModal()">
+          </button>
+
+        </div>
+
+        <div class="modal-body">
+
+          @if (notifyError) {
+
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+
+            {{ notifyError }}
+
+            <button type="button" class="btn-close btn-close-white" (click)="notifyError = ''">
+            </button>
+
+          </div>
+
+          }
+
+          <div class="mb-3">
+
+            <label class="form-label" for="notifySubject">
+              Subject *
+            </label>
+
+            <input id="notifySubject" name="notifySubject" type="text" class="form-control glass-form-input"
+              [(ngModel)]="notifySubject" placeholder="Enter email subject" />
+
+          </div>
+
+          <div class="mb-3">
+
+            <label class="form-label" for="notifyMessageBody">
+              Message *
+            </label>
+
+            <textarea id="notifyMessageBody" name="notifyMessageBody" class="form-control glass-form-input"
+              [(ngModel)]="notifyMessageBody" placeholder="Enter the notification message" rows="5">
+                  </textarea>
+
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button type="button" class="btn btn-outline-light" (click)="closeNotifyModal()" [disabled]="isNotifying">
+
+            Cancel
+
+          </button>
+
+          <button type="button" class="btn btn-primary" (click)="sendNotifications()" [disabled]="isNotifying">
+
+            {{
+            isNotifying
+            ? 'Sending...'
+            : 'Send Notifications'
+            }}
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
   }
 
 

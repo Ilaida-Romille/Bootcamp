@@ -10,281 +10,290 @@
 
     <!-- Success state -->
     @if (registeredAs(); as role) {
-      <div class="text-center py-2">
-        <div class="success-icon mb-3">&#10003;</div>
-        <h4 class="fw-bold text-white mb-2">Account Created!</h4>
-        @if (role === 'organizer') {
-          <p class="text-secondary small mb-0">
-            Your organizer account and organization profile have been created.
-            An admin may need to approve your account before events can be published.
-          </p>
-        } @else {
-          <p class="text-secondary small mb-0">
-            Your attendee account is ready. You can sign in right away.
-          </p>
-        }
-        <a routerLink="/" class="btn btn-info w-100 fw-bold text-dark mt-4">Go to Sign In</a>
-      </div>
+    <div class="text-center py-2">
+      <div class="success-icon mb-3">&#10003;</div>
+      <h4 class="fw-bold text-white mb-2">Account Created!</h4>
+      @if (role === 'organizer') {
+      <p class="text-secondary small mb-0">
+        Your organizer account and organization profile have been created.
+        An admin may need to approve your account before events can be published.
+      </p>
+      } @else {
+      <p class="text-secondary small mb-0">
+        Your attendee account is ready. You can sign in right away.
+      </p>
+      }
+      <a routerLink="/" class="btn btn-info w-100 fw-bold text-dark mt-4">Go to Sign In</a>
+    </div>
     } @else {
 
-      <!-- Role Selector -->
-      <div class="role-tabs d-flex mb-4" role="tablist">
-        <button
-          type="button"
-          class="role-tab"
-          [class.active]="activeRole() === 'attendee'"
-          (click)="selectRole('attendee')"
-          role="tab"
-          [attr.aria-selected]="activeRole() === 'attendee'">
-          Attendee
-        </button>
-        <button
-          type="button"
-          class="role-tab"
-          [class.active]="activeRole() === 'organizer'"
-          (click)="selectRole('organizer')"
-          role="tab"
-          [attr.aria-selected]="activeRole() === 'organizer'">
-          Organizer Admin
-        </button>
+    <!-- Role Selector -->
+    <div class="role-tabs d-flex mb-4" role="tablist">
+      <button type="button" class="role-tab" [class.active]="activeRole() === 'attendee'"
+        (click)="selectRole('attendee')" role="tab" [attr.aria-selected]="activeRole() === 'attendee'">
+        Attendee
+      </button>
+      <button type="button" class="role-tab" [class.active]="activeRole() === 'organizer'"
+        (click)="selectRole('organizer')" role="tab" [attr.aria-selected]="activeRole() === 'organizer'">
+        Organizer Admin
+      </button>
+    </div>
+
+    @if (errorMessage(); as msg) {
+    <div class="alert-denied mb-3" role="alert">{{ msg }}</div>
+    }
+
+    <!-- ── ATTENDEE FORM ── -->
+    @if (activeRole() === 'attendee') {
+    <form [formGroup]="attendeeForm" (ngSubmit)="onSubmit()" novalidate>
+
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-firstName">First
+            Name</label>
+          <input class="form-control glass-input"
+            [class.user-invalid]="attendeeForm.controls.firstName.invalid && attendeeForm.controls.firstName.touched"
+            type="text" id="at-firstName" formControlName="firstName" placeholder="Jane" autocomplete="given-name">
+          @if (attendeeForm.controls.firstName.invalid && attendeeForm.controls.firstName.touched) {
+          <span class="field-error mt-1 shown" role="alert">First name is required.</span>
+          }
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-lastName">Last Name</label>
+          <input class="form-control glass-input"
+            [class.user-invalid]="attendeeForm.controls.lastName.invalid && attendeeForm.controls.lastName.touched"
+            type="text" id="at-lastName" formControlName="lastName" placeholder="Doe" autocomplete="family-name">
+          @if (attendeeForm.controls.lastName.invalid && attendeeForm.controls.lastName.touched) {
+          <span class="field-error mt-1 shown" role="alert">Last name is required.</span>
+          }
+        </div>
       </div>
 
-      @if (errorMessage(); as msg) {
-        <div class="alert-denied mb-3" role="alert">{{ msg }}</div>
-      }
+      <div class="mb-3">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-email">Email Address</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <input class="form-control glass-input"
+            [class.user-invalid]="attendeeForm.controls.email.invalid && attendeeForm.controls.email.touched"
+            type="email" id="at-email" formControlName="email" placeholder="you&#64;example.com" autocomplete="email"
+            inputmode="email">
+        </div>
+        @if (attendeeForm.controls.email.invalid && attendeeForm.controls.email.touched) {
+        <span class="field-error mt-1 shown" role="alert">
+          Please enter a valid email address ({{ emailMinLength }}–{{ emailMaxLength }} characters).
+        </span>
+        }
+      </div>
 
-      <!-- ── ATTENDEE FORM ── -->
-      @if (activeRole() === 'attendee') {
-        <form [formGroup]="attendeeForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="mb-3">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-password">Password</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <input class="form-control glass-input"
+            [class.user-invalid]="attendeeForm.controls.password.invalid && attendeeForm.controls.password.touched"
+            type="password" id="at-password" formControlName="password" placeholder="••••••••"
+            autocomplete="new-password">
+        </div>
+        @if (attendeeForm.controls.password.invalid && attendeeForm.controls.password.touched) {
+        <span class="field-error mt-1 shown" role="alert">{{ orgPasswordErrors('attendee') }}</span>
+        }
+      </div>
 
-          <div class="row g-3 mb-3">
-            <div class="col-sm-6">
-              <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-firstName">First Name</label>
-              <input class="form-control glass-input"
-                [class.user-invalid]="attendeeForm.controls.firstName.invalid && attendeeForm.controls.firstName.touched"
-                type="text" id="at-firstName" formControlName="firstName" placeholder="Jane" autocomplete="given-name">
-              @if (attendeeForm.controls.firstName.invalid && attendeeForm.controls.firstName.touched) {
-                <span class="field-error mt-1 shown" role="alert">First name is required.</span>
-              }
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-lastName">Last Name</label>
-              <input class="form-control glass-input"
-                [class.user-invalid]="attendeeForm.controls.lastName.invalid && attendeeForm.controls.lastName.touched"
-                type="text" id="at-lastName" formControlName="lastName" placeholder="Doe" autocomplete="family-name">
-              @if (attendeeForm.controls.lastName.invalid && attendeeForm.controls.lastName.touched) {
-                <span class="field-error mt-1 shown" role="alert">Last name is required.</span>
-              }
-            </div>
-          </div>
+      <div class="mb-3">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-confirm">Confirm
+          Password</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <input class="form-control glass-input"
+            [class.user-invalid]="attendeeForm.controls.confirmPassword.touched && attendeeForm.errors?.['passwordMismatch']"
+            type="password" id="at-confirm" formControlName="confirmPassword" placeholder="••••••••"
+            autocomplete="new-password">
+        </div>
+        @if (attendeeForm.controls.confirmPassword.touched && attendeeForm.errors?.['passwordMismatch']) {
+        <span class="field-error mt-1 shown" role="alert">Passwords do not match.</span>
+        }
+      </div>
 
-          <div class="mb-3">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-email">Email Address</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              <input class="form-control glass-input"
-                [class.user-invalid]="attendeeForm.controls.email.invalid && attendeeForm.controls.email.touched"
-                type="email" id="at-email" formControlName="email" placeholder="you&#64;example.com"
-                autocomplete="email" inputmode="email">
-            </div>
-            @if (attendeeForm.controls.email.invalid && attendeeForm.controls.email.touched) {
-              <span class="field-error mt-1 shown" role="alert">
-                Please enter a valid email address ({{ emailMinLength }}–{{ emailMaxLength }} characters).
-              </span>
-            }
-          </div>
+      <div class="mb-4">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-org">Organization</label>
+        @if (orgLoadError()) {
+        <div class="field-error shown mb-1">Could not load organizations — is the backend running?</div>
+        }
+        <select class="form-select glass-input"
+          [class.user-invalid]="attendeeForm.controls.organizationId.invalid && attendeeForm.controls.organizationId.touched"
+          id="at-org" formControlName="organizationId">
+          <option value="" disabled selected>Select your organization…</option>
+          @for (org of organizations(); track org.id) {
+          <option [value]="org.id">{{ org.companyName }}</option>
+          }
+        </select>
+        @if (attendeeForm.controls.organizationId.invalid && attendeeForm.controls.organizationId.touched) {
+        <span class="field-error mt-1 shown" role="alert">Please select an organization.</span>
+        }
+      </div>
 
-          <div class="mb-3">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-password">Password</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <input class="form-control glass-input"
-                [class.user-invalid]="attendeeForm.controls.password.invalid && attendeeForm.controls.password.touched"
-                type="password" id="at-password" formControlName="password" placeholder="••••••••" autocomplete="new-password">
-            </div>
-            @if (attendeeForm.controls.password.invalid && attendeeForm.controls.password.touched) {
-              <span class="field-error mt-1 shown" role="alert">{{ orgPasswordErrors('attendee') }}</span>
-            }
-          </div>
+      <button class="btn btn-info w-100 py-2 fw-bold text-dark mb-3 sign-in-btn" type="submit"
+        [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Creating Account…' : 'Create Attendee Account' }}
+      </button>
+    </form>
+    }
 
-          <div class="mb-3">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-confirm">Confirm Password</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <input class="form-control glass-input"
-                [class.user-invalid]="attendeeForm.controls.confirmPassword.touched && attendeeForm.errors?.['passwordMismatch']"
-                type="password" id="at-confirm" formControlName="confirmPassword" placeholder="••••••••" autocomplete="new-password">
-            </div>
-            @if (attendeeForm.controls.confirmPassword.touched && attendeeForm.errors?.['passwordMismatch']) {
-              <span class="field-error mt-1 shown" role="alert">Passwords do not match.</span>
-            }
-          </div>
+    <!-- ── ORGANIZER FORM ── -->
+    @if (activeRole() === 'organizer') {
+    <form [formGroup]="organizerForm" (ngSubmit)="onSubmit()" novalidate>
 
-          <div class="mb-4">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="at-org">Organization</label>
-            @if (orgLoadError()) {
-              <div class="field-error shown mb-1">Could not load organizations — is the backend running?</div>
-            }
-            <select class="form-select glass-input"
-              [class.user-invalid]="attendeeForm.controls.organizationId.invalid && attendeeForm.controls.organizationId.touched"
-              id="at-org" formControlName="organizationId">
-              <option value="" disabled selected>Select your organization…</option>
-              @for (org of organizations(); track org.id) {
-                <option [value]="org.id">{{ org.companyName }}</option>
-              }
-            </select>
-            @if (attendeeForm.controls.organizationId.invalid && attendeeForm.controls.organizationId.touched) {
-              <span class="field-error mt-1 shown" role="alert">Please select an organization.</span>
-            }
-          </div>
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-firstName">First
+            Name</label>
+          <input class="form-control glass-input"
+            [class.user-invalid]="organizerForm.controls.firstName.invalid && organizerForm.controls.firstName.touched"
+            type="text" id="org-firstName" formControlName="firstName" placeholder="Jane" autocomplete="given-name">
+          @if (organizerForm.controls.firstName.invalid && organizerForm.controls.firstName.touched) {
+          <span class="field-error mt-1 shown" role="alert">First name is required.</span>
+          }
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-lastName">Last Name</label>
+          <input class="form-control glass-input"
+            [class.user-invalid]="organizerForm.controls.lastName.invalid && organizerForm.controls.lastName.touched"
+            type="text" id="org-lastName" formControlName="lastName" placeholder="Doe" autocomplete="family-name">
+          @if (organizerForm.controls.lastName.invalid && organizerForm.controls.lastName.touched) {
+          <span class="field-error mt-1 shown" role="alert">Last name is required.</span>
+          }
+        </div>
+      </div>
 
-          <button class="btn btn-info w-100 py-2 fw-bold text-dark mb-3 sign-in-btn" type="submit" [disabled]="isSubmitting()">
-            {{ isSubmitting() ? 'Creating Account…' : 'Create Attendee Account' }}
-          </button>
-        </form>
-      }
+      <div class="mb-3">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-email">Work Email</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <input class="form-control glass-input"
+            [class.user-invalid]="organizerForm.controls.email.invalid && organizerForm.controls.email.touched"
+            type="email" id="org-email" formControlName="email" placeholder="you&#64;company.com" autocomplete="email"
+            inputmode="email">
+        </div>
+        @if (organizerForm.controls.email.invalid && organizerForm.controls.email.touched) {
+        <span class="field-error mt-1 shown" role="alert">
+          Please enter a valid email address ({{ emailMinLength }}–{{ emailMaxLength }} characters).
+        </span>
+        }
+      </div>
 
-      <!-- ── ORGANIZER FORM ── -->
-      @if (activeRole() === 'organizer') {
-        <form [formGroup]="organizerForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="mb-3">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-password">Password</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <input class="form-control glass-input"
+            [class.user-invalid]="organizerForm.controls.password.invalid && organizerForm.controls.password.touched"
+            type="password" id="org-password" formControlName="password" placeholder="••••••••"
+            autocomplete="new-password">
+        </div>
+        @if (organizerForm.controls.password.invalid && organizerForm.controls.password.touched) {
+        <span class="field-error mt-1 shown" role="alert">{{ orgPasswordErrors('organizer') }}</span>
+        }
+      </div>
 
-          <div class="row g-3 mb-3">
-            <div class="col-sm-6">
-              <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-firstName">First Name</label>
-              <input class="form-control glass-input"
-                [class.user-invalid]="organizerForm.controls.firstName.invalid && organizerForm.controls.firstName.touched"
-                type="text" id="org-firstName" formControlName="firstName" placeholder="Jane" autocomplete="given-name">
-              @if (organizerForm.controls.firstName.invalid && organizerForm.controls.firstName.touched) {
-                <span class="field-error mt-1 shown" role="alert">First name is required.</span>
-              }
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-lastName">Last Name</label>
-              <input class="form-control glass-input"
-                [class.user-invalid]="organizerForm.controls.lastName.invalid && organizerForm.controls.lastName.touched"
-                type="text" id="org-lastName" formControlName="lastName" placeholder="Doe" autocomplete="family-name">
-              @if (organizerForm.controls.lastName.invalid && organizerForm.controls.lastName.touched) {
-                <span class="field-error mt-1 shown" role="alert">Last name is required.</span>
-              }
-            </div>
-          </div>
+      <div class="mb-3">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-confirm">Confirm
+          Password</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <input class="form-control glass-input"
+            [class.user-invalid]="organizerForm.controls.confirmPassword.touched && organizerForm.errors?.['passwordMismatch']"
+            type="password" id="org-confirm" formControlName="confirmPassword" placeholder="••••••••"
+            autocomplete="new-password">
+        </div>
+        @if (organizerForm.controls.confirmPassword.touched && organizerForm.errors?.['passwordMismatch']) {
+        <span class="field-error mt-1 shown" role="alert">Passwords do not match.</span>
+        }
+      </div>
 
-          <div class="mb-3">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-email">Work Email</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              <input class="form-control glass-input"
-                [class.user-invalid]="organizerForm.controls.email.invalid && organizerForm.controls.email.touched"
-                type="email" id="org-email" formControlName="email" placeholder="you&#64;company.com"
-                autocomplete="email" inputmode="email">
-            </div>
-            @if (organizerForm.controls.email.invalid && organizerForm.controls.email.touched) {
-              <span class="field-error mt-1 shown" role="alert">
-                Please enter a valid email address ({{ emailMinLength }}–{{ emailMaxLength }} characters).
-              </span>
-            }
-          </div>
+      <div class="section-divider my-4">
+        <span class="text-secondary small text-uppercase fw-semibold">Organization Details</span>
+      </div>
 
-          <div class="mb-3">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-password">Password</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <input class="form-control glass-input"
-                [class.user-invalid]="organizerForm.controls.password.invalid && organizerForm.controls.password.touched"
-                type="password" id="org-password" formControlName="password" placeholder="••••••••" autocomplete="new-password">
-            </div>
-            @if (organizerForm.controls.password.invalid && organizerForm.controls.password.touched) {
-              <span class="field-error mt-1 shown" role="alert">{{ orgPasswordErrors('organizer') }}</span>
-            }
-          </div>
+      <div class="mb-3">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-companyName">Company
+          Name</label>
+        <input class="form-control glass-input"
+          [class.user-invalid]="organizerForm.controls.companyName.invalid && organizerForm.controls.companyName.touched"
+          type="text" id="org-companyName" formControlName="companyName" placeholder="Acme Events Co.">
+        @if (organizerForm.controls.companyName.invalid && organizerForm.controls.companyName.touched) {
+        <span class="field-error mt-1 shown" role="alert">Company name is required.</span>
+        }
+      </div>
 
-          <div class="mb-3">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-confirm">Confirm Password</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <input class="form-control glass-input"
-                [class.user-invalid]="organizerForm.controls.confirmPassword.touched && organizerForm.errors?.['passwordMismatch']"
-                type="password" id="org-confirm" formControlName="confirmPassword" placeholder="••••••••" autocomplete="new-password">
-            </div>
-            @if (organizerForm.controls.confirmPassword.touched && organizerForm.errors?.['passwordMismatch']) {
-              <span class="field-error mt-1 shown" role="alert">Passwords do not match.</span>
-            }
-          </div>
+      <div class="mb-3">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-contactEmail">Organization
+          Contact Email</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <input class="form-control glass-input"
+            [class.user-invalid]="organizerForm.controls.primaryContactEmail.invalid && organizerForm.controls.primaryContactEmail.touched"
+            type="email" id="org-contactEmail" formControlName="primaryContactEmail"
+            placeholder="contact&#64;company.com" inputmode="email">
+        </div>
+        @if (organizerForm.controls.primaryContactEmail.invalid && organizerForm.controls.primaryContactEmail.touched) {
+        <span class="field-error mt-1 shown" role="alert">A valid contact email is required.</span>
+        }
+      </div>
 
-          <div class="section-divider my-4">
-            <span class="text-secondary small text-uppercase fw-semibold">Organization Details</span>
-          </div>
+      <div class="mb-4">
+        <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-phone">
+          Contact Number <span class="fw-normal text-muted">(optional)</span>
+        </label>
+        <input class="form-control glass-input" type="tel" id="org-phone" formControlName="primaryContactPhone"
+          placeholder="+63 900 000 0000" autocomplete="tel">
+      </div>
 
-          <div class="mb-3">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-companyName">Company Name</label>
-            <input class="form-control glass-input"
-              [class.user-invalid]="organizerForm.controls.companyName.invalid && organizerForm.controls.companyName.touched"
-              type="text" id="org-companyName" formControlName="companyName" placeholder="Acme Events Co.">
-            @if (organizerForm.controls.companyName.invalid && organizerForm.controls.companyName.touched) {
-              <span class="field-error mt-1 shown" role="alert">Company name is required.</span>
-            }
-          </div>
+      <button class="btn btn-info w-100 py-2 fw-bold text-dark mb-3 sign-in-btn" type="submit"
+        [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Creating Account…' : 'Create Organizer Account' }}
+      </button>
+    </form>
+    }
 
-          <div class="mb-3">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-contactEmail">Organization Contact Email</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              <input class="form-control glass-input"
-                [class.user-invalid]="organizerForm.controls.primaryContactEmail.invalid && organizerForm.controls.primaryContactEmail.touched"
-                type="email" id="org-contactEmail" formControlName="primaryContactEmail"
-                placeholder="contact&#64;company.com" inputmode="email">
-            </div>
-            @if (organizerForm.controls.primaryContactEmail.invalid && organizerForm.controls.primaryContactEmail.touched) {
-              <span class="field-error mt-1 shown" role="alert">A valid contact email is required.</span>
-            }
-          </div>
-
-          <div class="mb-4">
-            <label class="form-label text-uppercase text-secondary fw-semibold small" for="org-phone">
-              Contact Phone <span class="fw-normal text-muted">(optional)</span>
-            </label>
-            <input class="form-control glass-input" type="tel" id="org-phone"
-              formControlName="primaryContactPhone" placeholder="+63 900 000 0000" autocomplete="tel">
-          </div>
-
-          <button class="btn btn-info w-100 py-2 fw-bold text-dark mb-3 sign-in-btn" type="submit" [disabled]="isSubmitting()">
-            {{ isSubmitting() ? 'Creating Account…' : 'Create Organizer Account' }}
-          </button>
-        </form>
-      }
-
-      <p class="text-center text-secondary small mb-0 mt-1">
-        Already have an account?
-        <a routerLink="/" class="text-info fw-semibold text-decoration-none">Sign in</a>
-      </p>
+    <p class="text-center text-secondary small mb-0 mt-1">
+      Already have an account?
+      <a routerLink="/" class="text-info fw-semibold text-decoration-none">Sign in</a>
+    </p>
     }
 
   </div>

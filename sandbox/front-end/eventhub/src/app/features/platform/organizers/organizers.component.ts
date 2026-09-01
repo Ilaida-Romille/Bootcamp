@@ -120,19 +120,56 @@ export class OrganizersComponent implements OnInit {
   }
 
   onSearchChange(event: Event): void {
-    this.searchTerm = (event.target as HTMLInputElement).value;
-    this.applyFilter();
+    const rawValue = (event.target as HTMLInputElement).value;
+    this.searchTerm = rawValue;
+
+    const trimmedValue = this.searchTerm.trim();
+    if (trimmedValue.length === 0) {
+      this.loadOrganizers();
+      return;
+    }
+
+    if (trimmedValue.length < 3) {
+      return;
+    }
+
+    this.searchOrganizers(trimmedValue);
+  }
+
+  submitSearch(): void {
+    const trimmedValue = this.searchTerm.trim();
+
+    if (trimmedValue.length >= 3) {
+      this.searchOrganizers(trimmedValue);
+      return;
+    }
+
+    if (trimmedValue.length === 0) {
+      this.loadOrganizers();
+    }
+  }
+
+  private searchOrganizers(query: string): void {
+    this.dataLoadingError = '';
+    this.organizerService.searchOrganizers(query).subscribe({
+      next: (data) => {
+        this.organizers = data.map(o => this.mapToOrganizer(o));
+        this.applyFilter();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.organizers = [];
+        this.filteredOrganizers = [];
+        this.dataLoadingError = 'Unable to search organizers. Please try again.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   applyFilter(): void {
     this.filteredOrganizers = this.organizers.filter(o => {
-      const term = this.searchTerm.toLowerCase();
-      const matchesSearch =
-        o.fullName.toLowerCase().includes(term) ||
-        o.organizationName.toLowerCase().includes(term) ||
-        o.email.toLowerCase().includes(term);
       const matchesStatus = this.selectedStatus === 'All' || o.userStatus === this.selectedStatus;
-      return matchesSearch && matchesStatus;
+      return matchesStatus;
     });
     this.currentPage = 1;
   }

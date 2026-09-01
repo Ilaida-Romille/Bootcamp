@@ -30,6 +30,8 @@ import {
 
 import { AgendaApiService } from './services/organizer-agenda-api-service';
 
+import { NotificationApiService } from './services/notification-api.service';
+
 import {
   validateEventSchedule,
   validateEventCapacity,
@@ -69,6 +71,7 @@ export class OrganizerEventsComponent implements OnInit {
 
   private readonly eventsApi = inject(OrganizerEventsApiService);
   private readonly agendaApi = inject(AgendaApiService);
+  private readonly notificationApi = inject(NotificationApiService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   // ============================================================
@@ -202,6 +205,16 @@ export class OrganizerEventsComponent implements OnInit {
    * They are loaded independently using AgendaApiService.
    */
   viewingEventAgendas: Agenda[] = [];
+
+  // ============================================================
+  // Notify Registrants
+  // ============================================================
+
+  isNotifyModalOpen = false;
+  isNotifying = false;
+  notifyError = '';
+  notifySubject = '';
+  notifyMessageBody = '';
 
   // ============================================================
   // Post-Creation Agenda Prompt
@@ -1371,6 +1384,69 @@ export class OrganizerEventsComponent implements OnInit {
     this.viewingEvent = null;
 
     this.viewingEventAgendas = [];
+  }
+
+  // ============================================================
+  // Notify Registrants
+  // ============================================================
+
+  openNotifyModal(): void {
+
+    if (!this.viewingEvent) return;
+
+    this.notifyError = '';
+    this.notifySubject = `Reminder: ${this.viewingEvent.title}`;
+    this.notifyMessageBody = '';
+
+    this.isNotifyModalOpen = true;
+  }
+
+  closeNotifyModal(): void {
+
+    this.isNotifyModalOpen = false;
+
+    this.notifyError = '';
+    this.notifySubject = '';
+    this.notifyMessageBody = '';
+  }
+
+  sendNotifications(): void {
+
+    if (!this.viewingEvent) return;
+
+    if (!this.notifySubject.trim()) {
+      this.notifyError = 'Subject is required.';
+      return;
+    }
+
+    if (!this.notifyMessageBody.trim()) {
+      this.notifyError = 'Message body is required.';
+      return;
+    }
+
+    this.isNotifying = true;
+    this.notifyError = '';
+
+    const eventId = Number(this.viewingEvent.id);
+
+    this.notificationApi.sendNotificationEmail({
+      eventId,
+      recipientUserId: null,
+      subject: this.notifySubject.trim(),
+      messageBody: this.notifyMessageBody.trim()
+    }).subscribe({
+      next: () => {
+        this.isNotifying = false;
+        this.closeNotifyModal();
+        this.triggerToast('Notifications sent successfully to all registered attendees.', 'success', 'Registrants Notified');
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isNotifying = false;
+        this.notifyError = this.getApiErrorMessage(error, 'Unable to send notifications.');
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // ============================================================

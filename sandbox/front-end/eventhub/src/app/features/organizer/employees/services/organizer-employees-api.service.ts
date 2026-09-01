@@ -20,9 +20,6 @@ export interface EmployeeInput {
   lastName: string;
   email: string;
   company: string;
-  department: string;
-  jobTitle: string;
-  registeredEventIds?: string[];
 }
 
 export interface EmployeePatch {
@@ -30,10 +27,7 @@ export interface EmployeePatch {
   lastName?: string;
   email?: string;
   company?: string;
-  department?: string;
-  jobTitle?: string;
   avatarUrl?: string;
-  registeredEventIds?: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -133,6 +127,12 @@ export class OrganizerEmployeesApiService {
         this.employees.update((list) => list.filter((e) => e.id !== id));
         this.loading.set(false);
       }),
+      catchError((err) => this.handleError(err))
+    );
+  }
+
+  removeRegistrationForOrganizer(registrationId: string): Observable<void> {
+    return this.http.delete<void>(`/api/registrations/${encodeURIComponent(registrationId)}/organizer-remove`).pipe(
       catchError((err) => this.handleError(err))
     );
   }

@@ -109,7 +109,16 @@ export class SignupComponent implements OnInit {
       this.organizerForm.markAllAsTouched();
       return;
     }
-    const { confirmPassword: _c, ...payload } = this.organizerForm.getRawValue();
+    const { confirmPassword: _c, ...rest } = this.organizerForm.getRawValue();
+    const payload = {
+      firstName: this.sanitizeText(rest.firstName),
+      lastName: this.sanitizeText(rest.lastName),
+      email: this.sanitizeText(rest.email),
+      password: rest.password,
+      companyName: this.sanitizeText(rest.companyName),
+      primaryContactEmail: this.sanitizeEmail(rest.primaryContactEmail),
+      primaryContactPhone: this.sanitizePhone(rest.primaryContactPhone)
+    }
     this.isSubmitting.set(true);
     this.http.post('/api/auth/register', payload, { observe: 'response' }).subscribe({
       next: () => {
@@ -128,8 +137,17 @@ export class SignupComponent implements OnInit {
       this.attendeeForm.markAllAsTouched();
       return;
     }
+
+    const raw = this.attendeeForm.getRawValue();
+
     const { confirmPassword: _c, organizationId, ...rest } = this.attendeeForm.getRawValue();
-    const payload = { ...rest, organizationId: Number(organizationId) };
+    const payload = {
+      organizationId: Number(organizationId),
+      firstName: this.sanitizeText(raw.firstName),
+      lastName: this.sanitizeText(raw.lastName),
+      email: this.sanitizeEmail(raw.email),
+      password: raw.password, // Never modify password strings
+    }
     this.isSubmitting.set(true);
     this.http.post('/api/auth/register/attendee', payload, { observe: 'response' }).subscribe({
       next: () => {
@@ -152,5 +170,18 @@ export class SignupComponent implements OnInit {
       return typeof msg === 'string' ? msg : 'Please check your input and try again.';
     }
     return `Server error (${err.status}). Please try again later.`;
+  }
+
+  // Helper functions for input sanitization
+  private sanitizeText(val: string): string {
+    return val ? val.trim().replace(/<[^>]*>?/gm, '') : ''; // Trims & strips HTML tags
+  }
+
+  private sanitizeEmail(val: string): string {
+    return val ? val.trim().toLowerCase() : ''; // Trims & standardizes casing
+  }
+
+  private sanitizePhone(val: string): string {
+    return val ? val.replace(/[^\d+]/g, '') : ''; // Keeps only numbers and leading '+'
   }
 }
